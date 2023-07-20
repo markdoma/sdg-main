@@ -130,8 +130,9 @@ export default function Home() {
 
           {/* Main section */}
           <main className="py-10">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div>Back</div>
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col">
+              {/* <div>Back</div> */}
+
               <IDpreview />
             </div>
           </main>

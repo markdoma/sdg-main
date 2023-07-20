@@ -50,6 +50,12 @@ const navigation = [
     icon: UsersIcon,
     component: "Attendance",
   },
+  {
+    name: "QR Codes",
+    href: "/",
+    icon: UsersIcon,
+    component: "QR",
+  },
   //   { name: "Projects", href: "#", icon: FolderIcon, component: Projects },
   //   { name: "Calendar", href: "#", icon: CalendarIcon, component: Calendar },
   //   {
