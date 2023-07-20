@@ -1,9 +1,22 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 
 const QrScanner = dynamic(() => import("react-qr-scanner"), { ssr: false });
 
 const QRCodeScanner = ({ onScan, resetScanResult }) => {
+  // State to hold the facing mode for the camera
+  const [facingMode, setFacingMode] = useState("user");
+
+  // Effect to update the facing mode when accessed on mobile devices
+  useEffect(() => {
+    // Detect if the user is on a mobile device
+    const isMobileDevice =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+
+    setFacingMode(isMobileDevice ? "environment" : "user");
+  }, []);
   const [scanResult, setScanResult] = useState("");
   const [isScanned, setIsScanned] = useState(false);
   const [scanKey, setScanKey] = useState(0);
@@ -66,7 +79,7 @@ const QRCodeScanner = ({ onScan, resetScanResult }) => {
             onScan={handleScan}
             style={{ width: "100%", height: "400px" }} // Adjust the height to make the camera larger
             legacyMode={!isScanned}
-            facingMode="environment" // Set the facing mode to "environment" for back camera (default)
+            facingMode={facingMode} // Set the facing mode based on the device type
           />
           {scanResult && (
             <div className="mt-4">
