@@ -43,7 +43,7 @@ const FormWithQRCode = () => {
     // Replace this with your own data source or API call
     const data = [
       {
-        name: "John Doe",
+        name: "Biboy Doma",
         gender: "Male",
         contact: "09277781103",
         dob: "1990-01-01",
@@ -52,7 +52,7 @@ const FormWithQRCode = () => {
         qrCode: "dummy-qr-code-1",
       },
       {
-        name: "Jane Smith",
+        name: "Elle Doma",
         gender: "Female",
         contact: "09277781103",
         dob: "1985-05-12",
