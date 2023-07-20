@@ -11,17 +11,36 @@ const QRCodeScanner = ({ onScan, resetScanResult }) => {
   const dummyData = [
     {
       qrCode: "dummy-qr-code-1",
-      name: "John Doe",
+      name: "Elle Doma",
       age: 25,
       email: "john.doe@example.com",
     },
     {
       qrCode: "dummy-qr-code-3",
-      name: "Jane Smith",
+      name: "Mark Doma",
       age: 30,
-      email: "jane.smith@example.com",
+      email: "mark@doma.com",
     },
-    // Add more dummy records here
+    {
+      qrCode: "dummy-qr-code-1",
+      name: "Jeanne Doma",
+      age: 25,
+      email: "jeanne@doma.com",
+    },
+    {
+      qrCode: "dummy-qr-code-3",
+      name: "Biboy Doma",
+      age: 30,
+      email: "biboy@doma.com",
+    },
+    {
+      qrCode: "dummy-qr-code-1",
+      name: "Tess",
+      age: 25,
+      email: "tess@doma.com",
+    },
+
+    // Add more dummy data as needed
   ];
 
   const handleScan = (data) => {
