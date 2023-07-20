@@ -17,6 +17,11 @@ const QRCodeScanner = ({ onScan, resetScanResult }) => {
 
     setFacingMode(isMobileDevice ? "environment" : "user");
   }, []);
+
+  // Function to toggle the facing mode between front and back camera
+  const toggleCamera = () => {
+    setFacingMode((prevMode) => (prevMode === "user" ? "environment" : "user"));
+  };
   const [scanResult, setScanResult] = useState("");
   const [isScanned, setIsScanned] = useState(false);
   const [scanKey, setScanKey] = useState(0);
@@ -71,16 +76,37 @@ const QRCodeScanner = ({ onScan, resetScanResult }) => {
     <div className="flex justify-center items-start h-screen">
       <div className="w-full max-w-md">
         <div className="my-4">
-          <QrScanner
-            key={scanKey} // Add key prop to trigger a re-render and reset the QR scanner
-            ref={qrReaderRef}
-            delay={300}
-            onError={handleError}
-            onScan={handleScan}
-            style={{ width: "100%", height: "400px" }} // Adjust the height to make the camera larger
-            legacyMode={!isScanned}
-            facingMode={facingMode} // Set the facing mode based on the device type
-          />
+          <div className="relative">
+            {/* QR Scanner */}
+            <QrScanner
+              key={scanKey} // Add key prop to trigger a re-render and reset the QR scanner
+              ref={qrReaderRef}
+              delay={300}
+              onError={handleError}
+              onScan={handleScan}
+              style={{ width: "100%", height: "400px" }} // Adjust the height to make the camera larger
+              legacyMode={!isScanned}
+              facingMode={facingMode} // Set the facing mode based on the device type
+            />
+
+            {/* Button to toggle the camera */}
+            {facingMode === "environment" && (
+              <button
+                onClick={toggleCamera}
+                className="absolute top-2 left-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                Switch to Front Camera
+              </button>
+            )}
+            {facingMode === "user" && (
+              <button
+                onClick={toggleCamera}
+                className="absolute top-2 left-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                Switch to Back Camera
+              </button>
+            )}
+          </div>
           {scanResult && (
             <div className="mt-4">
               <p>Scanned QR Code: {scanResult.text}</p>
