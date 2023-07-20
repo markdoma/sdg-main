@@ -72,6 +72,46 @@ const QRCodeScanner = ({ onScan, resetScanResult }) => {
     setScanKey((prevKey) => prevKey + 1); // Update the key value to retrigger scan
   };
 
+  useEffect(() => {
+    // Access the camera stream with the initial facing mode
+    navigator.mediaDevices
+      .getUserMedia({ video: { facingMode: "environment" } })
+      .then((stream) => {
+        if (qrReaderRef.current) {
+          qrReaderRef.current.srcObject = stream;
+        }
+      })
+      .catch((error) => {
+        console.error("Error accessing the camera:", error);
+      });
+  }, []);
+
+  const toggleCameraFacingMode = () => {
+    if (qrReaderRef.current && qrReaderRef.current.video) {
+      qrReaderRef.current.video
+        .getVideoTracks()
+        .forEach((track) => track.stop()); // Stop the current camera stream
+
+      // Toggle the facing mode
+      const newFacingMode =
+        qrReaderRef.current.facingMode === "environment"
+          ? "user"
+          : "environment";
+
+      // Access the camera stream with the new facing mode
+      navigator.mediaDevices
+        .getUserMedia({ video: { facingMode: newFacingMode } })
+        .then((stream) => {
+          if (qrReaderRef.current) {
+            qrReaderRef.current.srcObject = stream;
+          }
+        })
+        .catch((error) => {
+          console.error("Error accessing the camera:", error);
+        });
+    }
+  };
+
   return (
     <div className="flex justify-center items-start h-screen">
       <div className="w-full max-w-md">
@@ -86,26 +126,16 @@ const QRCodeScanner = ({ onScan, resetScanResult }) => {
               onScan={handleScan}
               style={{ width: "100%", height: "400px" }} // Adjust the height to make the camera larger
               legacyMode={!isScanned}
-              facingMode={facingMode} // Set the facing mode based on the device type
+              facingMode="environment"
             />
 
             {/* Button to toggle the camera */}
-            {facingMode === "environment" && (
-              <button
-                onClick={toggleCamera}
-                className="absolute top-2 left-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Switch to Front Camera
-              </button>
-            )}
-            {facingMode === "user" && (
-              <button
-                onClick={toggleCamera}
-                className="absolute top-2 left-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Switch to Back Camera
-              </button>
-            )}
+            <button
+              onClick={toggleCameraFacingMode}
+              className="absolute top-2 left-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Switch Camera
+            </button>
           </div>
           {scanResult && (
             <div className="mt-4">
