@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import QRCode from "qrcode.react";
 import { v4 as uuidv4 } from "uuid";
+import { db } from "../utils/firebase";
 
 import Modal from "../components/Modal";
 
@@ -18,15 +19,28 @@ const FormWithQRCode = () => {
   const [uniqueCode, setUniqueCode] = useState("");
 
   const [dummyData, setDummyData] = useState([]);
+  const [members, setMembers] = useState([]);
   const [matchedNames, setMatchedNames] = useState([]);
   const [matchedInviter, setMatchedInviter] = useState([]);
   const [selectedName, setSelectedName] = useState(null);
 
   useEffect(() => {
-    // Fetch dummy data (replace with your own data source)
-    const fetchedData = fetchDummyData();
-    setDummyData(fetchedData);
+    const unsubscribe = db.collection("master").onSnapshot((snapshot) => {
+      const fetchedMembers = snapshot.docs.map((doc) => doc.data());
+      setMembers(fetchedMembers);
+    });
+
+    return () => {
+      // Unsubscribe from the snapshot listener when the component unmounts
+      unsubscribe();
+    };
   }, []);
+
+  // useEffect(() => {
+  //   // Fetch dummy data (replace with your own data source)
+  //   const fetchedData = fetchDummyData();
+  //   setDummyData(fetchedData);
+  // }, []);
 
   const [isSaved, setIsSaved] = useState(false);
 
@@ -97,11 +111,11 @@ const FormWithQRCode = () => {
     if (inputFirstName.trim() === "") {
       setMatchedNames([]); // Clear the matched names list if the input is empty
     } else {
-      const matched = dummyData.filter((record) =>
-        record.firstName.toLowerCase().includes(inputFirstName.toLowerCase())
+      const matched = members.filter((record) =>
+        record.firstname.toLowerCase().includes(inputFirstName.toLowerCase())
       );
       setMatchedNames(
-        matched.map((record) => `${record.firstName} ${record.lastName}`)
+        matched.map((record) => `${record.firstname} ${record.lastname}`)
       );
       setSelectedName(null);
     }
@@ -119,11 +133,11 @@ const FormWithQRCode = () => {
     if (inputInvitedBy.trim() === "") {
       setMatchedInviter([]); // Clear the matched names list if the input is empty
     } else {
-      const matched = dummyData.filter((record) =>
-        record.firstName.toLowerCase().includes(inputInvitedBy.toLowerCase())
+      const matched = members.filter((record) =>
+        record.firstname.toLowerCase().includes(inputInvitedBy.toLowerCase())
       );
       setMatchedInviter(
-        matched.map((record) => `${record.firstName} ${record.lastName}`)
+        matched.map((record) => `${record.firstname} ${record.lastname}`)
       );
     }
   };
@@ -135,13 +149,13 @@ const FormWithQRCode = () => {
 
   const handleMatchedNameClick = (selectedName) => {
     const matchedRecord = dummyData.find((record) => {
-      const fullName = `${record.firstName} ${record.lastName}`.toLowerCase();
+      const fullName = `${record.firstname} ${record.lastname}`.toLowerCase();
       return fullName === selectedName.toLowerCase();
     });
 
     if (matchedRecord) {
-      setFirstName(matchedRecord.firstName);
-      setLastName(matchedRecord.lastName);
+      setFirstName(matchedRecord.firstname);
+      setLastName(matchedRecord.lastname);
       setMatchedNames([]);
       setSelectedName(matchedRecord);
       setShowQRCode(true);

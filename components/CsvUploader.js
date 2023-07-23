@@ -11,7 +11,7 @@ const CsvUploader = () => {
     setUploading(true);
 
     // const bucketPath = "gs://ligayasdg.appspot.com/SDG_DB.csv";
-    const bucketPath = "gs://ligayasdg.appspot.com/test.csv";
+    const bucketPath = "gs://ligayasdg.appspot.com/SDG_DB_latest.csv";
     const fileRef = storage.refFromURL(bucketPath);
 
     let downloadURL;
@@ -48,7 +48,7 @@ const CsvUploader = () => {
     }
 
     try {
-      const dataCollection = db.collection("test");
+      const dataCollection = db.collection("master");
       await Promise.all(data.map((item) => dataCollection.add(item)));
       alert("CSV data has been successfully uploaded to Firestore!");
     } catch (error) {
