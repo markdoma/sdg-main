@@ -26,8 +26,8 @@ const CsvUploader = () => {
     let data = [];
 
     try {
-      const response = await fetch(downloadURL, { mode: "no-cors" });
-      // const response = await fetch(downloadURL);
+      // const response = await fetch(downloadURL, { mode: "no-cors" });
+      const response = await fetch(downloadURL);
       const csvString = await response.text();
       if (!response.ok) {
         throw new Error("Fetch request failed: " + response.status);
