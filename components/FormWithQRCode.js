@@ -36,6 +36,14 @@ const FormWithQRCode = () => {
     };
   }, []);
 
+  // Function to get the maximum "no" value from the "members" array
+  const getMaxNoValue = () => {
+    const maxNo = members.reduce((max, member) => {
+      return member.no > max ? member.no : max;
+    }, 0);
+    return maxNo;
+  };
+
   // useEffect(() => {
   //   // Fetch dummy data (replace with your own data source)
   //   const fetchedData = fetchDummyData();
@@ -47,15 +55,71 @@ const FormWithQRCode = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (selectedName) {
-      const generatedCode = selectedName.qrCode;
-      setUniqueCode(generatedCode);
-    } else {
-      const generatedCode = uuidv4();
-      setUniqueCode(generatedCode);
-    }
+    // if (selectedName) {
+    //   const generatedCode = selectedName.qrCode;
+    //   setUniqueCode(generatedCode);
+    // } else {
+    //   const generatedCode = uuidv4();
+    //   setUniqueCode(generatedCode);
+    // }
+
+    const generatedCode = uuidv4();
+    setUniqueCode(generatedCode);
     setShowQRCode(true);
     setIsSaved(true);
+
+    // Prepare the data to be saved in the database
+    const newData = {
+      no: getMaxNoValue() + 1,
+      parent_no: null,
+      lastname: lastName,
+      firstname: firstName,
+      middlename: null,
+      suffix: null,
+      nickname: null,
+      gender: gender,
+      birthdate: new Date(dob),
+      street: address,
+      brgy: null,
+      city: null,
+      province: null,
+      region: null,
+      civilstatus: status,
+      bloodtype: null,
+      weddingdate: null,
+      contact: contact,
+      emailadd: null,
+      fathersname: null,
+      mothersname: null,
+      profession_course: null,
+      company_school: null,
+      cwryear: null,
+      entry: null,
+      class: classification,
+      status: null,
+      pl: null,
+      service_role: null,
+      ligaya: null,
+      chrurch: null,
+      lat: null,
+      long: null,
+      qrCode: uniqueCode,
+      insert_date: new Date(),
+      insert_by: "Reg Team",
+      update_date: null,
+      update_by: null,
+    };
+
+    // Add the data to the "master" collection in the database
+    db.collection("master")
+      .add(newData)
+      .then((docRef) => {
+        console.log("Document written with ID: ", docRef.id);
+        // If you need to do anything after successfully adding the record, you can put it here.
+      })
+      .catch((error) => {
+        console.error("Error adding document: ", error);
+      });
   };
 
   const handleModalClose = () => {
@@ -64,43 +128,43 @@ const FormWithQRCode = () => {
     resetForm();
   };
 
-  const fetchDummyData = () => {
-    // Replace this with your own data source or API call
-    const data = [
-      {
-        firstName: "Biboy",
-        lastName: "Doma",
-        gender: "Male",
-        contact: "09277781103",
-        dob: "1990-01-01",
-        address: "123 Main St",
-        invitedBy: "Jane Smith",
-        qrCode: "dummy-qr-code-1",
-      },
-      {
-        firstName: "Elle",
-        lastName: "Doma",
-        gender: "Female",
-        contact: "09277781103",
-        dob: "1985-05-12",
-        address: "456 Elm St",
-        invitedBy: "John Doe",
-        qrCode: "dummy-qr-code-2",
-      },
-      {
-        firstName: "Elle",
-        lastName: "Reyes",
-        gender: "Female",
-        contact: "09277781103",
-        dob: "1985-05-12",
-        address: "456 Elm St",
-        invitedBy: "John Doe",
-        qrCode: "dummy-qr-code-2",
-      },
-      // Add more dummy records here
-    ];
-    return data;
-  };
+  // const fetchDummyData = () => {
+  //   // Replace this with your own data source or API call
+  //   const data = [
+  //     {
+  //       firstName: "Biboy",
+  //       lastName: "Doma",
+  //       gender: "Male",
+  //       contact: "09277781103",
+  //       dob: "1990-01-01",
+  //       address: "123 Main St",
+  //       invitedBy: "Jane Smith",
+  //       qrCode: "dummy-qr-code-1",
+  //     },
+  //     {
+  //       firstName: "Elle",
+  //       lastName: "Doma",
+  //       gender: "Female",
+  //       contact: "09277781103",
+  //       dob: "1985-05-12",
+  //       address: "456 Elm St",
+  //       invitedBy: "John Doe",
+  //       qrCode: "dummy-qr-code-2",
+  //     },
+  //     {
+  //       firstName: "Elle",
+  //       lastName: "Reyes",
+  //       gender: "Female",
+  //       contact: "09277781103",
+  //       dob: "1985-05-12",
+  //       address: "456 Elm St",
+  //       invitedBy: "John Doe",
+  //       qrCode: "dummy-qr-code-2",
+  //     },
+  //     // Add more dummy records here
+  //   ];
+  //   return data;
+  // };
 
   const handleFirstNameChange = (e) => {
     const inputFirstName = e.target.value;
@@ -148,10 +212,13 @@ const FormWithQRCode = () => {
   };
 
   const handleMatchedNameClick = (selectedName) => {
-    const matchedRecord = dummyData.find((record) => {
+    console.log(selectedName);
+    const matchedRecord = members.find((record) => {
       const fullName = `${record.firstname} ${record.lastname}`.toLowerCase();
       return fullName === selectedName.toLowerCase();
     });
+
+    console.log(matchedRecord);
 
     if (matchedRecord) {
       setFirstName(matchedRecord.firstname);
@@ -200,6 +267,7 @@ const FormWithQRCode = () => {
               value={firstName}
               onChange={handleFirstNameChange}
               required
+              autoComplete="off"
             />
             {matchedNames.length > 0 && firstName.trim() !== "" && (
               <ul className="mt-2 p-2 border border-gray-300 bg-gray-100 rounded-md">
@@ -219,10 +287,19 @@ const FormWithQRCode = () => {
           {selectedName ? (
             <>
               <div className="flex justify-between items-center mb-4">
-                <p className="font-bold">{`${selectedName.firstName} ${selectedName.lastName}`}</p>
+                <p className="font-bold">{`${selectedName.firstname} ${selectedName.lastname}`}</p>
               </div>
 
-              <div className="mb-4">
+              <div className="flex justify-center items-center">
+                <button
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  // onClick={() => setIsButtonCentered(true)}
+                >
+                  Present
+                </button>
+              </div>
+
+              {/* <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="qrCode"
@@ -230,7 +307,7 @@ const FormWithQRCode = () => {
                   Assigned QR Code
                 </label>
                 <QRCode value={selectedName.qrCode} size={256} />
-              </div>
+              </div> */}
             </>
           ) : (
             <>
@@ -249,6 +326,7 @@ const FormWithQRCode = () => {
                   value={lastName}
                   onChange={handleLastNameChange}
                   required
+                  autoComplete="off"
                 />
               </div>
               <div className="mb-4">
@@ -264,6 +342,7 @@ const FormWithQRCode = () => {
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
                   required
+                  autoComplete="off"
                 >
                   <option value="">Select Status</option>
                   <option value="single">Single</option>
@@ -286,6 +365,7 @@ const FormWithQRCode = () => {
                   value={dob}
                   onChange={(e) => setDOB(e.target.value)}
                   required
+                  autoComplete="off"
                 />
               </div>
               <div className="mb-4">
@@ -301,8 +381,8 @@ const FormWithQRCode = () => {
                       type="radio"
                       className="form-radio text-blue-500"
                       name="gender"
-                      value="male"
-                      checked={gender === "male"}
+                      value="Male"
+                      checked={gender === "Male"}
                       onChange={(e) => setGender(e.target.value)}
                     />
                     <span className="text-gray-700">Male</span>
@@ -312,8 +392,8 @@ const FormWithQRCode = () => {
                       type="radio"
                       className="form-radio text-pink-500"
                       name="gender"
-                      value="female"
-                      checked={gender === "female"}
+                      value="Female"
+                      checked={gender === "Female"}
                       onChange={(e) => setGender(e.target.value)}
                     />
                     <span className="text-gray-700">Female</span>
@@ -335,6 +415,7 @@ const FormWithQRCode = () => {
                   value={contact}
                   onChange={(e) => setContact(e.target.value)}
                   required
+                  autoComplete="off"
                 />
               </div>
               <div className="mb-4">
@@ -352,6 +433,7 @@ const FormWithQRCode = () => {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   required
+                  autoComplete="off"
                 />
               </div>
 
@@ -370,6 +452,7 @@ const FormWithQRCode = () => {
                   value={invitedBy}
                   onChange={handleInvitedByChange}
                   required
+                  autoComplete="off"
                 />
                 {matchedInviter.length > 0 && invitedBy.trim() !== "" && (
                   <ul className="mt-2 p-2 border border-gray-300 bg-gray-100 rounded-md">
