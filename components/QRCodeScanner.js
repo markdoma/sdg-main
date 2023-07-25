@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 const QrScanner = dynamic(() => import("react-qr-scanner"), { ssr: false });
 
 const QRCodeScanner = ({ onScan, resetScanResult }) => {
+  const [facingMode, setFacingMode] = useState("environment");
   const [scanResult, setScanResult] = useState("");
   const [isScanned, setIsScanned] = useState(false);
   const [scanKey, setScanKey] = useState(0);
@@ -73,44 +74,26 @@ const QRCodeScanner = ({ onScan, resetScanResult }) => {
     setScanKey((prevKey) => prevKey + 1); // Update the key value to retrigger scan
   };
 
-  useEffect(() => {
-    // Access the camera stream with the initial facing mode
-    navigator.mediaDevices
-      .getUserMedia({ video: { facingMode: "environment" } })
-      .then((stream) => {
-        if (qrReaderRef.current) {
-          qrReaderRef.current.srcObject = stream;
-        }
-      })
-      .catch((error) => {
-        console.error("Error accessing the camera:", error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   // Access the camera stream with the initial facing mode
+  //   navigator.mediaDevices
+  //     .getUserMedia({ video: { facingMode: "environment" } })
+  //     .then((stream) => {
+  //       if (qrReaderRef.current) {
+  //         qrReaderRef.current.srcObject = stream;
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error accessing the camera:", error);
+  //     });
+  // }, []);
 
   const toggleCameraFacingMode = () => {
-    if (qrReaderRef.current && qrReaderRef.current.video) {
-      qrReaderRef.current.video
-        .getVideoTracks()
-        .forEach((track) => track.stop()); // Stop the current camera stream
-
-      // Toggle the facing mode
-      const newFacingMode =
-        qrReaderRef.current.facingMode === "environment"
-          ? "user"
-          : "environment";
-
-      // Access the camera stream with the new facing mode
-      navigator.mediaDevices
-        .getUserMedia({ video: { facingMode: newFacingMode } })
-        .then((stream) => {
-          if (qrReaderRef.current) {
-            qrReaderRef.current.srcObject = stream;
-          }
-        })
-        .catch((error) => {
-          console.error("Error accessing the camera:", error);
-        });
-    }
+    setFacingMode((prevFacingMode) =>
+      prevFacingMode === "environment" ? "user" : "environment"
+    );
+    // Reset the QR scanner by updating the key and triggering a re-render
+    setScanKey((prevKey) => prevKey + 1);
   };
 
   return (
@@ -130,16 +113,17 @@ const QRCodeScanner = ({ onScan, resetScanResult }) => {
               // facingMode={{
               //   exact: "environment",
               // }}
-              facingMode="environment"
+              // facingMode="environment"
+              facingMode={facingMode}
             />
 
             {/* Button to toggle the camera */}
-            {/* <button
+            <button
               onClick={toggleCameraFacingMode}
               className="absolute top-2 left-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Switch Camera
-            </button> */}
+            </button>
           </div>
           {scanResult && (
             <div className="mt-4">
