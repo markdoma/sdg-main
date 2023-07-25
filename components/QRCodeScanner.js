@@ -127,8 +127,8 @@ const QRCodeScanner = ({ onScan, resetScanResult }) => {
               onScan={handleScan}
               style={{ width: "100%", height: "400px" }} // Adjust the height to make the camera larger
               legacyMode={!isScanned}
-              constraints={{
-                facingMode: "environment",
+              facingMode={{
+                exact: "environment",
               }}
               // facingMode="environment"
             />
