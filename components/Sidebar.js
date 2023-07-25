@@ -94,7 +94,6 @@ function Sidebar({ setActiveComponent }) {
       <div className="flex h-16 shrink-0 items-center">
         <img
           className="h-14 w-auto"
-          // src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
           src="/ligaya.png"
           alt="Ligaya ng Panginoon"
           // width="400"
