@@ -1,26 +1,58 @@
-import React, { useState, useRef, useEffect } from "react";
-import { QrReader } from "react-qr-reader-extended";
+import { useState, useRef, useEffect } from "react";
+import dynamic from "next/dynamic";
+
+const QrScanner = dynamic(() => import("react-qr-scanner"), { ssr: false });
 
 const QRCodeScanner = ({ onScan, resetScanResult }) => {
   const [facingMode, setFacingMode] = useState("environment");
-  const [scanResult, setScanResult] = useState(null);
+  const [scanResult, setScanResult] = useState("");
   const [isScanned, setIsScanned] = useState(false);
   const [scanKey, setScanKey] = useState(0);
   const qrReaderRef = useRef(null);
-  // const dummyData = [
-  //   // ... dummy data ...
-  // ];
+  const dummyData = [
+    {
+      qrCode: "dummy-qr-code-1",
+      name: "Elle Doma",
+      age: 25,
+      email: "john.doe@example.com",
+    },
+    {
+      qrCode: "dummy-qr-code-3",
+      name: "Mark Doma",
+      age: 30,
+      email: "mark@doma.com",
+    },
+    {
+      qrCode: "dummy-qr-code-1",
+      name: "Jeanne Doma",
+      age: 25,
+      email: "jeanne@doma.com",
+    },
+    {
+      qrCode: "dummy-qr-code-3",
+      name: "Biboy Doma",
+      age: 30,
+      email: "biboy@doma.com",
+    },
+    {
+      qrCode: "dummy-qr-code-1",
+      name: "Tess",
+      age: 25,
+      email: "tess@doma.com",
+    },
+
+    // Add more dummy data as needed
+  ];
 
   const handleScan = (data) => {
     if (data && !isScanned) {
-      // Stop scanning after getting a result
-      qrReaderRef.current.stopScanning();
-
       setScanResult(data);
       setIsScanned(true);
       onScan(data);
 
-      const foundRecord = dummyData.find((record) => record.qrCode === data);
+      const foundRecord = dummyData.find(
+        (record) => record.qrCode === data.text
+      );
 
       if (foundRecord) {
         console.log("QR code already exists:", foundRecord);
@@ -37,24 +69,30 @@ const QRCodeScanner = ({ onScan, resetScanResult }) => {
   };
 
   const handleResetScanResult = () => {
-    setScanResult(null);
+    setScanResult("");
     setIsScanned(false);
-    setScanKey((prevKey) => prevKey + 1);
+    setScanKey((prevKey) => prevKey + 1); // Update the key value to retrigger scan
   };
 
   useEffect(() => {
-    if (qrReaderRef.current && facingMode) {
-      qrReaderRef.current.openImageDialog(); // Request user permission to use the camera
-    }
-  }, [facingMode]);
+    // Access the camera stream with the initial facing mode
+    navigator.mediaDevices
+      .getUserMedia({ video: { facingMode: "environment" } })
+      .then((stream) => {
+        if (qrReaderRef.current) {
+          qrReaderRef.current.srcObject = stream;
+        }
+      })
+      .catch((error) => {
+        console.error("Error accessing the camera:", error);
+      });
+  }, []);
 
   const toggleCameraFacingMode = () => {
     setFacingMode((prevFacingMode) =>
-      prevFacingMode === "user" ? "environment" : "user"
+      prevFacingMode === "environment" ? "user" : "environment"
     );
-
-    setScanResult(null);
-    setIsScanned(false);
+    // Reset the QR scanner by updating the key and triggering a re-render
     setScanKey((prevKey) => prevKey + 1);
   };
 
@@ -63,14 +101,21 @@ const QRCodeScanner = ({ onScan, resetScanResult }) => {
       <div className="w-full max-w-md">
         <div className="my-4">
           <div className="relative">
-            {/* QR Reader */}
-            <QrReader
-              key={scanKey}
+            {/* QR Scanner */}
+            <QrScanner
+              key={scanKey} // Add key prop to trigger a re-render and reset the QR scanner
               ref={qrReaderRef}
-              // onError={handleError}
-              onResult={handleScan}
-              style={{ width: "100%", height: "400px" }}
+              delay={300}
+              onError={handleError}
+              onScan={handleScan}
+              style={{ width: "100%", height: "400px" }} // Adjust the height to make the camera larger
+              legacyMode={!isScanned}
+              // facingMode={{
+              //   exact: "environment",
+              // }}
+              // facingMode="environment"
               facingMode={facingMode}
+              // constraints={{ facingMode: "environment" }}
             />
 
             {/* Button to toggle the camera */}
