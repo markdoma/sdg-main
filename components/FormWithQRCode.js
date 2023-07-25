@@ -269,7 +269,8 @@ const FormWithQRCode = () => {
               required
               autoComplete="off"
             />
-            {matchedNames.length > 0 && firstName.trim() !== "" && (
+
+            {firstName.trim().length >= 3 && matchedNames.length > 0 && (
               <ul className="mt-2 p-2 border border-gray-300 bg-gray-100 rounded-md">
                 {matchedNames.map((matchedName, index) => (
                   <li
