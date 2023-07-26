@@ -52,6 +52,13 @@ const FormWithQRCode = () => {
 
   const [isSaved, setIsSaved] = useState(false);
 
+  // New function to convert data to JSON format
+  const convertToJSON = (firstName, lastName) => {
+    return JSON.stringify({
+      firstname: firstName,
+      lastname: lastName,
+    });
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -62,6 +69,9 @@ const FormWithQRCode = () => {
     //   const generatedCode = uuidv4();
     //   setUniqueCode(generatedCode);
     // }
+
+    // Convert the data to JSON format using the new function
+    const jsonData = convertToJSON(firstName, lastName);
 
     const generatedCode = uuidv4();
     setUniqueCode(generatedCode);
@@ -103,7 +113,7 @@ const FormWithQRCode = () => {
       chrurch: null,
       lat: null,
       long: null,
-      qrCode: uniqueCode,
+      qrCode: jsonData,
       insert_date: new Date(),
       insert_by: "Reg Team",
       update_date: null,
@@ -301,15 +311,16 @@ const FormWithQRCode = () => {
                 </button>
               </div>
 
-              {/* <div className="mb-4">
+              <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="qrCode"
                 >
                   Assigned QR Code
                 </label>
-                <QRCode value={selectedName.qrCode} size={256} />
-              </div> */}
+                {/* <QRCode value={selectedName.qrCode} size={256} /> */}
+                <QRCode value="{name: Mark Jayson, id: 1234}" size={256} />
+              </div>
             </>
           ) : (
             <>

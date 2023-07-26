@@ -3,6 +3,7 @@ import Sidebar from "@/components/Sidebar";
 import IDpreview from "@/components/IDpreview";
 import CsvUploader from "@/components/CsvUploader";
 import GoogleCalendarEvents from "@/components/GoogleCalendarEvents";
+import PDFGenerator from "@/components/PDFGenerator";
 
 import { Fragment, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
@@ -135,6 +136,7 @@ export default function Home() {
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col">
               {/* <div>Back</div> */}
               {/* <CsvUploader /> */}
+              {/* <PDFGenerator /> */}
               {/* <IDpreview /> */}
               <GoogleCalendarEvents />
             </div>

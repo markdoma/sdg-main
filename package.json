@@ -14,10 +14,13 @@
     "@firebase/storage": "^0.11.2",
     "@headlessui/react": "^1.7.15",
     "@heroicons/react": "^2.0.18",
+    "@react-pdf/renderer": "^3.1.12",
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
     "dotenv": "^16.3.1",
+    "file-saver": "^2.0.5",
     "firebase": "^8.10.1",
+    "html-to-pdf": "^0.1.11",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "next": "^13.4.7",
@@ -26,9 +29,11 @@
     "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-pdf": "^7.2.0",
     "react-qr-reader-extended": "^3.0.0",
     "react-qr-scanner": "^1.0.0-alpha.11",
     "tailwindcss": "3.3.2",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "xmlserializer": "^0.6.1"
   }
 }
