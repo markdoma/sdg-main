@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import QRCode from "qrcode.react";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../utils/firebase";
+import axios from "axios";
 
 import Modal from "../components/Modal";
 
@@ -23,6 +24,106 @@ const FormWithQRCode = () => {
   const [matchedNames, setMatchedNames] = useState([]);
   const [matchedInviter, setMatchedInviter] = useState([]);
   const [selectedName, setSelectedName] = useState(null);
+  // New state variable to hold event details
+  const [eventDetails, setEventDetails] = useState(null);
+  // State when Present button is submitted - For those who are in the database
+  const [isPresentButtonClicked, setIsPresentButtonClicked] = useState(false);
+  // State when form is submitted
+  const [isSaved, setIsSaved] = useState(false);
+
+  // New state variable to track whether attendance is already captured for today's event
+  const [isAttendanceCaptured, setIsAttendanceCaptured] = useState(false);
+
+  // Function to retrieve event details from Google Calendar's event list for the current day
+
+  const getEventDetailsFromGoogleCalendar = async () => {
+    try {
+      const response = await axios.get(
+        `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events`,
+        {
+          params: {
+            key: "AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY",
+          },
+        }
+      );
+      const currentDate = new Date();
+      // const data = await response.json();
+      const data = response.data.items;
+      const eventsForCurrentDay = data.filter((event) => {
+        const eventDate = new Date(event.start.dateTime);
+
+        return eventDate.toDateString() === currentDate.toDateString();
+      });
+
+      return eventsForCurrentDay.length > 0 ? eventsForCurrentDay[0] : null;
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  // Function to add a new attendance record to the "attendance" collection
+  const addAttendanceRecord = (event, no, firstName, lastName) => {
+    const newAttendanceRecord = {
+      date: new Date(event.start.dateTime), // Replace with the actual event date from Google Calendar
+      event: event.summary, // Replace with the actual event name from Google Calendar
+      no: no,
+      firstname: firstName,
+      lastname: lastName,
+    };
+
+    db.collection("attendance")
+      .add(newAttendanceRecord)
+      .then((docRef) => {
+        console.log("Attendance record added with ID: ", docRef.id);
+        // If you need to do anything after successfully adding the record, you can put it here.
+      })
+      .catch((error) => {
+        console.error("Error adding attendance record: ", error);
+      });
+
+    setIsPresentButtonClicked(true);
+  };
+
+  useEffect(() => {
+    // Check if attendance is already captured for today's event
+    if (selectedName && eventDetails && eventDetails.start.dateTime) {
+      const eventDateTime = new Date(eventDetails.start.dateTime);
+      // console.log(eventDateTime);
+      // console.log(isAttendanceCaptured);
+      // Firestore query to check if a matching attendance record exists
+      db.collection("attendance")
+        .where("no", "==", selectedName.no)
+        .where("date", "==", eventDateTime)
+        .get()
+        .then((querySnapshot) => {
+          setIsAttendanceCaptured(!querySnapshot.empty);
+        })
+        .catch((error) => {
+          console.error("Error checking attendance: ", error);
+        });
+    }
+  }, [eventDetails, selectedName]);
+
+  useEffect(() => {
+    // Fetch event details from Google Calendar when the component mounts
+    getEventDetailsFromGoogleCalendar()
+      .then((event) => {
+        setEventDetails(event);
+      })
+      .catch((error) => {
+        console.error("Error fetching event details: ", error);
+      });
+  }, []);
+
+  const handlePresentButtonClick = () => {
+    // Add the attendance record when the "Present" button is clicked
+    addAttendanceRecord(
+      eventDetails,
+      selectedName.no,
+      selectedName.firstname,
+      selectedName.lastname
+    );
+  };
 
   useEffect(() => {
     const unsubscribe = db.collection("master").onSnapshot((snapshot) => {
@@ -44,14 +145,6 @@ const FormWithQRCode = () => {
     return maxNo;
   };
 
-  // useEffect(() => {
-  //   // Fetch dummy data (replace with your own data source)
-  //   const fetchedData = fetchDummyData();
-  //   setDummyData(fetchedData);
-  // }, []);
-
-  const [isSaved, setIsSaved] = useState(false);
-
   // New function to convert data to JSON format
   const convertToJSON = (firstName, lastName) => {
     return JSON.stringify({
@@ -61,14 +154,6 @@ const FormWithQRCode = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // if (selectedName) {
-    //   const generatedCode = selectedName.qrCode;
-    //   setUniqueCode(generatedCode);
-    // } else {
-    //   const generatedCode = uuidv4();
-    //   setUniqueCode(generatedCode);
-    // }
 
     // Convert the data to JSON format using the new function
     const jsonData = convertToJSON(firstName, lastName);
@@ -138,44 +223,6 @@ const FormWithQRCode = () => {
     resetForm();
   };
 
-  // const fetchDummyData = () => {
-  //   // Replace this with your own data source or API call
-  //   const data = [
-  //     {
-  //       firstName: "Biboy",
-  //       lastName: "Doma",
-  //       gender: "Male",
-  //       contact: "09277781103",
-  //       dob: "1990-01-01",
-  //       address: "123 Main St",
-  //       invitedBy: "Jane Smith",
-  //       qrCode: "dummy-qr-code-1",
-  //     },
-  //     {
-  //       firstName: "Elle",
-  //       lastName: "Doma",
-  //       gender: "Female",
-  //       contact: "09277781103",
-  //       dob: "1985-05-12",
-  //       address: "456 Elm St",
-  //       invitedBy: "John Doe",
-  //       qrCode: "dummy-qr-code-2",
-  //     },
-  //     {
-  //       firstName: "Elle",
-  //       lastName: "Reyes",
-  //       gender: "Female",
-  //       contact: "09277781103",
-  //       dob: "1985-05-12",
-  //       address: "456 Elm St",
-  //       invitedBy: "John Doe",
-  //       qrCode: "dummy-qr-code-2",
-  //     },
-  //     // Add more dummy records here
-  //   ];
-  //   return data;
-  // };
-
   const handleFirstNameChange = (e) => {
     const inputFirstName = e.target.value;
     setFirstName(inputFirstName);
@@ -222,13 +269,13 @@ const FormWithQRCode = () => {
   };
 
   const handleMatchedNameClick = (selectedName) => {
-    console.log(selectedName);
+    // console.log(selectedName);
     const matchedRecord = members.find((record) => {
       const fullName = `${record.firstname} ${record.lastname}`.toLowerCase();
       return fullName === selectedName.toLowerCase();
     });
 
-    console.log(matchedRecord);
+    // console.log(matchedRecord);
 
     if (matchedRecord) {
       setFirstName(matchedRecord.firstname);
@@ -297,30 +344,56 @@ const FormWithQRCode = () => {
           </div>
           {selectedName ? (
             <>
-              <div className="flex justify-between items-center mb-4">
-                <p className="font-bold">{`${selectedName.firstname} ${selectedName.lastname}`}</p>
+              <div className="flex flex-col mb-4">
+                <p className="font-bold">
+                  Name: {`${selectedName.firstname} ${selectedName.lastname}`}
+                </p>
+                <p className="font-bold">
+                  Pastoral Leader: {selectedName.pl ? selectedName.pl : "n/a"}
+                </p>
+                <p className="font-bold">
+                  Today's Event:{" "}
+                  {eventDetails.summary ? eventDetails.summary : "n/a"}
+                </p>
+                <p className="font-bold">
+                  Date:{" "}
+                  {eventDetails.start.dateTime
+                    ? new Date(eventDetails.start.dateTime).toLocaleDateString()
+                    : "n/a"}
+                </p>
               </div>
+              {/* Conditionally render the "Present" button */}
+              {eventDetails && !isAttendanceCaptured && (
+                <div className="flex justify-center items-center">
+                  <button
+                    type="button"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    onClick={handlePresentButtonClick}
+                  >
+                    I'm Here!
+                  </button>
+                </div>
+              )}
 
-              <div className="flex justify-center items-center">
-                <button
-                  type="button"
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  // onClick={() => setIsButtonCentered(true)}
-                >
-                  Present
-                </button>
-              </div>
-
-              <div className="mb-4">
+              {/* Render attendance message when attendance is already captured */}
+              {isAttendanceCaptured && eventDetails && eventDetails.summary && (
+                <div className="bg-white rounded-lg shadow-lg p-4 mt-4 text-center border border-red-100">
+                  <p className="text-xl font-blue-100 font-italic">
+                    Your attendance for today's event: {eventDetails.summary}
+                    <p>is already captured!</p>
+                  </p>
+                </div>
+              )}
+              {/* <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="qrCode"
                 >
                   Assigned QR Code
                 </label>
-                {/* <QRCode value={selectedName.qrCode} size={256} /> */}
+
                 <QRCode value="{name: Mark Jayson, id: 1234}" size={256} />
-              </div>
+              </div> */}
             </>
           ) : (
             <>
@@ -522,15 +595,19 @@ const FormWithQRCode = () => {
             </>
           )}
         </form>
-        {isSaved && <Modal onClose={handleModalClose} />}
-        {/* Render the modal when isSaved is true */}
-        {/* {showQRCode && !selectedName && (
-          <>
-            <div className="flex justify-center items-center">
-              <QRCode value={uniqueCode} size={256} />
-            </div>
-          </>
-        )} */}
+        {/* Render the modal when isSubmitted is true or isPresentButtonClicked is true */}
+        {(isSaved || isPresentButtonClicked) && (
+          <Modal
+            onClose={() => {
+              setIsPresentButtonClicked(false); // Reset isPresentButtonClicked to false when modal is closed
+              setIsSaved(false);
+              resetForm();
+            }}
+            eventSummary={eventDetails ? eventDetails.summary : ""}
+            name={selectedName ? selectedName.firstname : ""}
+            // eventSummary={eventDetails ? eventDetails.summary : ""}
+          />
+        )}
       </div>
     </div>
   );
