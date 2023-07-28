@@ -45,15 +45,21 @@ const navigation = [
   // { name: 'Members', href: '/members', icon: HomeIcon, component: 'Members' },
   // { name: 'Scan QR', href: '/scan', icon: HomeIcon, component: 'Scan' },
   {
-    name: 'Attendance Summary Report',
+    name: 'Summary Report',
     href: '/',
     icon: HomeIcon,
     component: 'AttendanceSummaryReport',
   },
   {
-    name: 'Attendance',
+    name: 'Attendance and Registration',
     href: '/attendance',
     icon: UsersIcon,
+    component: 'Attendance',
+  },
+  {
+    name: 'Calendar',
+    href: '/calendar',
+    icon: CalendarIcon,
     component: 'Attendance',
   },
 

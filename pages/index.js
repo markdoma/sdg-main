@@ -5,6 +5,7 @@ import CsvUploader from '@/components/CsvUploader';
 import GoogleCalendarEvents from '@/components/GoogleCalendarEvents';
 import PDFGenerator from '@/components/PDFGenerator';
 import AttendanceSummaryReport from '@/components/AttendanceSummaryReport';
+import PageHeading from '@/components/PageHeading';
 
 import { Fragment, useState } from 'react';
 import { Dialog, Menu, Transition } from '@headlessui/react';
@@ -136,14 +137,8 @@ export default function Home() {
           {/* Main section */}
           <main className="py-10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              {/* AttendanceSummaryReport will be shown below Header on small screens */}
-              <div className="lg:hidden">
-                <AttendanceSummaryReport />
-              </div>
-              {/* For large screens, the AttendanceSummaryReport appears after other components */}
-              <div className="hidden lg:block">
-                <AttendanceSummaryReport />
-              </div>
+              <PageHeading />
+              <AttendanceSummaryReport />
             </div>
           </main>
         </div>

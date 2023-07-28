@@ -42,6 +42,7 @@ const AttendanceSummaryReport = () => {
         date: item.date,
         firstname: item.firstname,
         lastname: item.lastname,
+        invitedBy: item.invitedBy, // Include the 'invitedby' column for the Guest Card
       });
       return result;
     }, {});
@@ -77,6 +78,11 @@ const AttendanceSummaryReport = () => {
                         <th className="font-semibold border px-4 py-2">
                           Last Name
                         </th>
+                        {pastoralLeader === 'Guest' && (
+                          <th className="font-semibold border px-4 py-2">
+                            Invited By
+                          </th>
+                        )}
                       </tr>
                     </thead>
                     <tbody>
@@ -97,6 +103,13 @@ const AttendanceSummaryReport = () => {
                               {record.lastname}
                             </div>
                           </td>
+                          {pastoralLeader === 'Guest' && (
+                            <td className="border px-4 py-2">
+                              <div className="flex justify-center">
+                                {record.invitedBy}
+                              </div>
+                            </td>
+                          )}
                         </tr>
                       ))}
                     </tbody>

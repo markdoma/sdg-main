@@ -1,8 +1,8 @@
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import FormWithQRCode from '@/components/FormWithQRCode';
-import QRCodeScanner from '@/components/QRCodeScanner';
-import PageHeadingcopy from '@/components/PageHeadingcopy';
+import GoogleCalendarEvents from '@/components/GoogleCalendarEvents';
+import PageHeadingcopycopy from '@/components/PageHeadingcopycopy';
 
 import { Fragment, useState } from 'react';
 import { Dialog, Menu, Transition } from '@headlessui/react';
@@ -133,8 +133,8 @@ export default function Sample() {
           {/* Main section */}
           <main className="py-10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <PageHeadingcopy />
-              <FormWithQRCode />
+              <PageHeadingcopycopy />
+              <GoogleCalendarEvents />
             </div>
           </main>
         </div>
