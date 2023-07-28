@@ -62,13 +62,14 @@ const FormWithQRCode = () => {
   };
 
   // Function to add a new attendance record to the "attendance" collection
-  const addAttendanceRecord = (event, no, firstName, lastName) => {
+  const addAttendanceRecord = (event, no, firstName, lastName, pl) => {
     const newAttendanceRecord = {
       date: new Date(event.start.dateTime), // Replace with the actual event date from Google Calendar
       event: event.summary, // Replace with the actual event name from Google Calendar
       no: no,
       firstname: firstName,
       lastname: lastName,
+      pastoral_leader: pl,
     };
 
     db.collection('attendance')
@@ -121,7 +122,8 @@ const FormWithQRCode = () => {
       eventDetails,
       selectedName.no,
       selectedName.firstname,
-      selectedName.lastname
+      selectedName.lastname,
+      selectedName.pl
     );
   };
 
@@ -216,6 +218,15 @@ const FormWithQRCode = () => {
       .catch((error) => {
         console.error('Error adding document: ', error);
       });
+
+    // Call addAttendanceRecord with pastoral_leader set to "Guest"
+    addAttendanceRecord(
+      eventDetails,
+      newData.no,
+      newData.firstname,
+      newData.lastname,
+      'Guest'
+    );
   };
 
   const handleModalClose = () => {

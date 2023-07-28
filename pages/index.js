@@ -1,12 +1,13 @@
-import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
-import IDpreview from "@/components/IDpreview";
-import CsvUploader from "@/components/CsvUploader";
-import GoogleCalendarEvents from "@/components/GoogleCalendarEvents";
-import PDFGenerator from "@/components/PDFGenerator";
+import Header from '@/components/Header';
+import Sidebar from '@/components/Sidebar';
+import IDpreview from '@/components/IDpreview';
+import CsvUploader from '@/components/CsvUploader';
+import GoogleCalendarEvents from '@/components/GoogleCalendarEvents';
+import PDFGenerator from '@/components/PDFGenerator';
+import AttendanceSummaryReport from '@/components/AttendanceSummaryReport';
 
-import { Fragment, useState } from "react";
-import { Dialog, Menu, Transition } from "@headlessui/react";
+import { Fragment, useState } from 'react';
+import { Dialog, Menu, Transition } from '@headlessui/react';
 import {
   Bars3Icon,
   BellIcon,
@@ -18,11 +19,11 @@ import {
   HomeIcon,
   UsersIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline';
 import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
-} from "@heroicons/react/20/solid";
+} from '@heroicons/react/20/solid';
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -32,7 +33,7 @@ export default function Home() {
   //   // Add your logic to handle the scanned QR code data here
   // };
 
-  const [scanResult, setScanResult] = useState("");
+  const [scanResult, setScanResult] = useState('');
 
   const handleScan = (data) => {
     setScanResult(data);
@@ -40,7 +41,7 @@ export default function Home() {
   };
 
   const resetScanResult = () => {
-    setScanResult("");
+    setScanResult('');
   };
 
   return (
@@ -129,16 +130,20 @@ export default function Home() {
         {/* Main content */}
         <div className="lg:pl-72">
           {/* Header */}
+
           <Header />
 
           {/* Main section */}
           <main className="py-10">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col">
-              {/* <div>Back</div> */}
-              {/* <CsvUploader /> */}
-              {/* <PDFGenerator /> */}
-              {/* <IDpreview /> */}
-              <GoogleCalendarEvents />
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              {/* AttendanceSummaryReport will be shown below Header on small screens */}
+              <div className="lg:hidden">
+                <AttendanceSummaryReport />
+              </div>
+              {/* For large screens, the AttendanceSummaryReport appears after other components */}
+              <div className="hidden lg:block">
+                <AttendanceSummaryReport />
+              </div>
             </div>
           </main>
         </div>
