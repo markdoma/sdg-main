@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const Modal = ({ onClose, eventSummary, name }) => {
   return (
@@ -8,9 +8,9 @@ const Modal = ({ onClose, eventSummary, name }) => {
         <div className="modal-content p-4 flex flex-col items-center">
           <h2 className="text-2xl font-bold mb-4">Success!</h2>
           <p className="text-center">
-            {eventSummary
-              ? `${name}, your attendance is successfully saved for ${eventSummary}!`
-              : "Details have been saved successfully."}
+            {name
+              ? `${name}, we have successfully saved your attendance for ${eventSummary}! `
+              : 'The details have been successfully saved!'}
           </p>
           <button
             onClick={onClose}

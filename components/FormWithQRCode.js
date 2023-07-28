@@ -1,23 +1,23 @@
-import { useState, useEffect } from "react";
-import QRCode from "qrcode.react";
-import { v4 as uuidv4 } from "uuid";
-import { db } from "../utils/firebase";
-import axios from "axios";
+import { useState, useEffect } from 'react';
+import QRCode from 'qrcode.react';
+import { v4 as uuidv4 } from 'uuid';
+import { db } from '../utils/firebase';
+import axios from 'axios';
 
-import Modal from "../components/Modal";
+import Modal from '../components/Modal';
 
 const FormWithQRCode = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [dob, setDOB] = useState("");
-  const [gender, setGender] = useState("");
-  const [contact, setContact] = useState("");
-  const [address, setAddress] = useState("");
-  const [invitedBy, setInvitedBy] = useState("");
-  const [status, setStatus] = useState("");
-  const [classification, setClassification] = useState("");
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [dob, setDOB] = useState('');
+  const [gender, setGender] = useState('');
+  const [contact, setContact] = useState('');
+  const [address, setAddress] = useState('');
+  const [invitedBy, setInvitedBy] = useState('');
+  const [status, setStatus] = useState('');
+  const [classification, setClassification] = useState('');
   const [showQRCode, setShowQRCode] = useState(false);
-  const [uniqueCode, setUniqueCode] = useState("");
+  const [uniqueCode, setUniqueCode] = useState('');
 
   const [dummyData, setDummyData] = useState([]);
   const [members, setMembers] = useState([]);
@@ -42,7 +42,7 @@ const FormWithQRCode = () => {
         `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events`,
         {
           params: {
-            key: "AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY",
+            key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
           },
         }
       );
@@ -57,7 +57,7 @@ const FormWithQRCode = () => {
 
       return eventsForCurrentDay.length > 0 ? eventsForCurrentDay[0] : null;
     } catch (error) {
-      console.error("Error fetching events:", error);
+      console.error('Error fetching events:', error);
     }
   };
 
@@ -71,14 +71,14 @@ const FormWithQRCode = () => {
       lastname: lastName,
     };
 
-    db.collection("attendance")
+    db.collection('attendance')
       .add(newAttendanceRecord)
       .then((docRef) => {
-        console.log("Attendance record added with ID: ", docRef.id);
+        console.log('Attendance record added with ID: ', docRef.id);
         // If you need to do anything after successfully adding the record, you can put it here.
       })
       .catch((error) => {
-        console.error("Error adding attendance record: ", error);
+        console.error('Error adding attendance record: ', error);
       });
 
     setIsPresentButtonClicked(true);
@@ -91,15 +91,15 @@ const FormWithQRCode = () => {
       // console.log(eventDateTime);
       // console.log(isAttendanceCaptured);
       // Firestore query to check if a matching attendance record exists
-      db.collection("attendance")
-        .where("no", "==", selectedName.no)
-        .where("date", "==", eventDateTime)
+      db.collection('attendance')
+        .where('no', '==', selectedName.no)
+        .where('date', '==', eventDateTime)
         .get()
         .then((querySnapshot) => {
           setIsAttendanceCaptured(!querySnapshot.empty);
         })
         .catch((error) => {
-          console.error("Error checking attendance: ", error);
+          console.error('Error checking attendance: ', error);
         });
     }
   }, [eventDetails, selectedName]);
@@ -111,7 +111,7 @@ const FormWithQRCode = () => {
         setEventDetails(event);
       })
       .catch((error) => {
-        console.error("Error fetching event details: ", error);
+        console.error('Error fetching event details: ', error);
       });
   }, []);
 
@@ -126,7 +126,7 @@ const FormWithQRCode = () => {
   };
 
   useEffect(() => {
-    const unsubscribe = db.collection("master").onSnapshot((snapshot) => {
+    const unsubscribe = db.collection('master').onSnapshot((snapshot) => {
       const fetchedMembers = snapshot.docs.map((doc) => doc.data());
       setMembers(fetchedMembers);
     });
@@ -200,20 +200,21 @@ const FormWithQRCode = () => {
       long: null,
       qrCode: jsonData,
       insert_date: new Date(),
-      insert_by: "Reg Team",
+      insert_by: 'Reg Team',
       update_date: null,
       update_by: null,
     };
 
     // Add the data to the "master" collection in the database
-    db.collection("master")
+    db.collection('master')
       .add(newData)
       .then((docRef) => {
-        console.log("Document written with ID: ", docRef.id);
+        console.log('Document written with ID: ', docRef.id);
         // If you need to do anything after successfully adding the record, you can put it here.
+        setIsSaved(true);
       })
       .catch((error) => {
-        console.error("Error adding document: ", error);
+        console.error('Error adding document: ', error);
       });
   };
 
@@ -229,7 +230,7 @@ const FormWithQRCode = () => {
 
     setSelectedName(null);
 
-    if (inputFirstName.trim() === "") {
+    if (inputFirstName.trim() === '') {
       setMatchedNames([]); // Clear the matched names list if the input is empty
     } else {
       const matched = members.filter((record) =>
@@ -251,7 +252,7 @@ const FormWithQRCode = () => {
     const inputInvitedBy = e.target.value;
     setInvitedBy(inputInvitedBy);
 
-    if (inputInvitedBy.trim() === "") {
+    if (inputInvitedBy.trim() === '') {
       setMatchedInviter([]); // Clear the matched names list if the input is empty
     } else {
       const matched = members.filter((record) =>
@@ -287,18 +288,18 @@ const FormWithQRCode = () => {
   };
 
   const resetForm = () => {
-    setFirstName("");
-    setLastName("");
-    setDOB("");
-    setGender("");
-    setContact("");
-    setAddress("");
-    setInvitedBy("");
-    setStatus("");
-    setClassification("");
+    setFirstName('');
+    setLastName('');
+    setDOB('');
+    setGender('');
+    setContact('');
+    setAddress('');
+    setInvitedBy('');
+    setStatus('');
+    setClassification('');
     setSelectedName(null);
     setShowQRCode(false);
-    setUniqueCode("");
+    setUniqueCode('');
     setIsSaved(false);
   };
 
@@ -310,12 +311,12 @@ const FormWithQRCode = () => {
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
         >
           <div className="mb-4">
-            <label
+            {/* <label
               className="block text-gray-700 text-sm font-bold mb-2"
               htmlFor="firstName"
             >
               First Name
-            </label>
+            </label> */}
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="firstName"
@@ -345,21 +346,33 @@ const FormWithQRCode = () => {
           {selectedName ? (
             <>
               <div className="flex flex-col mb-4">
-                <p className="font-bold">
-                  Name: {`${selectedName.firstname} ${selectedName.lastname}`}
+                <p>
+                  <span className="font-bold">Name:</span>{' '}
+                  <span className="font-italic">
+                    {`${selectedName.firstname} ${selectedName.lastname}`}
+                  </span>
                 </p>
-                <p className="font-bold">
-                  Pastoral Leader: {selectedName.pl ? selectedName.pl : "n/a"}
+                <p>
+                  <span className="font-bold">Pastoral Leader:</span>{' '}
+                  <span className="font-italic">
+                    {selectedName.pl ? selectedName.pl : 'N/A'}
+                  </span>
                 </p>
-                <p className="font-bold">
-                  Today's Event:{" "}
-                  {eventDetails.summary ? eventDetails.summary : "n/a"}
+                <p>
+                  <span className="font-bold">Today's Event:</span>{' '}
+                  <span className="font-italic">
+                    {eventDetails ? eventDetails.summary : 'No event for today'}
+                  </span>
                 </p>
-                <p className="font-bold">
-                  Date:{" "}
-                  {eventDetails.start.dateTime
-                    ? new Date(eventDetails.start.dateTime).toLocaleDateString()
-                    : "n/a"}
+                <p>
+                  <span className="font-bold">Date:</span>{' '}
+                  <span className="font-italic">
+                    {eventDetails
+                      ? new Date(
+                          eventDetails.start.dateTime
+                        ).toLocaleDateString()
+                      : 'No event for today'}
+                  </span>
                 </p>
               </div>
               {/* Conditionally render the "Present" button */}
@@ -379,8 +392,7 @@ const FormWithQRCode = () => {
               {isAttendanceCaptured && eventDetails && eventDetails.summary && (
                 <div className="bg-white rounded-lg shadow-lg p-4 mt-4 text-center border border-red-100">
                   <p className="text-xl font-blue-100 font-italic">
-                    Your attendance for today's event: {eventDetails.summary}
-                    <p>is already captured!</p>
+                    We have already recorded your attendance for today's event!
                   </p>
                 </div>
               )}
@@ -398,12 +410,12 @@ const FormWithQRCode = () => {
           ) : (
             <>
               <div className="mb-4">
-                <label
+                {/* <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="lastName"
                 >
                   Last Name
-                </label>
+                </label> */}
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="lastName"
@@ -416,12 +428,12 @@ const FormWithQRCode = () => {
                 />
               </div>
               <div className="mb-4">
-                <label
+                {/* <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="status"
                 >
                   Status
-                </label>
+                </label> */}
                 <select
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="status"
@@ -455,12 +467,12 @@ const FormWithQRCode = () => {
                 />
               </div>
               <div className="mb-4">
-                <label
+                {/* <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="gender"
                 >
                   Gender
-                </label>
+                </label> */}
                 <div className="flex items-center space-x-4">
                   <label className="flex items-center space-x-2 cursor-pointer">
                     <input
@@ -468,7 +480,7 @@ const FormWithQRCode = () => {
                       className="form-radio text-blue-500"
                       name="gender"
                       value="Male"
-                      checked={gender === "Male"}
+                      checked={gender === 'Male'}
                       onChange={(e) => setGender(e.target.value)}
                     />
                     <span className="text-gray-700">Male</span>
@@ -479,7 +491,7 @@ const FormWithQRCode = () => {
                       className="form-radio text-pink-500"
                       name="gender"
                       value="Female"
-                      checked={gender === "Female"}
+                      checked={gender === 'Female'}
                       onChange={(e) => setGender(e.target.value)}
                     />
                     <span className="text-gray-700">Female</span>
@@ -487,17 +499,17 @@ const FormWithQRCode = () => {
                 </div>
               </div>
               <div className="mb-4">
-                <label
+                {/* <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="contact"
                 >
-                  Contact
-                </label>
+                  Contact No.
+                </label> */}
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="contact"
                   type="text"
-                  placeholder="Contact"
+                  placeholder="Contact No."
                   value={contact}
                   onChange={(e) => setContact(e.target.value)}
                   required
@@ -505,12 +517,12 @@ const FormWithQRCode = () => {
                 />
               </div>
               <div className="mb-4">
-                <label
+                {/* <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="address"
                 >
                   Address
-                </label>
+                </label> */}
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="address"
@@ -524,12 +536,12 @@ const FormWithQRCode = () => {
               </div>
 
               <div className="mb-4">
-                <label
+                {/* <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="invitedBy"
                 >
                   Invited By
-                </label>
+                </label> */}
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="invitedBy"
@@ -540,7 +552,7 @@ const FormWithQRCode = () => {
                   required
                   autoComplete="off"
                 />
-                {matchedInviter.length > 0 && invitedBy.trim() !== "" && (
+                {matchedInviter.length > 0 && invitedBy.trim() !== '' && (
                   <ul className="mt-2 p-2 border border-gray-300 bg-gray-100 rounded-md">
                     {matchedInviter.map((matchedName, index) => (
                       <li
@@ -559,12 +571,12 @@ const FormWithQRCode = () => {
               </div>
               <div className="mb-8 border border-green-500 p-4 rounded-lg">
                 <div className="mb-4">
-                  <label
+                  {/* <label
                     className="block text-gray-700 text-sm font-bold mb-2"
                     htmlFor="classification"
                   >
                     Classification
-                  </label>
+                  </label> */}
                   <select
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     id="classification"
@@ -603,8 +615,8 @@ const FormWithQRCode = () => {
               setIsSaved(false);
               resetForm();
             }}
-            eventSummary={eventDetails ? eventDetails.summary : ""}
-            name={selectedName ? selectedName.firstname : ""}
+            eventSummary={eventDetails ? eventDetails.summary : ''}
+            name={selectedName ? selectedName.firstname : ''}
             // eventSummary={eventDetails ? eventDetails.summary : ""}
           />
         )}
