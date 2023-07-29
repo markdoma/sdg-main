@@ -45,8 +45,14 @@ const navigation = [
   // { name: 'Members', href: '/members', icon: HomeIcon, component: 'Members' },
   // { name: 'Scan QR', href: '/scan', icon: HomeIcon, component: 'Scan' },
   {
-    name: 'Summary Report',
+    name: 'Home',
     href: '/',
+    icon: UsersIcon,
+    component: 'Attendance',
+  },
+  {
+    name: 'Summary Report',
+    href: '/summary',
     icon: HomeIcon,
     component: 'AttendanceSummaryReport',
   },
@@ -56,6 +62,7 @@ const navigation = [
     icon: UsersIcon,
     component: 'Attendance',
   },
+
   {
     name: 'Calendar',
     href: '/calendar',
