@@ -64,6 +64,7 @@ const FormWithQRCode = () => {
   // Function to add a new attendance record to the "attendance" collection
   const addAttendanceRecord = (event, no, firstName, lastName) => {
     const newAttendanceRecord = {
+      id: uuidv4(),
       date: new Date(event.start.dateTime), // Replace with the actual event date from Google Calendar
       event: event.summary, // Replace with the actual event name from Google Calendar
       no: no,
@@ -351,16 +352,16 @@ const FormWithQRCode = () => {
                 <p className="font-bold">
                   Pastoral Leader: {selectedName.pl ? selectedName.pl : "n/a"}
                 </p>
-                <p className="font-bold">
+                {/* <p className="font-bold">
                   Today's Event:{" "}
                   {eventDetails.summary ? eventDetails.summary : "n/a"}
-                </p>
-                <p className="font-bold">
+                </p> */}
+                {/* <p className="font-bold">
                   Date:{" "}
                   {eventDetails.start.dateTime
                     ? new Date(eventDetails.start.dateTime).toLocaleDateString()
                     : "n/a"}
-                </p>
+                </p> */}
               </div>
               {/* Conditionally render the "Present" button */}
               {eventDetails && !isAttendanceCaptured && (

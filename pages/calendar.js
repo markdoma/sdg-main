@@ -139,8 +139,8 @@ export default function Home() {
               {/* <CsvUploader /> */}
               {/* <PDFGenerator /> */}
               {/* <IDpreview /> */}
-              {/* <GoogleCalendarEvents /> */}
-              <AttendanceSummary />
+              <GoogleCalendarEvents />
+              {/* <AttendanceSummary /> */}
             </div>
           </main>
         </div>

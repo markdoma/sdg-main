@@ -42,6 +42,12 @@ import Attendance from "@/components/Attendance";
 // ];
 
 const navigation = [
+  {
+    name: "Home",
+    href: "/",
+    icon: UsersIcon,
+    component: "Home",
+  },
   { name: "Members", href: "/members", icon: HomeIcon, component: "Members" },
   { name: "Scan QR", href: "/scan", icon: HomeIcon, component: "Scan" },
   {
@@ -50,11 +56,12 @@ const navigation = [
     icon: UsersIcon,
     component: "Attendance",
   },
+
   {
-    name: "QR Codes",
-    href: "/",
+    name: "Calendar",
+    href: "/calendar",
     icon: UsersIcon,
-    component: "QR",
+    component: "Calendar",
   },
   //   { name: "Projects", href: "#", icon: FolderIcon, component: Projects },
   //   { name: "Calendar", href: "#", icon: CalendarIcon, component: Calendar },
