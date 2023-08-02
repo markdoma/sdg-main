@@ -42,16 +42,22 @@ import Attendance from "@/components/Attendance";
 // ];
 
 const navigation = [
+  // { name: 'Members', href: '/members', icon: HomeIcon, component: 'Members' },
+  // { name: 'Scan QR', href: '/scan', icon: HomeIcon, component: 'Scan' },
   {
     name: "Home",
     href: "/",
     icon: UsersIcon,
-    component: "Home",
+    component: "Attendance",
   },
-  { name: "Members", href: "/members", icon: HomeIcon, component: "Members" },
-  { name: "Scan QR", href: "/scan", icon: HomeIcon, component: "Scan" },
   {
-    name: "Attendance",
+    name: "Summary Report",
+    href: "/summary",
+    icon: HomeIcon,
+    component: "AttendanceSummaryReport",
+  },
+  {
+    name: "Attendance and Registration",
     href: "/attendance",
     icon: UsersIcon,
     component: "Attendance",
@@ -60,9 +66,10 @@ const navigation = [
   {
     name: "Calendar",
     href: "/calendar",
-    icon: UsersIcon,
-    component: "Calendar",
+    icon: CalendarIcon,
+    component: "Attendance",
   },
+
   //   { name: "Projects", href: "#", icon: FolderIcon, component: Projects },
   //   { name: "Calendar", href: "#", icon: CalendarIcon, component: Calendar },
   //   {
@@ -74,11 +81,6 @@ const navigation = [
   //   { name: "Reports", href: "#", icon: ChartPieIcon, component: Reports },
 ];
 
-const teams = [
-  { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
-  { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-  { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
-];
 const userNavigation = [
   { name: "Your profile", href: "#" },
   { name: "Sign out", href: "#" },
@@ -138,9 +140,9 @@ function Sidebar({ setActiveComponent }) {
             </ul>
           </li>
           <li>
-            <div className="text-xs font-semibold leading-6 text-gray-400">
+            {/* <div className="text-xs font-semibold leading-6 text-gray-400">
               Your teams
-            </div>
+            </div> */}
             <ul role="list" className="-mx-2 space-y-1">
               {navigation.map((item, index) => (
                 <li key={item.name}>
@@ -160,7 +162,7 @@ function Sidebar({ setActiveComponent }) {
             </ul>
           </li>
           <li className="mt-auto">
-            <a
+            {/* <a
               href="#"
               className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
             >
@@ -169,7 +171,7 @@ function Sidebar({ setActiveComponent }) {
                 aria-hidden="true"
               />
               Settings
-            </a>
+            </a> */}
           </li>
         </ul>
       </nav>

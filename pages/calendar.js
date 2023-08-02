@@ -1,10 +1,8 @@
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import IDpreview from "@/components/IDpreview";
-import CsvUploader from "@/components/CsvUploader";
+import FormWithQRCode from "@/components/FormWithQRCode";
 import GoogleCalendarEvents from "@/components/GoogleCalendarEvents";
-import PDFGenerator from "@/components/PDFGenerator";
-import AttendanceSummary from "@/components/AttendanceSummary";
+import PageHeadingcopycopy from "@/components/PageHeadingcopycopy";
 
 import { Fragment, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
@@ -25,7 +23,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
 
-export default function Home() {
+export default function Sample() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // const handleScan = (data) => {
@@ -134,13 +132,9 @@ export default function Home() {
 
           {/* Main section */}
           <main className="py-10">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col">
-              {/* <div>Back</div> */}
-              {/* <CsvUploader /> */}
-              {/* <PDFGenerator /> */}
-              {/* <IDpreview /> */}
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <PageHeadingcopycopy />
               <GoogleCalendarEvents />
-              {/* <AttendanceSummary /> */}
             </div>
           </main>
         </div>

@@ -4,7 +4,8 @@ import IDpreview from "@/components/IDpreview";
 import CsvUploader from "@/components/CsvUploader";
 import GoogleCalendarEvents from "@/components/GoogleCalendarEvents";
 import PDFGenerator from "@/components/PDFGenerator";
-import AttendanceSummary from "@/components/AttendanceSummary";
+import FormWithQRCode from "@/components/FormWithQRCode";
+import PageHeadingcopy from "@/components/PageHeadingcopy";
 
 import { Fragment, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
@@ -130,17 +131,14 @@ export default function Home() {
         {/* Main content */}
         <div className="lg:pl-72">
           {/* Header */}
+
           <Header />
 
           {/* Main section */}
           <main className="py-10">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col">
-              {/* <div>Back</div> */}
-              {/* <CsvUploader /> */}
-              {/* <PDFGenerator /> */}
-              {/* <IDpreview /> */}
-              {/* <GoogleCalendarEvents /> */}
-              <AttendanceSummary />
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <PageHeadingcopy />
+              <FormWithQRCode />
             </div>
           </main>
         </div>
