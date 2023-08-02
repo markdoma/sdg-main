@@ -1,23 +1,23 @@
-import { useState, useEffect } from 'react';
-import QRCode from 'qrcode.react';
-import { v4 as uuidv4 } from 'uuid';
-import { db } from '../utils/firebase';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import QRCode from "qrcode.react";
+import { v4 as uuidv4 } from "uuid";
+import { db } from "../utils/firebase";
+import axios from "axios";
 
-import Modal from '../components/Modal';
+import Modal from "../components/Modal";
 
 const FormWithQRCode = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [dob, setDOB] = useState('');
-  const [gender, setGender] = useState('');
-  const [contact, setContact] = useState('');
-  const [address, setAddress] = useState('');
-  const [invitedBy, setInvitedBy] = useState('');
-  const [status, setStatus] = useState('');
-  const [classification, setClassification] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dob, setDOB] = useState("");
+  const [gender, setGender] = useState("");
+  const [contact, setContact] = useState("");
+  const [address, setAddress] = useState("");
+  const [invitedBy, setInvitedBy] = useState("");
+  const [status, setStatus] = useState("");
+  const [classification, setClassification] = useState("");
   const [showQRCode, setShowQRCode] = useState(false);
-  const [uniqueCode, setUniqueCode] = useState('');
+  const [uniqueCode, setUniqueCode] = useState("");
 
   const [dummyData, setDummyData] = useState([]);
   const [members, setMembers] = useState([]);
@@ -42,7 +42,7 @@ const FormWithQRCode = () => {
         `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events`,
         {
           params: {
-            key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
+            key: "AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY",
           },
         }
       );
@@ -57,7 +57,7 @@ const FormWithQRCode = () => {
 
       return eventsForCurrentDay.length > 0 ? eventsForCurrentDay[0] : null;
     } catch (error) {
-      console.error('Error fetching events:', error);
+      console.error("Error fetching events:", error);
     }
   };
 
@@ -71,6 +71,7 @@ const FormWithQRCode = () => {
     invitedBy
   ) => {
     const newAttendanceRecord = {
+      id: uuidv4(),
       date: new Date(event.start.dateTime), // Replace with the actual event date from Google Calendar
       event: event.summary, // Replace with the actual event name from Google Calendar
       no: no,
@@ -80,14 +81,14 @@ const FormWithQRCode = () => {
       invitedBy: invitedBy,
     };
 
-    db.collection('attendance')
+    db.collection("attendance")
       .add(newAttendanceRecord)
       .then((docRef) => {
-        console.log('Attendance record added with ID: ', docRef.id);
+        console.log("Attendance record added with ID: ", docRef.id);
         // If you need to do anything after successfully adding the record, you can put it here.
       })
       .catch((error) => {
-        console.error('Error adding attendance record: ', error);
+        console.error("Error adding attendance record: ", error);
       });
 
     setIsPresentButtonClicked(true);
@@ -100,15 +101,15 @@ const FormWithQRCode = () => {
       // console.log(eventDateTime);
       // console.log(isAttendanceCaptured);
       // Firestore query to check if a matching attendance record exists
-      db.collection('attendance')
-        .where('no', '==', selectedName.no)
-        .where('date', '==', eventDateTime)
+      db.collection("attendance")
+        .where("no", "==", selectedName.no)
+        .where("date", "==", eventDateTime)
         .get()
         .then((querySnapshot) => {
           setIsAttendanceCaptured(!querySnapshot.empty);
         })
         .catch((error) => {
-          console.error('Error checking attendance: ', error);
+          console.error("Error checking attendance: ", error);
         });
     }
   }, [eventDetails, selectedName]);
@@ -120,7 +121,7 @@ const FormWithQRCode = () => {
         setEventDetails(event);
       })
       .catch((error) => {
-        console.error('Error fetching event details: ', error);
+        console.error("Error fetching event details: ", error);
       });
   }, []);
 
@@ -137,7 +138,7 @@ const FormWithQRCode = () => {
   };
 
   useEffect(() => {
-    const unsubscribe = db.collection('master').onSnapshot((snapshot) => {
+    const unsubscribe = db.collection("master").onSnapshot((snapshot) => {
       const fetchedMembers = snapshot.docs.map((doc) => doc.data());
       setMembers(fetchedMembers);
     });
@@ -211,22 +212,22 @@ const FormWithQRCode = () => {
       long: null,
       qrCode: jsonData,
       insert_date: new Date(),
-      insert_by: 'Reg Team',
+      insert_by: "Reg Team",
       update_date: null,
       update_by: null,
       invitedBy: invitedBy,
     };
 
     // Add the data to the "master" collection in the database
-    db.collection('master')
+    db.collection("master")
       .add(newData)
       .then((docRef) => {
-        console.log('Document written with ID: ', docRef.id);
+        console.log("Document written with ID: ", docRef.id);
         // If you need to do anything after successfully adding the record, you can put it here.
         setIsSaved(true);
       })
       .catch((error) => {
-        console.error('Error adding document: ', error);
+        console.error("Error adding document: ", error);
       });
 
     // Call addAttendanceRecord with pastoral_leader set to "Guest"
@@ -235,7 +236,7 @@ const FormWithQRCode = () => {
       newData.no,
       newData.firstname,
       newData.lastname,
-      'Guest',
+      "Guest",
       newData.invitedBy
     );
   };
@@ -252,7 +253,7 @@ const FormWithQRCode = () => {
 
     setSelectedName(null);
 
-    if (inputFirstName.trim() === '') {
+    if (inputFirstName.trim() === "") {
       setMatchedNames([]); // Clear the matched names list if the input is empty
     } else {
       const matched = members.filter((record) =>
@@ -274,7 +275,7 @@ const FormWithQRCode = () => {
     const inputInvitedBy = e.target.value;
     setInvitedBy(inputInvitedBy);
 
-    if (inputInvitedBy.trim() === '') {
+    if (inputInvitedBy.trim() === "") {
       setMatchedInviter([]); // Clear the matched names list if the input is empty
     } else {
       const matched = members.filter((record) =>
@@ -310,18 +311,18 @@ const FormWithQRCode = () => {
   };
 
   const resetForm = () => {
-    setFirstName('');
-    setLastName('');
-    setDOB('');
-    setGender('');
-    setContact('');
-    setAddress('');
-    setInvitedBy('');
-    setStatus('');
-    setClassification('');
+    setFirstName("");
+    setLastName("");
+    setDOB("");
+    setGender("");
+    setContact("");
+    setAddress("");
+    setInvitedBy("");
+    setStatus("");
+    setClassification("");
     setSelectedName(null);
     setShowQRCode(false);
-    setUniqueCode('');
+    setUniqueCode("");
     setIsSaved(false);
   };
 
@@ -369,31 +370,31 @@ const FormWithQRCode = () => {
             <>
               <div className="flex flex-col mb-4">
                 <p>
-                  <span className="font-bold">Name:</span>{' '}
+                  <span className="font-bold">Name:</span>{" "}
                   <span className="font-italic">
                     {`${selectedName.firstname} ${selectedName.lastname}`}
                   </span>
                 </p>
                 <p>
-                  <span className="font-bold">Pastoral Leader:</span>{' '}
+                  <span className="font-bold">Pastoral Leader:</span>{" "}
                   <span className="font-italic">
-                    {selectedName.pl ? selectedName.pl : 'N/A'}
+                    {selectedName.pl ? selectedName.pl : "N/A"}
                   </span>
                 </p>
                 <p>
-                  <span className="font-bold">Today's Event:</span>{' '}
+                  <span className="font-bold">Today's Event:</span>{" "}
                   <span className="font-italic">
-                    {eventDetails ? eventDetails.summary : 'No event for today'}
+                    {eventDetails ? eventDetails.summary : "No event for today"}
                   </span>
                 </p>
                 <p>
-                  <span className="font-bold">Date:</span>{' '}
+                  <span className="font-bold">Date:</span>{" "}
                   <span className="font-italic">
                     {eventDetails
                       ? new Date(
                           eventDetails.start.dateTime
                         ).toLocaleDateString()
-                      : 'No event for today'}
+                      : "No event for today"}
                   </span>
                 </p>
               </div>
@@ -502,7 +503,7 @@ const FormWithQRCode = () => {
                       className="form-radio text-blue-500"
                       name="gender"
                       value="Male"
-                      checked={gender === 'Male'}
+                      checked={gender === "Male"}
                       onChange={(e) => setGender(e.target.value)}
                     />
                     <span className="text-gray-700">Male</span>
@@ -513,7 +514,7 @@ const FormWithQRCode = () => {
                       className="form-radio text-pink-500"
                       name="gender"
                       value="Female"
-                      checked={gender === 'Female'}
+                      checked={gender === "Female"}
                       onChange={(e) => setGender(e.target.value)}
                     />
                     <span className="text-gray-700">Female</span>
@@ -574,7 +575,7 @@ const FormWithQRCode = () => {
                   required
                   autoComplete="off"
                 />
-                {matchedInviter.length > 0 && invitedBy.trim() !== '' && (
+                {matchedInviter.length > 0 && invitedBy.trim() !== "" && (
                   <ul className="mt-2 p-2 border border-gray-300 bg-gray-100 rounded-md">
                     {matchedInviter.map((matchedName, index) => (
                       <li
@@ -640,8 +641,8 @@ const FormWithQRCode = () => {
               setIsSaved(false);
               resetForm();
             }}
-            eventSummary={eventDetails ? eventDetails.summary : ''}
-            name={selectedName ? selectedName.firstname : ''}
+            eventSummary={eventDetails ? eventDetails.summary : ""}
+            name={selectedName ? selectedName.firstname : ""}
             // eventSummary={eventDetails ? eventDetails.summary : ""}
           />
         )}
