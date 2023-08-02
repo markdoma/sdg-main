@@ -134,7 +134,7 @@ const FormWithQRCode = () => {
     // Add the attendance record when the "Present" button is clicked
     addAttendanceRecord(
       eventDetails,
-      'n5TvZ4EexBuTI4d8mmKh',
+      selectedName.doc_id,
       selectedName.no,
       selectedName.firstname,
       selectedName.lastname,
