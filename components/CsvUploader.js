@@ -79,20 +79,16 @@ const CsvUploader = () => {
       data = parsedData.data; // Extract the data array from the parsed result
 
       // Transform the data array to update the timestamp field to Firestore Timestamp objects
-      data = data.map((item) => {
-        const docId = db.collection('master_data').doc().id;
-        return {
-          ...item,
-          doc_id: docId,
-          no: convertToFirestoreInt(item.no),
-          parent_no: convertToFirestoreInt(item.parent_no),
-          qrcode: convertToJSON(item.firstname, item.lastname),
-          insert_date: convertToFirestoreTimestamp(item.insert_date),
-          update_date: convertToFirestoreTimestamp(item.update_date),
-          birthdate: convertToFirestoreTimestamp(item.birthdate),
-          weddingdate: convertToFirestoreTimestamp(item.weddingdate),
-        };
-      });
+      data = data.map((item) => ({
+        ...item,
+        no: convertToFirestoreInt(item.no),
+        parent_no: convertToFirestoreInt(item.parent_no),
+        qrcode: convertToJSON(item.firstname, item.lastname),
+        insert_date: convertToFirestoreTimestamp(item.insert_date),
+        update_date: convertToFirestoreTimestamp(item.update_date),
+        birthdate: convertToFirestoreTimestamp(item.birthdate),
+        weddingdate: convertToFirestoreTimestamp(item.weddingdate),
+      }));
 
       console.log(data);
     } catch (error) {
@@ -103,7 +99,18 @@ const CsvUploader = () => {
 
     try {
       const dataCollection = db.collection('master_data');
-      await Promise.all(data.map((item) => dataCollection.add(item)));
+
+      for (const item of data) {
+        const docRef = await dataCollection.add(item);
+        const docId = docRef.id;
+
+        // Update the Firestore document with the doc_id field
+        await dataCollection.doc(docId).update({ doc_id: docId });
+
+        item.doc_id = docId;
+      }
+
+      console.log(data);
       alert('CSV data has been successfully uploaded to Firestore!');
     } catch (error) {
       console.error('Error uploading data to Firestore:', error);
