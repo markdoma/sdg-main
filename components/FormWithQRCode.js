@@ -183,6 +183,7 @@ const FormWithQRCode = () => {
     setIsSaved(true);
 
     // Prepare the data to be saved in the database
+    // Prepare the data to be saved in the database
     const newData = {
       no: getMaxNoValue() + 1,
       parent_no: null,
@@ -225,28 +226,43 @@ const FormWithQRCode = () => {
       invitedBy: invitedBy,
     };
 
-    // Add the data to the "master" collection in the database
+    // Add the data to the "master_data" collection in the database
     db.collection('master_data')
       .add(newData)
       .then((docRef) => {
         console.log('Document written with ID: ', docRef.id);
-        // If you need to do anything after successfully adding the record, you can put it here.
-        setIsSaved(true);
+
+        // Update the newData object with the doc_id
+        newData.doc_id = docRef.id;
+
+        // Add the attendance record when the "Present" button is clicked
+        addAttendanceRecord(
+          eventDetails,
+          newData.doc_id,
+          newData.no,
+          newData.firstname,
+          newData.lastname,
+          newData.pl,
+          null,
+          newData.sdg_class
+        );
+
+        // Now newData object has the doc_id property, and you can use it as needed.
+
+        // Update the "master_data" collection with the doc_id property
+        db.collection('master_data')
+          .doc(docRef.id)
+          .update({ doc_id: docRef.id })
+          .then(() => {
+            console.log('Document updated with doc_id: ', docRef.id);
+          })
+          .catch((error) => {
+            console.error('Error updating document with doc_id: ', error);
+          });
       })
       .catch((error) => {
         console.error('Error adding document: ', error);
       });
-
-    // Call addAttendanceRecord with pastoral_leader set to "Guest"
-    addAttendanceRecord(
-      eventDetails,
-      newData.no,
-      newData.firstname,
-      newData.lastname,
-      'Guest',
-      newData.invitedBy,
-      newData.classification
-    );
   };
 
   const handleModalClose = () => {
