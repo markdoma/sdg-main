@@ -608,7 +608,7 @@ const FormWithQRCode = () => {
                   >
                     <option value="">Select Classification</option>
                     <option value="LNP Member SDG">LNP Member SDG</option>
-                    <option value="LNP Member SDG">
+                    <option value="LNP Member SDG - Family">
                       LNP Member SDG - Family
                     </option>
                     <option value="LNP Member Non-SDG">
