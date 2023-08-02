@@ -1,9 +1,9 @@
 // components/CsvUploader.js
-import { useState } from "react";
-import firebase from "firebase/app";
-import { db, storage } from "../utils/firebase"; // Import the Firebase configuration
-import Papa from "papaparse"; // Import papaparse library
-import GoogleAuth from "../components/GoogleAuth";
+import { useState } from 'react';
+import firebase from 'firebase/app';
+import { db, storage } from '../utils/firebase'; // Import the Firebase configuration
+import Papa from 'papaparse'; // Import papaparse library
+import GoogleAuth from '../components/GoogleAuth';
 
 function convertToFirestoreTimestamp(dateStr) {
   // If the dateStr is empty, return null
@@ -12,7 +12,7 @@ function convertToFirestoreTimestamp(dateStr) {
   }
 
   // Split the date string into parts: day, month, and year
-  const [day, month, year] = dateStr.split("/");
+  const [day, month, year] = dateStr.split('/');
 
   // Create a new Date object by providing the year, month (0-indexed), and day
   const date = new Date(year, parseInt(month) - 1, day);
@@ -41,14 +41,14 @@ const CsvUploader = () => {
     setUploading(true);
 
     // const bucketPath = "gs://ligayasdg.appspot.com/SDG_DB.csv";
-    const bucketPath = "gs://ligayasdg.appspot.com/SDG_DB_latest_1.csv";
+    const bucketPath = 'gs://ligayasdg.appspot.com/SDG_DB_latest_2.csv';
     const fileRef = storage.refFromURL(bucketPath);
 
     let downloadURL;
     try {
       downloadURL = await fileRef.getDownloadURL();
     } catch (error) {
-      console.error("Error fetching download URL:", error);
+      console.error('Error fetching download URL:', error);
       setUploading(false);
       return;
     }
@@ -60,7 +60,7 @@ const CsvUploader = () => {
       const response = await fetch(downloadURL);
       const csvString = await response.text();
       if (!response.ok) {
-        throw new Error("Fetch request failed: " + response.status);
+        throw new Error('Fetch request failed: ' + response.status);
       }
       // Parse the CSV data using papaparse
       const parsedData = Papa.parse(csvString, {
@@ -92,17 +92,17 @@ const CsvUploader = () => {
 
       console.log(data);
     } catch (error) {
-      console.error("Error extracting data from CSV:", error);
+      console.error('Error extracting data from CSV:', error);
       setUploading(false);
       return;
     }
 
     try {
-      const dataCollection = db.collection("master");
+      const dataCollection = db.collection('master_data');
       await Promise.all(data.map((item) => dataCollection.add(item)));
-      alert("CSV data has been successfully uploaded to Firestore!");
+      alert('CSV data has been successfully uploaded to Firestore!');
     } catch (error) {
-      console.error("Error uploading data to Firestore:", error);
+      console.error('Error uploading data to Firestore:', error);
     }
 
     setUploading(false);
@@ -112,7 +112,7 @@ const CsvUploader = () => {
     <div>
       <GoogleAuth />
       <button onClick={handleUpload} disabled={uploading}>
-        {uploading ? "Uploading..." : "Upload CSV from Cloud Bucket"}
+        {uploading ? 'Uploading...' : 'Upload CSV from Cloud Bucket'}
       </button>
     </div>
   );
