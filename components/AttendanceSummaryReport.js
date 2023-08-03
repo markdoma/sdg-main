@@ -8,15 +8,17 @@ const AttendanceSummaryReport = () => {
 
   // Fetch data using useEffect
   useEffect(() => {
-    const unsubscribe = db.collection('attendance').onSnapshot((snapshot) => {
-      const fetchedAttendance = snapshot.docs.map((doc) => doc.data());
-      // Convert Firestore timestamps to JavaScript Date objects
-      const processedAttendanceData = fetchedAttendance.map((item) => ({
-        ...item,
-        date: item.date.toDate().toLocaleDateString('en-US'), // Assuming 'date' is the field with the timestamp
-      }));
-      setAttendanceData(processedAttendanceData);
-    });
+    const unsubscribe = db
+      .collectionGroup('attendance')
+      .onSnapshot((snapshot) => {
+        const fetchedAttendance = snapshot.docs.map((doc) => doc.data());
+        // Convert Firestore timestamps to JavaScript Date objects
+        const processedAttendanceData = fetchedAttendance.map((item) => ({
+          ...item,
+          date: item.date.toDate().toLocaleDateString('en-US'), // Assuming 'date' is the field with the timestamp
+        }));
+        setAttendanceData(processedAttendanceData);
+      });
 
     return () => {
       // Unsubscribe from the snapshot listener when the component unmounts

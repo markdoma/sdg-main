@@ -3,6 +3,7 @@ import Sidebar from '@/components/Sidebar';
 import FormWithQRCode from '@/components/FormWithQRCode';
 import PageHeading from '@/components/PageHeading';
 import AttendanceSummaryReport from '@/components/AttendanceSummaryReport';
+import AttendancePage from '@/components/AttendancePage';
 
 import { Fragment, useState } from 'react';
 import { Dialog, Menu, Transition } from '@headlessui/react';
@@ -134,7 +135,8 @@ export default function Summary() {
           <main className="py-10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <PageHeading />
-              <AttendanceSummaryReport />
+              {/* <AttendanceSummaryReport /> */}
+              <AttendancePage />
             </div>
           </main>
         </div>

@@ -75,12 +75,16 @@ const FormWithQRCode = () => {
     sdg_class
   ) => {
     const newAttendanceRecord = {
-      date: new Date(event.start.dateTime), // Replace with the actual event date from Google Calendar
-      event: event.summary, // Replace with the actual event name from Google Calendar
+      // date: new Date(event.start.dateTime), // Replace with the actual event date from Google Calendar
+      // event: event.summary, // Replace with the actual event name from Google Calendar
+      date: new Date('07/30/2023'), // Replace with the actual event date from Google Calendar
+      event: 'SDG: District Gathering', // Replace with the actual event name from Google Calendar
       id: id,
       no: no,
-      firstname: firstName.toLowerCase(),
-      lastname: lastName.toLowerCase(),
+      firstname:
+        firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase(),
+      lastname:
+        lastName.charAt(0).toUpperCase() + lastName.slice(1).toLowerCase(),
       pastoral_leader: pl,
       invitedBy: invitedBy,
       sdg_class: sdg_class,
