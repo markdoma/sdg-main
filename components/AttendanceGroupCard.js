@@ -1,81 +1,96 @@
 import React from 'react';
 
 const AttendanceGroupCard = ({ groups }) => {
+  // Find the Guest group
+  const guestGroup = groups.find((group) => group.classification === 'Guest');
+
+  // Filter out the Guest group and other classifications
+  const otherGroups = groups.filter(
+    (group) => group.classification !== 'Guest'
+  );
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      {groups.map(({ classification, data }) => {
-        if (data.length === 0) {
-          // Do not display the card if there's no data for the classification
-          return null;
-        }
+      {guestGroup && guestGroup.data.length > 0 && (
+        <div
+          key={guestGroup.classification}
+          className="col-span-4 p-4 bg-red-200 rounded"
+        >
+          <h2 className="text-xl font-bold mb-2">
+            {guestGroup.classification}
+          </h2>
+          <table className="table-auto w-full">
+            <thead>
+              <tr>
+                <th className="px-4 py-2">Name</th>
+                <th className="px-4 py-2">Invited By</th>
+              </tr>
+            </thead>
+            <tbody>
+              {guestGroup.data.map((item) => (
+                <tr key={item.id}>
+                  <td className="border px-4 py-2">{`${item.firstname} ${item.lastname}`}</td>
+                  <td className="border px-4 py-2">{item.invitedBy}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-        let backgroundColor = '';
+      <div className="col-span-3 grid grid-cols-3 md:grid-cols-4 gap-4">
+        {otherGroups.map(({ classification, data }) => {
+          if (classification === 'Member') {
+            // Group members by pastoral_leader
+            const groupedMembers = data.reduce((acc, item) => {
+              const pastoralLeader =
+                item.pastoral_leader || 'No Pastoral Leader';
+              if (!acc[pastoralLeader]) {
+                acc[pastoralLeader] = [];
+              }
+              acc[pastoralLeader].push(item);
+              return acc;
+            }, {});
 
-        switch (classification) {
-          case 'Member':
-            backgroundColor = 'bg-yellow-500';
-            break;
-          case 'Family':
-            backgroundColor = 'bg-green-500';
-            break;
-          case 'Guest':
-            backgroundColor = 'bg-red-500';
-            break;
-          case 'Non-SDG':
-            backgroundColor = 'bg-blue-500';
-            break;
-          default:
-            backgroundColor = 'bg-gray-500';
-            break;
-        }
+            return Object.entries(groupedMembers).map(
+              ([pastoralLeader, members]) => (
+                <div
+                  key={pastoralLeader}
+                  className={`col-span-1 p-4 rounded bg-white`}
+                >
+                  <h2 className="text-xl font-bold mb-2">{pastoralLeader}</h2>
+                  <ul>
+                    {members.map((member) => (
+                      <li key={member.id} className="mb-2">
+                        {`${member.firstname} ${member.lastname}`}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            );
+          }
 
-        if (classification === 'Member') {
-          // Group members with the same 'pastoral_leader' value into separate cards
-          const uniquePastoralLeaders = Array.from(
-            new Set(data.map((item) => item.pastoral_leader))
-          );
-
-          return uniquePastoralLeaders.map((pastoralLeader) => (
+          // Render other classifications as a single card
+          return (
             <div
-              key={pastoralLeader}
-              className={`p-4 rounded ${backgroundColor} my-4`}
+              key={classification}
+              className={`col-span-1 p-4 rounded ${
+                classification === 'Family' ? 'bg-green-500' : 'bg-blue-500'
+              }`}
             >
-              {/* <h2 className="text-xl font-bold mb-2">{classification}</h2> */}
-              <h3 className="font-bold">{pastoralLeader}</h3>
+              <h2 className="text-xl font-bold mb-2">{classification}</h2>
               <ul>
-                {data
-                  .filter((item) => item.pastoral_leader === pastoralLeader)
-                  .map((item) => (
-                    <li key={item.id} className="mb-2">
-                      {/* Render the attendance details here */}
-                      {/* You can use item properties like date, pastoralLeader, etc. */}
-                      {`${item.firstname} ${item.lastname}`}
-                    </li>
-                  ))}
+                {data.map((item) => (
+                  <li key={item.id} className="mb-2">
+                    {`${item.firstname} ${item.lastname}`}
+                  </li>
+                ))}
               </ul>
             </div>
-          ));
-        }
-
-        // For other classifications, render as a single card
-        return (
-          <div
-            key={classification}
-            className={`p-4 rounded ${backgroundColor} my-4`}
-          >
-            <h2 className="text-xl font-bold mb-2">{classification}</h2>
-            <ul>
-              {data.map((item) => (
-                <li key={item.id} className="mb-2">
-                  {/* Render the attendance details here */}
-                  {/* You can use item properties like date, pastoralLeader, etc. */}
-                  {`${item.firstname} ${item.lastname}`}
-                </li>
-              ))}
-            </ul>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };
