@@ -39,9 +39,11 @@ const FormWithQRCode = () => {
   const getEventDetailsFromGoogleCalendar = async () => {
     try {
       const response = await axios.get(
-        `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events`,
+        // `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events`,
+        `https://www.googleapis.com/calendar/v3/calendars/markdoma0510@gmail.com/events`,
         {
           params: {
+            // key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
             key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
           },
         }
@@ -106,7 +108,9 @@ const FormWithQRCode = () => {
       // console.log(eventDateTime);
       // console.log(isAttendanceCaptured);
       // Firestore query to check if a matching attendance record exists
-      db.collection('attendance')
+      db.collection('master_data')
+        .doc(selectedName.doc_id)
+        .collection('attendance')
         .where('no', '==', selectedName.no)
         .where('date', '==', eventDateTime)
         .get()
