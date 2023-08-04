@@ -44,6 +44,13 @@ const AttendanceGroupCard = ({ groups }) => {
     );
   }, 0);
 
+  // Calculate counts for each classification
+  const countByClassification = groups.reduce((acc, group) => {
+    const { classification, data } = group;
+    acc[classification] = data.length;
+    return acc;
+  }, {});
+
   const totalAdults = totalAttendees - totalKids;
 
   return (
@@ -51,25 +58,39 @@ const AttendanceGroupCard = ({ groups }) => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Attendance Report */}
         <div className="col-span-4 flex justify-center items-center mt-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="col-span-1 flex flex-col items-center">
-              <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="col-span-2 md:col-span-3 flex flex-col items-center">
+              <div className="w-48 h-16 md:w-48 md:h-24 bg-blue-500 rounded-xl flex items-center justify-center text-white text-xl font-bold">
                 {totalAttendees}
               </div>
-              <p className="mt-2">Total Attendees</p>
+              <p className="mt-2 font-bold text-sm">Total Attendees</p>
             </div>
             <div className="col-span-1 flex flex-col items-center">
               <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
                 {totalAdults}
               </div>
-              <p className="mt-2">Total Adults</p>
+              <p className="mt-2 font-bold text-sm">Total Adults</p>
             </div>
             <div className="col-span-1 flex flex-col items-center">
               <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
                 {totalKids}
               </div>
-              <p className="mt-2">Total Kids</p>
+              <p className="mt-2 font-bold text-sm">Total Kids</p>
             </div>
+            {/* Display counts for each classification */}
+            {Object.entries(countByClassification).map(
+              ([classification, count]) => (
+                <div
+                  className="col-span-1 flex flex-col items-center"
+                  key={classification}
+                >
+                  <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                    {count}
+                  </div>
+                  <p className="mt-2 font-bold text-sm">{classification}</p>
+                </div>
+              )
+            )}
           </div>
         </div>
 
