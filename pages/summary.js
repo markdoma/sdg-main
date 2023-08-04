@@ -1,9 +1,13 @@
+import { useEffect } from 'react';
+
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import FormWithQRCode from '@/components/FormWithQRCode';
 import PageHeading from '@/components/PageHeading';
 import AttendanceSummaryReport from '@/components/AttendanceSummaryReport';
 import AttendancePage from '@/components/AttendancePage';
+
+import axios from 'axios';
 
 //Context
 import EventContext from '@/context/eventContext';
@@ -29,6 +33,7 @@ import {
 
 export default function Summary() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [eventsOptions, setEventsOptions] = useState([]);
 
   // const handleScan = (data) => {
   //   console.log("Scanned QR Code:", data);
@@ -42,17 +47,70 @@ export default function Summary() {
     // console.log("Scanned QR Code:", data);
   };
 
-  const resetScanResult = () => {
-    setScanResult('');
-  };
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(
+          `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events`,
+          {
+            params: {
+              key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
+            },
+          }
+        );
 
-  const eventOptions = [
-    { value: '2023-07-30', label: 'July District Gathering' },
-    { value: '2023-03-26', label: 'March District Gathering' },
-    { value: '2023-08-06', label: 'August Open Door' },
-  ];
+        // Filter events that start with "SDG" or "Open"
+        const filteredEvents = response.data.items.filter((item) => {
+          const summary = item.summary.toLowerCase();
+          return (
+            summary.startsWith('sdg: district') || summary.startsWith('open')
+          );
+        });
 
-  const [selectedEvent, setSelectedEvent] = useState(eventOptions[0]);
+        // Filter events with dates between 07/30/23 and today's date
+        const currentDate = new Date();
+        const events = filteredEvents.map((item, index) => {
+          let value;
+          if (item.start.dateTime) {
+            value = new Date(item.start.dateTime).toLocaleDateString('en-US');
+          } else {
+            value = new Date(item.start.date).toLocaleDateString('en-US');
+          }
+
+          // Parse the date string and compare it with the currentDate
+          const eventDate = new Date(value);
+          if (eventDate >= new Date('2023-07-29') && eventDate <= currentDate) {
+            return {
+              value,
+              label: item.summary,
+              key: `${value}-${index}`,
+            };
+          }
+          return null;
+        });
+
+        // Remove null values from the events array (events that didn't meet the criteria)
+        const filteredEventsOptions = events.filter(Boolean);
+
+        setEventsOptions(filteredEventsOptions);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  // const eventOptions = eventsOptions;
+
+  // const eventOptions = [
+  //   { value: '2023-07-30', label: 'July District Gathering' },
+  //   { value: '2023-03-26', label: 'March District Gathering' },
+  //   { value: '2023-08-06', label: 'August Open Door' },
+  //   { value: '2023-08-04', label: 'Test Event' },
+  // ];
+
+  const [selectedEvent, setSelectedEvent] = useState(eventsOptions[0]);
 
   return (
     <>
@@ -145,8 +203,13 @@ export default function Summary() {
           {/* Main section */}
           <main className="py-10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              {/* <PageHeading evenstOptions="Hello" /> */}
               <EventContext.Provider value={[selectedEvent, setSelectedEvent]}>
-                <PageHeading eventOptions={eventOptions} />
+                {/* {eventsOptions.length > 0 && ( // Add this conditional check
+                  <PageHeading eventOptions />
+                )} */}
+                <PageHeading eventsOptions={eventsOptions} />
+
                 {/* <AttendanceSummaryReport /> */}
                 <AttendancePage />
               </EventContext.Provider>

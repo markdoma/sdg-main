@@ -6,6 +6,13 @@ import axios from 'axios';
 
 import Modal from '../components/Modal';
 
+const capitalizeName = (name) => {
+  return name
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 const FormWithQRCode = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -39,8 +46,8 @@ const FormWithQRCode = () => {
   const getEventDetailsFromGoogleCalendar = async () => {
     try {
       const response = await axios.get(
+        `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events`,
         // `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events`,
-        `https://www.googleapis.com/calendar/v3/calendars/markdoma0510@gmail.com/events`,
         {
           params: {
             // key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
@@ -75,16 +82,14 @@ const FormWithQRCode = () => {
     sdg_class
   ) => {
     const newAttendanceRecord = {
-      // date: new Date(event.start.dateTime), // Replace with the actual event date from Google Calendar
-      // event: event.summary, // Replace with the actual event name from Google Calendar
-      date: new Date('07/30/2023'), // Replace with the actual event date from Google Calendar
-      event: 'SDG: District Gathering', // Replace with the actual event name from Google Calendar
+      date: new Date(event.start.dateTime), // Replace with the actual event date from Google Calendar
+      event: event.summary, // Replace with the actual event name from Google Calendar
+      // date: new Date('07/30/2023'), // Replace with the actual event date from Google Calendar
+      // event: 'SDG: District Gathering', // Replace with the actual event name from Google Calendar
       id: id,
       no: no,
-      firstname:
-        firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase(),
-      lastname:
-        lastName.charAt(0).toUpperCase() + lastName.slice(1).toLowerCase(),
+      firstname: capitalizeName(firstName),
+      lastname: capitalizeName(lastName),
       pastoral_leader: pl,
       invitedBy: invitedBy,
       sdg_class: sdg_class,
@@ -189,14 +194,12 @@ const FormWithQRCode = () => {
     setUniqueCode(generatedCode);
     setShowQRCode(true);
     setIsSaved(true);
-
-    // Prepare the data to be saved in the database
     // Prepare the data to be saved in the database
     const newData = {
       no: getMaxNoValue() + 1,
       parent_no: null,
-      lastname: lastName.toLowerCase(),
-      firstname: firstName.toLowerCase(),
+      lastname: capitalizeName(lastName),
+      firstname: capitalizeName(firstName),
       middlename: null,
       suffix: null,
       nickname: null,
@@ -251,7 +254,7 @@ const FormWithQRCode = () => {
           newData.firstname,
           newData.lastname,
           newData.pl,
-          null,
+          newData.invitedBy,
           newData.sdg_class
         );
 

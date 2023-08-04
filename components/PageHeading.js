@@ -2,13 +2,14 @@ import React, { useContext, useState } from 'react';
 import EventContext from '@/context/eventContext';
 import EventOptions from '../components/EventOptions';
 
-export default function PageHeading({ eventOptions }) {
+export default function PageHeading({ eventsOptions }) {
   // const eventOptions = [
   //   { value: '2023-07-30', label: 'July District Gathering' },
   //   { value: '2023-03-26', label: 'March District Gathering' },
   //   { value: '2023-08-06', label: 'August Open Door' },
   // ];
 
+  // console.log(eventsOptions);
   return (
     <div className="md:flex md:items-center md:justify-between md:space-x-5 mb-5">
       {' '}
@@ -32,14 +33,14 @@ export default function PageHeading({ eventOptions }) {
           <p className="text-sm font-medium text-gray-500">
             Attendance for{' '}
             <a href="#" className="text-gray-900">
-              {eventOptions[0].label}
+              {eventsOptions.label}
             </a>{' '}
-            on <time dateTime={eventOptions[0].value}>July 30, 2023</time>
+            on <time dateTime={eventsOptions.value}>July 30, 2023</time>
           </p>
         </div>
       </div>
       <div className="relative mt-6">
-        <EventOptions eventOptions={eventOptions} />
+        <EventOptions eventsOptions={eventsOptions} />
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
           <svg
             className="h-4 w-4"

@@ -65,18 +65,6 @@ const AttendanceGroupCard = ({ groups, eventOptions }) => {
               </div>
               <p className="mt-2 font-bold text-sm">Total Attendees</p>
             </div>
-            <div className="col-span-1 flex flex-col items-center">
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
-                {totalAdults}
-              </div>
-              <p className="mt-2 font-bold text-sm">Total Adults</p>
-            </div>
-            <div className="col-span-1 flex flex-col items-center">
-              <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
-                {totalKids}
-              </div>
-              <p className="mt-2 font-bold text-sm">Total Kids</p>
-            </div>
             {/* Display counts for each classification */}
             {Object.entries(countByClassification).map(
               ([classification, count]) => (
@@ -91,6 +79,18 @@ const AttendanceGroupCard = ({ groups, eventOptions }) => {
                 </div>
               )
             )}
+            <div className="col-span-1 flex flex-col items-center">
+              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                {totalAdults}
+              </div>
+              <p className="mt-2 font-bold text-sm">Total Adults</p>
+            </div>
+            <div className="col-span-1 flex flex-col items-center">
+              <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                {totalKids}
+              </div>
+              <p className="mt-2 font-bold text-sm">Total Kids</p>
+            </div>
           </div>
         </div>
 
