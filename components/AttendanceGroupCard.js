@@ -6,7 +6,7 @@ const calculateAge = (birthdate) => {
   // Convert birthdate (in seconds) to milliseconds by multiplying with 1000
   const birthDate = new Date(birthdate.seconds * 1000);
   let age = today.getFullYear() - birthDate.getFullYear();
-  console.log(birthdate);
+  // console.log(birthdate);
   const monthDiff = today.getMonth() - birthDate.getMonth();
   if (
     monthDiff < 0 ||
@@ -17,7 +17,7 @@ const calculateAge = (birthdate) => {
   return age;
 };
 
-const AttendanceGroupCard = ({ groups }) => {
+const AttendanceGroupCard = ({ groups, eventOptions }) => {
   // Find the Guest group
   const guestGroup = groups.find((group) => group.classification === 'Guest');
 

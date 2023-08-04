@@ -5,6 +5,9 @@ import PageHeading from '@/components/PageHeading';
 import AttendanceSummaryReport from '@/components/AttendanceSummaryReport';
 import AttendancePage from '@/components/AttendancePage';
 
+//Context
+import EventContext from '@/context/eventContext';
+
 import { Fragment, useState } from 'react';
 import { Dialog, Menu, Transition } from '@headlessui/react';
 import {
@@ -42,6 +45,14 @@ export default function Summary() {
   const resetScanResult = () => {
     setScanResult('');
   };
+
+  const eventOptions = [
+    { value: '2023-07-30', label: 'July District Gathering' },
+    { value: '2023-03-26', label: 'March District Gathering' },
+    { value: '2023-08-06', label: 'August Open Door' },
+  ];
+
+  const [selectedEvent, setSelectedEvent] = useState(eventOptions[0]);
 
   return (
     <>
@@ -134,9 +145,11 @@ export default function Summary() {
           {/* Main section */}
           <main className="py-10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <PageHeading />
-              {/* <AttendanceSummaryReport /> */}
-              <AttendancePage />
+              <EventContext.Provider value={[selectedEvent, setSelectedEvent]}>
+                <PageHeading eventOptions={eventOptions} />
+                {/* <AttendanceSummaryReport /> */}
+                <AttendancePage />
+              </EventContext.Provider>
             </div>
           </main>
         </div>
