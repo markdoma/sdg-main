@@ -108,13 +108,20 @@ const AttendanceGroupCard = ({ groups, eventOptions }) => {
                 <tr>
                   <th className="px-4 py-2">Name</th>
                   <th className="px-4 py-2">Invited By</th>
+                  <th className="px-4 py-2">First Timer</th>
                 </tr>
               </thead>
               <tbody>
                 {guestGroup.data.map((item) => (
-                  <tr key={item.id}>
+                  <tr
+                    key={item.id}
+                    className={item.first_timer === 'yes' ? 'bg-green-200' : ''}
+                  >
                     <td className="border px-4 py-2">{`${item.firstname} ${item.lastname}`}</td>
                     <td className="border px-4 py-2">{item.invitedBy}</td>
+                    <td className="border px-4 py-2">
+                      {item.first_timer === 'yes' ? '🎊 🎉🎊 🎉🎊 🎉' : ''}
+                    </td>
                   </tr>
                 ))}
               </tbody>

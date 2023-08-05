@@ -18,11 +18,12 @@ const FormWithQRCode = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [dob, setDOB] = useState('');
-  const [gender, setGender] = useState('');
+  const [gender, setGender] = useState('Male');
   const [contact, setContact] = useState('');
   const [address, setAddress] = useState('');
   const [invitedBy, setInvitedBy] = useState('');
   const [status, setStatus] = useState('');
+  const [first, setFirst] = useState('yes');
   const [classification, setClassification] = useState('');
   const [showQRCode, setShowQRCode] = useState(false);
   const [uniqueCode, setUniqueCode] = useState('');
@@ -116,7 +117,8 @@ const FormWithQRCode = () => {
           newData.lastname,
           newData.pl,
           newData.invitedBy,
-          newData.sdg_class
+          newData.sdg_class,
+          first
         );
 
         // Now newData object has the doc_id property, and you can use it as needed.
@@ -180,7 +182,8 @@ const FormWithQRCode = () => {
     lastName,
     pl,
     invitedBy,
-    sdg_class
+    sdg_class,
+    first
   ) => {
     const newAttendanceRecord = {
       date: new Date(event.start.dateTime), // Replace with the actual event date from Google Calendar
@@ -194,6 +197,7 @@ const FormWithQRCode = () => {
       pastoral_leader: pl,
       invitedBy: invitedBy,
       sdg_class: sdg_class,
+      first_timer: first,
     };
     db.collection('master_data')
       .doc(id)
@@ -254,7 +258,8 @@ const FormWithQRCode = () => {
       selectedName.lastname,
       selectedName.pl,
       null,
-      selectedName.sdg_class
+      selectedName.sdg_class,
+      'no'
     );
   };
 
@@ -481,6 +486,7 @@ const FormWithQRCode = () => {
     setAddress('');
     setInvitedBy('');
     setStatus('');
+    setFirst('');
     setClassification('');
     setSelectedName(null);
     setShowQRCode(false);
@@ -605,23 +611,6 @@ const FormWithQRCode = () => {
           ) : (
             <>
               <div className="mb-4">
-                {/* <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="lastName"
-                >
-                  Last Name
-                </label> */}
-                {/* <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="lastName"
-                  type="text"
-                  placeholder="Last Name"
-                  value={lastName}
-                  onChange={handleLastNameChange}
-                  required
-                  autoComplete="off"
-                /> */}
-
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="firstName"
@@ -634,12 +623,6 @@ const FormWithQRCode = () => {
                 />
               </div>
               <div className="mb-4">
-                {/* <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="status"
-                >
-                  Status
-                </label> */}
                 <select
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="status"
@@ -673,12 +656,6 @@ const FormWithQRCode = () => {
                 />
               </div>
               <div className="mb-4">
-                {/* <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="gender"
-                >
-                  Gender
-                </label> */}
                 <div className="flex items-center space-x-4">
                   <label className="flex items-center space-x-2 cursor-pointer">
                     <input
@@ -688,6 +665,7 @@ const FormWithQRCode = () => {
                       value="Male"
                       checked={gender === 'Male'}
                       onChange={(e) => setGender(e.target.value)}
+                      required
                     />
                     <span className="text-gray-700">Male</span>
                   </label>
@@ -699,18 +677,13 @@ const FormWithQRCode = () => {
                       value="Female"
                       checked={gender === 'Female'}
                       onChange={(e) => setGender(e.target.value)}
+                      required
                     />
                     <span className="text-gray-700">Female</span>
                   </label>
                 </div>
               </div>
               <div className="mb-4">
-                {/* <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="contact"
-                >
-                  Contact No.
-                </label> */}
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="contact"
@@ -723,12 +696,6 @@ const FormWithQRCode = () => {
                 />
               </div>
               <div className="mb-4">
-                {/* <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="address"
-                >
-                  Address
-                </label> */}
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="address"
@@ -742,12 +709,6 @@ const FormWithQRCode = () => {
               </div>
 
               <div className="mb-4">
-                {/* <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="invitedBy"
-                >
-                  Invited By
-                </label> */}
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="invitedBy"
@@ -774,6 +735,38 @@ const FormWithQRCode = () => {
                     ))}
                   </ul>
                 )}
+              </div>
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="dob"
+              >
+                Is this your first time to attend?{' '}
+              </label>
+              <div className="flex items-center space-x-4 mb-2">
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    className="form-radio text-blue-500"
+                    name="first"
+                    value="no"
+                    checked={first === 'no'}
+                    onChange={(e) => setFirst(e.target.value)}
+                    required
+                  />
+                  <span className="text-gray-700">No</span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    className="form-radio text-pink-500"
+                    name="first"
+                    value="yes"
+                    checked={first === 'yes'}
+                    onChange={(e) => setFirst(e.target.value)}
+                    required
+                  />
+                  <span className="text-gray-700">Yes</span>
+                </label>
               </div>
               <div className="mb-8 border border-green-500 p-4 rounded-lg">
                 <div className="mb-4">
@@ -828,6 +821,7 @@ const FormWithQRCode = () => {
               gender: gender,
               invitedBy: invitedBy,
               contact: contact,
+              first: first,
               // Add more fields as needed
             }}
             onClose={handleConfirmationModalClose}

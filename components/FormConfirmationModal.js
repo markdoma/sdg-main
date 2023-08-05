@@ -10,8 +10,12 @@ const FormConfirmationModal = ({ data, onClose, onConfirm }) => {
           correct.
         </p>
         <div className="mb-2">
+          <p className="font-bold">Surname:</p>
+          <p>{data.lastname}</p>
+        </div>
+        <div className="mb-2">
           <p className="font-bold">Name:</p>
-          <p>{`${data.firstname} ${data.lastname}`}</p>
+          <p>{data.firstname}</p>
         </div>
         <div className="mb-2">
           <p className="font-bold">Gener:</p>
@@ -29,9 +33,16 @@ const FormConfirmationModal = ({ data, onClose, onConfirm }) => {
           <p className="font-bold">Status:</p>
           <p>{data.civilstatus}</p>
         </div>
-        <div className="mb-10">
+        <div className="mb-2">
           <p className="font-bold">Invited By:</p>
           <p>{data.invitedBy}</p>
+        </div>
+        <div className="mb-10">
+          <p className="font-bold">
+            First time to attend:{' '}
+            <span className="text-red-800">{data.first.toUpperCase()}</span>
+          </p>
+          {/* <p>{data.first}</p> */}
         </div>
         {/* Add more fields as needed */}
         <div className="flex justify-between">
