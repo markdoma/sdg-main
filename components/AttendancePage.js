@@ -69,6 +69,8 @@ const AttendancePage = () => {
         return {
           ...attendanceItem,
           birthdate: masterDataItem.birthdate || null,
+          gender: masterDataItem.gender || null,
+          civilstatus: masterDataItem.civilstatus || null,
           // Add other fields from masterDataItem if needed
         };
       }
