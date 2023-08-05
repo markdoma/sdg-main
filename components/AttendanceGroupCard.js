@@ -39,7 +39,7 @@ const AttendanceGroupCard = ({ groups, eventOptions }) => {
       group.data.filter((item) => {
         const age = calculateAge(item.birthdate);
         // console.log(age);
-        return age < 18;
+        return age < 12;
       }).length
     );
   }, 0);
