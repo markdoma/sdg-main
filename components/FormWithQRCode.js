@@ -282,29 +282,53 @@ const FormWithQRCode = () => {
     resetForm();
   };
 
+  // const handleFirstNameChange = (e) => {
+  //   const inputFirstName = e.target.value;
+  //   setFirstName(inputFirstName);
+
+  //   setSelectedName(null);
+
+  //   if (inputFirstName.trim() === '') {
+  //     setMatchedNames([]); // Clear the matched names list if the input is empty
+  //   } else {
+  //     const matched = members.filter((record) =>
+  //       record.firstname.toLowerCase().includes(inputFirstName.toLowerCase())
+  //     );
+  //     setMatchedNames(
+  //       matched.map((record) => `${record.firstname} ${record.lastname}`)
+  //     );
+  //     setSelectedName(null);
+  //   }
+  // };
+
   const handleFirstNameChange = (e) => {
-    const inputFirstName = e.target.value;
-    setFirstName(inputFirstName);
+    setFirstName(e.target.value);
+    setSelectedName(null);
+  };
+
+  const handleLastNameChange = (e) => {
+    const inputLastName = e.target.value;
+    setLastName(inputLastName);
 
     setSelectedName(null);
 
-    if (inputFirstName.trim() === '') {
+    if (inputLastName.trim() === '') {
       setMatchedNames([]); // Clear the matched names list if the input is empty
     } else {
       const matched = members.filter((record) =>
-        record.firstname.toLowerCase().includes(inputFirstName.toLowerCase())
+        record.lastname.toLowerCase().includes(inputLastName.toLowerCase())
       );
       setMatchedNames(
-        matched.map((record) => `${record.firstname} ${record.lastname}`)
+        matched.map((record) => `${record.lastname}, ${record.firstname}`)
       );
       setSelectedName(null);
     }
   };
 
-  const handleLastNameChange = (e) => {
-    setLastName(e.target.value);
-    setSelectedName(null);
-  };
+  // const handleLastNameChange = (e) => {
+  //   setLastName(e.target.value);
+  //   setSelectedName(null);
+  // };
 
   const handleInvitedByChange = (e) => {
     const inputInvitedBy = e.target.value;
@@ -330,7 +354,7 @@ const FormWithQRCode = () => {
   const handleMatchedNameClick = (selectedName) => {
     // console.log(selectedName);
     const matchedRecord = members.find((record) => {
-      const fullName = `${record.firstname} ${record.lastname}`.toLowerCase();
+      const fullName = `${record.lastname}, ${record.firstname}`.toLowerCase();
       return fullName === selectedName.toLowerCase();
     });
 
@@ -375,7 +399,7 @@ const FormWithQRCode = () => {
             >
               First Name
             </label> */}
-            <input
+            {/* <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="firstName"
               type="text"
@@ -384,9 +408,20 @@ const FormWithQRCode = () => {
               onChange={handleFirstNameChange}
               required
               autoComplete="off"
+            /> */}
+
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="lastName"
+              type="text"
+              placeholder="Surname"
+              value={lastName}
+              onChange={handleLastNameChange}
+              required
+              autoComplete="off"
             />
 
-            {firstName.trim().length >= 3 && matchedNames.length > 0 && (
+            {lastName.trim().length >= 3 && matchedNames.length > 0 && (
               <ul className="mt-2 p-2 border border-gray-300 bg-gray-100 rounded-md">
                 {matchedNames.map((matchedName, index) => (
                   <li
@@ -474,13 +509,24 @@ const FormWithQRCode = () => {
                 >
                   Last Name
                 </label> */}
-                <input
+                {/* <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="lastName"
                   type="text"
                   placeholder="Last Name"
                   value={lastName}
                   onChange={handleLastNameChange}
+                  required
+                  autoComplete="off"
+                /> */}
+
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="firstName"
+                  type="text"
+                  placeholder="Name"
+                  value={firstName}
+                  onChange={handleFirstNameChange}
                   required
                   autoComplete="off"
                 />
