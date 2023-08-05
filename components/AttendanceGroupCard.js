@@ -119,7 +119,7 @@ const AttendanceGroupCard = ({ groups, eventOptions }) => {
                   >
                     <td className="border px-4 py-2">{`${item.firstname} ${item.lastname}`}</td>
                     <td className="border px-4 py-2">{item.invitedBy}</td>
-                    <td className="border px-4 py-2">
+                    <td className="border px-4 py-2 text-center">
                       {item.first_timer === 'yes' ? '🎊 🎉🎊 🎉🎊 🎉' : ''}
                     </td>
                   </tr>

@@ -121,8 +121,6 @@ const FormWithQRCode = () => {
           first
         );
 
-        // Now newData object has the doc_id property, and you can use it as needed.
-
         // Update the "master_data" collection with the doc_id property
         db.collection('master_data')
           .doc(docRef.id)
@@ -150,7 +148,6 @@ const FormWithQRCode = () => {
     try {
       const response = await axios.get(
         `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events`,
-        // `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events`,
         {
           params: {
             // key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
@@ -188,8 +185,7 @@ const FormWithQRCode = () => {
     const newAttendanceRecord = {
       date: new Date(event.start.dateTime), // Replace with the actual event date from Google Calendar
       event: event.summary, // Replace with the actual event name from Google Calendar
-      // date: new Date('07/30/2023'), // Replace with the actual event date from Google Calendar
-      // event: 'SDG: District Gathering', // Replace with the actual event name from Google Calendar
+
       id: id,
       no: no,
       firstname: capitalizeName(firstName),
@@ -219,8 +215,7 @@ const FormWithQRCode = () => {
     // Check if attendance is already captured for today's event
     if (selectedName && eventDetails && eventDetails.start.dateTime) {
       const eventDateTime = new Date(eventDetails.start.dateTime);
-      // console.log(eventDateTime);
-      // console.log(isAttendanceCaptured);
+
       // Firestore query to check if a matching attendance record exists
       db.collection('master_data')
         .doc(selectedName.doc_id)
@@ -293,119 +288,7 @@ const FormWithQRCode = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setShowConfirmationModal(true);
-    // // Convert the data to JSON format using the new function
-    // const jsonData = convertToJSON(firstName, lastName);
-
-    // const generatedCode = uuidv4();
-    // setUniqueCode(generatedCode);
-    // setShowQRCode(true);
-    // setIsSaved(true);
-    // // Prepare the data to be saved in the database
-    // const newData = {
-    //   no: getMaxNoValue() + 1,
-    //   parent_no: null,
-    //   lastname: capitalizeName(lastName),
-    //   firstname: capitalizeName(firstName),
-    //   middlename: null,
-    //   suffix: null,
-    //   nickname: null,
-    //   gender: gender,
-    //   birthdate: new Date(dob),
-    //   street: address,
-    //   brgy: null,
-    //   city: null,
-    //   province: null,
-    //   region: null,
-    //   civilstatus: status,
-    //   bloodtype: null,
-    //   weddingdate: null,
-    //   contact: contact,
-    //   emailadd: null,
-    //   fathersname: null,
-    //   mothersname: null,
-    //   profession_course: null,
-    //   company_school: null,
-    //   cwryear: null,
-    //   entry: null,
-    //   sdg_class: classification,
-    //   status: null,
-    //   pl: null,
-    //   service_role: null,
-    //   ligaya: null,
-    //   chrurch: null,
-    //   lat: null,
-    //   long: null,
-    //   qrCode: jsonData,
-    //   insert_date: new Date(),
-    //   insert_by: 'Reg Team',
-    //   update_date: null,
-    //   update_by: null,
-    //   invitedBy: invitedBy,
-    // };
-
-    // // Add the data to the "master_data" collection in the database
-    // db.collection('master_data')
-    //   .add(newData)
-    //   .then((docRef) => {
-    //     console.log('Document written with ID: ', docRef.id);
-
-    //     // Update the newData object with the doc_id
-    //     newData.doc_id = docRef.id;
-
-    //     // Add the attendance record when the "Present" button is clicked
-    //     addAttendanceRecord(
-    //       eventDetails,
-    //       newData.doc_id,
-    //       newData.no,
-    //       newData.firstname,
-    //       newData.lastname,
-    //       newData.pl,
-    //       newData.invitedBy,
-    //       newData.sdg_class
-    //     );
-
-    //     // Now newData object has the doc_id property, and you can use it as needed.
-
-    //     // Update the "master_data" collection with the doc_id property
-    //     db.collection('master_data')
-    //       .doc(docRef.id)
-    //       .update({ doc_id: docRef.id })
-    //       .then(() => {
-    //         console.log('Document updated with doc_id: ', docRef.id);
-    //       })
-    //       .catch((error) => {
-    //         console.error('Error updating document with doc_id: ', error);
-    //       });
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error adding document: ', error);
-    //   });
   };
-
-  // const handleModalClose = () => {
-  //   // Handle form reset and modal close
-  //   setIsSaved(false);
-  //   resetForm();
-  // };
-
-  // const handleFirstNameChange = (e) => {
-  //   const inputFirstName = e.target.value;
-  //   setFirstName(inputFirstName);
-
-  //   setSelectedName(null);
-
-  //   if (inputFirstName.trim() === '') {
-  //     setMatchedNames([]); // Clear the matched names list if the input is empty
-  //   } else {
-  //     const matched = members.filter((record) =>
-  //       record.firstname.toLowerCase().includes(inputFirstName.toLowerCase())
-  //     );
-  //     setMatchedNames(
-  //       matched.map((record) => `${record.firstname} ${record.lastname}`)
-  //     );
-  //     setSelectedName(null);
-  //   }
-  // };
 
   const handleFirstNameChange = (e) => {
     setFirstName(e.target.value);
@@ -432,11 +315,6 @@ const FormWithQRCode = () => {
       setSelectedName(null);
     }
   };
-
-  // const handleLastNameChange = (e) => {
-  //   setLastName(e.target.value);
-  //   setSelectedName(null);
-  // };
 
   const handleInvitedByChange = (e) => {
     const inputInvitedBy = e.target.value;
@@ -502,22 +380,6 @@ const FormWithQRCode = () => {
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
         >
           <div className="mb-4">
-            {/* <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="firstName"
-            >
-              First Name
-            </label> */}
-            {/* <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="firstName"
-              type="text"
-              placeholder="First Name"
-              value={firstName}
-              onChange={handleFirstNameChange}
-              required
-              autoComplete="off"
-            /> */}
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="lastName"
@@ -597,16 +459,6 @@ const FormWithQRCode = () => {
                   </p>
                 </div>
               )}
-              {/* <div className="mb-4">
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="qrCode"
-                >
-                  Assigned QR Code
-                </label>
-
-                <QRCode value="{name: Mark Jayson, id: 1234}" size={256} />
-              </div> */}
             </>
           ) : (
             <>
