@@ -484,9 +484,9 @@ const FormWithQRCode = () => {
                   autoComplete="off"
                 >
                   <option value="">Select Status</option>
-                  <option value="single">Single</option>
-                  <option value="married">Married</option>
-                  <option value="kids">Kids</option>
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="Kids">Kids</option>
                 </select>
               </div>
               <div className="mb-4">

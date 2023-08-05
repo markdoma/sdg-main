@@ -22,9 +22,6 @@ const calculateAge = (birthdate) => {
 };
 
 const AttendanceGroupCard = ({ groups, eventOptions }) => {
-  // Find the Guest group
-  const guestGroup = groups.find((group) => group.classification === 'Guest');
-
   // Filter out the Guest group and other classifications
   const otherGroups = groups.filter(
     (group) => group.classification !== 'Guest'
@@ -56,6 +53,26 @@ const AttendanceGroupCard = ({ groups, eventOptions }) => {
   }, {});
 
   const totalAdults = totalAttendees - totalKids;
+
+  const separateGuestsByCivilStatusAndGender = (guests) => {
+    const groupedGuests = {};
+
+    guests.forEach((guest) => {
+      const { civilstatus, gender } = guest;
+      const groupKey = `${gender} -  ${civilstatus}`;
+
+      if (!groupedGuests[groupKey]) {
+        groupedGuests[groupKey] = [];
+      }
+
+      groupedGuests[groupKey].push(guest);
+    });
+
+    return groupedGuests;
+  };
+
+  // Find the Guest group
+  const guestGroup = groups.find((group) => group.classification === 'Guest');
 
   return (
     <div className="flex justify-center items-start h-screen">
@@ -99,37 +116,49 @@ const AttendanceGroupCard = ({ groups, eventOptions }) => {
         </div>
 
         {/* Guest Card */}
-        {guestGroup && guestGroup.data.length > 0 && (
+        {guestGroup && guestGroup.data && guestGroup.data.length > 0 && (
           <div
             key={guestGroup.classification}
-            className="col-span-4 p-4 bg-red-300 rounded"
+            className="col-span-4 p-4 bg-red-200 rounded"
           >
             <h2 className="text-xl font-bold mb-2">
               {guestGroup.classification}
             </h2>
-            <table className="table-auto w-full">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2">Name</th>
-                  <th className="px-4 py-2">Invited By</th>
-                  <th className="px-4 py-2">First Timer</th>
-                </tr>
-              </thead>
-              <tbody>
-                {guestGroup.data.map((item) => (
-                  <tr
-                    key={item.id}
-                    className={item.first_timer === 'yes' ? 'bg-green-200' : ''}
-                  >
-                    <td className="border px-4 py-2">{`${item.firstname} ${item.lastname}`}</td>
-                    <td className="border px-4 py-2">{item.invitedBy}</td>
-                    <td className="border px-4 py-2 text-center">
-                      {item.first_timer === 'yes' ? '🎊 🎉🎊 🎉🎊 🎉' : ''}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {/* Separate guests by civil status and gender */}
+            {Object.entries(
+              separateGuestsByCivilStatusAndGender(guestGroup.data)
+            ).map(([groupKey, guests]) => (
+              <div key={groupKey}>
+                <h2 className="text-xl font-bold mb-2 mt-4 underline text-center">
+                  {groupKey}
+                </h2>
+                <table className="table-auto w-full">
+                  <thead>
+                    <tr>
+                      <th className="px-4 py-2">Name</th>
+                      <th className="px-4 py-2">Invited By</th>
+                      <th className="px-4 py-2">First Timer</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {guests.map((item) => (
+                      <tr
+                        key={item.id}
+                        className={
+                          item.first_timer === 'yes' ? 'bg-green-100' : ''
+                        }
+                      >
+                        <td className="border px-4 py-2">{`${item.firstname} ${item.lastname}`}</td>
+                        <td className="border px-4 py-2">{item.invitedBy}</td>
+                        <td className="border px-4 py-2 text-center">
+                          {item.first_timer === 'yes' ? '🎊 🎉🎊 🎉🎊 🎉' : ''}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
           </div>
         )}
 
