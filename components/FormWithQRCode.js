@@ -5,6 +5,7 @@ import { db } from '../utils/firebase';
 import axios from 'axios';
 
 import Modal from '../components/Modal';
+import FormConfirmationModal from '../components/FormConfirmationModal';
 
 const capitalizeName = (name) => {
   return name
@@ -35,11 +36,111 @@ const FormWithQRCode = () => {
   const [eventDetails, setEventDetails] = useState(null);
   // State when Present button is submitted - For those who are in the database
   const [isPresentButtonClicked, setIsPresentButtonClicked] = useState(false);
-  // State when form is submitted
-  const [isSaved, setIsSaved] = useState(false);
+  // State when form is confirmed
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
   // New state variable to track whether attendance is already captured for today's event
   const [isAttendanceCaptured, setIsAttendanceCaptured] = useState(false);
+
+  // Modals
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const handleConfirmationModalConfirm = () => {
+    // Handle the form submission here after the user confirms the information
+    setShowConfirmationModal(false);
+    setIsConfirmed(true);
+    // Convert the data to JSON format using the new function
+    const jsonData = convertToJSON(firstName, lastName);
+
+    const generatedCode = uuidv4();
+    setUniqueCode(generatedCode);
+    setShowQRCode(true);
+
+    // Prepare the data to be saved in the database
+    const newData = {
+      no: getMaxNoValue() + 1,
+      parent_no: null,
+      lastname: capitalizeName(lastName),
+      firstname: capitalizeName(firstName),
+      middlename: null,
+      suffix: null,
+      nickname: null,
+      gender: gender,
+      birthdate: new Date(dob),
+      street: address,
+      brgy: null,
+      city: null,
+      province: null,
+      region: null,
+      civilstatus: status,
+      bloodtype: null,
+      weddingdate: null,
+      contact: contact,
+      emailadd: null,
+      fathersname: null,
+      mothersname: null,
+      profession_course: null,
+      company_school: null,
+      cwryear: null,
+      entry: null,
+      sdg_class: classification,
+      status: null,
+      pl: null,
+      service_role: null,
+      ligaya: null,
+      chrurch: null,
+      lat: null,
+      long: null,
+      qrCode: jsonData,
+      insert_date: new Date(),
+      insert_by: 'Reg Team',
+      update_date: null,
+      update_by: null,
+      invitedBy: invitedBy,
+    };
+
+    // Add the data to the "master_data" collection in the database
+    db.collection('master_data')
+      .add(newData)
+      .then((docRef) => {
+        console.log('Document written with ID: ', docRef.id);
+
+        // Update the newData object with the doc_id
+        newData.doc_id = docRef.id;
+
+        // Add the attendance record when the "Present" button is clicked
+        addAttendanceRecord(
+          eventDetails,
+          newData.doc_id,
+          newData.no,
+          newData.firstname,
+          newData.lastname,
+          newData.pl,
+          newData.invitedBy,
+          newData.sdg_class
+        );
+
+        // Now newData object has the doc_id property, and you can use it as needed.
+
+        // Update the "master_data" collection with the doc_id property
+        db.collection('master_data')
+          .doc(docRef.id)
+          .update({ doc_id: docRef.id })
+          .then(() => {
+            console.log('Document updated with doc_id: ', docRef.id);
+          })
+          .catch((error) => {
+            console.error('Error updating document with doc_id: ', error);
+          });
+      })
+      .catch((error) => {
+        console.error('Error adding document: ', error);
+      });
+  };
+
+  const handleConfirmationModalClose = () => {
+    // Hide the confirmation modal when the user clicks on "Edit"
+    setShowConfirmationModal(false);
+  };
 
   // Function to retrieve event details from Google Calendar's event list for the current day
 
@@ -186,101 +287,101 @@ const FormWithQRCode = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
+    setShowConfirmationModal(true);
+    // // Convert the data to JSON format using the new function
+    // const jsonData = convertToJSON(firstName, lastName);
 
-    // Convert the data to JSON format using the new function
-    const jsonData = convertToJSON(firstName, lastName);
+    // const generatedCode = uuidv4();
+    // setUniqueCode(generatedCode);
+    // setShowQRCode(true);
+    // setIsSaved(true);
+    // // Prepare the data to be saved in the database
+    // const newData = {
+    //   no: getMaxNoValue() + 1,
+    //   parent_no: null,
+    //   lastname: capitalizeName(lastName),
+    //   firstname: capitalizeName(firstName),
+    //   middlename: null,
+    //   suffix: null,
+    //   nickname: null,
+    //   gender: gender,
+    //   birthdate: new Date(dob),
+    //   street: address,
+    //   brgy: null,
+    //   city: null,
+    //   province: null,
+    //   region: null,
+    //   civilstatus: status,
+    //   bloodtype: null,
+    //   weddingdate: null,
+    //   contact: contact,
+    //   emailadd: null,
+    //   fathersname: null,
+    //   mothersname: null,
+    //   profession_course: null,
+    //   company_school: null,
+    //   cwryear: null,
+    //   entry: null,
+    //   sdg_class: classification,
+    //   status: null,
+    //   pl: null,
+    //   service_role: null,
+    //   ligaya: null,
+    //   chrurch: null,
+    //   lat: null,
+    //   long: null,
+    //   qrCode: jsonData,
+    //   insert_date: new Date(),
+    //   insert_by: 'Reg Team',
+    //   update_date: null,
+    //   update_by: null,
+    //   invitedBy: invitedBy,
+    // };
 
-    const generatedCode = uuidv4();
-    setUniqueCode(generatedCode);
-    setShowQRCode(true);
-    setIsSaved(true);
-    // Prepare the data to be saved in the database
-    const newData = {
-      no: getMaxNoValue() + 1,
-      parent_no: null,
-      lastname: capitalizeName(lastName),
-      firstname: capitalizeName(firstName),
-      middlename: null,
-      suffix: null,
-      nickname: null,
-      gender: gender,
-      birthdate: new Date(dob),
-      street: address,
-      brgy: null,
-      city: null,
-      province: null,
-      region: null,
-      civilstatus: status,
-      bloodtype: null,
-      weddingdate: null,
-      contact: contact,
-      emailadd: null,
-      fathersname: null,
-      mothersname: null,
-      profession_course: null,
-      company_school: null,
-      cwryear: null,
-      entry: null,
-      sdg_class: classification,
-      status: null,
-      pl: null,
-      service_role: null,
-      ligaya: null,
-      chrurch: null,
-      lat: null,
-      long: null,
-      qrCode: jsonData,
-      insert_date: new Date(),
-      insert_by: 'Reg Team',
-      update_date: null,
-      update_by: null,
-      invitedBy: invitedBy,
-    };
+    // // Add the data to the "master_data" collection in the database
+    // db.collection('master_data')
+    //   .add(newData)
+    //   .then((docRef) => {
+    //     console.log('Document written with ID: ', docRef.id);
 
-    // Add the data to the "master_data" collection in the database
-    db.collection('master_data')
-      .add(newData)
-      .then((docRef) => {
-        console.log('Document written with ID: ', docRef.id);
+    //     // Update the newData object with the doc_id
+    //     newData.doc_id = docRef.id;
 
-        // Update the newData object with the doc_id
-        newData.doc_id = docRef.id;
+    //     // Add the attendance record when the "Present" button is clicked
+    //     addAttendanceRecord(
+    //       eventDetails,
+    //       newData.doc_id,
+    //       newData.no,
+    //       newData.firstname,
+    //       newData.lastname,
+    //       newData.pl,
+    //       newData.invitedBy,
+    //       newData.sdg_class
+    //     );
 
-        // Add the attendance record when the "Present" button is clicked
-        addAttendanceRecord(
-          eventDetails,
-          newData.doc_id,
-          newData.no,
-          newData.firstname,
-          newData.lastname,
-          newData.pl,
-          newData.invitedBy,
-          newData.sdg_class
-        );
+    //     // Now newData object has the doc_id property, and you can use it as needed.
 
-        // Now newData object has the doc_id property, and you can use it as needed.
-
-        // Update the "master_data" collection with the doc_id property
-        db.collection('master_data')
-          .doc(docRef.id)
-          .update({ doc_id: docRef.id })
-          .then(() => {
-            console.log('Document updated with doc_id: ', docRef.id);
-          })
-          .catch((error) => {
-            console.error('Error updating document with doc_id: ', error);
-          });
-      })
-      .catch((error) => {
-        console.error('Error adding document: ', error);
-      });
+    //     // Update the "master_data" collection with the doc_id property
+    //     db.collection('master_data')
+    //       .doc(docRef.id)
+    //       .update({ doc_id: docRef.id })
+    //       .then(() => {
+    //         console.log('Document updated with doc_id: ', docRef.id);
+    //       })
+    //       .catch((error) => {
+    //         console.error('Error updating document with doc_id: ', error);
+    //       });
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error adding document: ', error);
+    //   });
   };
 
-  const handleModalClose = () => {
-    // Handle form reset and modal close
-    setIsSaved(false);
-    resetForm();
-  };
+  // const handleModalClose = () => {
+  //   // Handle form reset and modal close
+  //   setIsSaved(false);
+  //   resetForm();
+  // };
 
   // const handleFirstNameChange = (e) => {
   //   const inputFirstName = e.target.value;
@@ -382,7 +483,7 @@ const FormWithQRCode = () => {
     setSelectedName(null);
     setShowQRCode(false);
     setUniqueCode('');
-    setIsSaved(false);
+    setIsConfirmed(false);
   };
 
   return (
@@ -713,13 +814,33 @@ const FormWithQRCode = () => {
               </div>
             </>
           )}
+          <div className="m-4">
+            <p className="italic text-gray-600 text-sm">
+              Disclaimer: The information you provide will solely be used for
+              Ligaya ng Panginoon purposes. We prioritize data privacy and do
+              not share your data with third parties.
+            </p>
+          </div>
         </form>
+        {/* Render the confirmation modal when showConfirmationModal is true */}
+        {showConfirmationModal && (
+          <FormConfirmationModal
+            data={{
+              firstname: firstName,
+              lastname: lastName,
+              birthdate: dob,
+              // Add more fields as needed
+            }}
+            onClose={handleConfirmationModalClose}
+            onConfirm={handleConfirmationModalConfirm}
+          />
+        )}
         {/* Render the modal when isSubmitted is true or isPresentButtonClicked is true */}
-        {(isSaved || isPresentButtonClicked) && (
+        {(isConfirmed || isPresentButtonClicked) && (
           <Modal
             onClose={() => {
               setIsPresentButtonClicked(false); // Reset isPresentButtonClicked to false when modal is closed
-              setIsSaved(false);
+              setIsConfirmed(false);
               resetForm();
             }}
             eventSummary={eventDetails ? eventDetails.summary : ''}
