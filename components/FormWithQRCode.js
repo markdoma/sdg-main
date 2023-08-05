@@ -405,6 +405,7 @@ const FormWithQRCode = () => {
   const handleFirstNameChange = (e) => {
     setFirstName(e.target.value);
     setSelectedName(null);
+    setMatchedNames([]);
   };
 
   const handleLastNameChange = (e) => {
@@ -415,6 +416,7 @@ const FormWithQRCode = () => {
 
     if (inputLastName.trim() === '') {
       setMatchedNames([]); // Clear the matched names list if the input is empty
+      setFirstName('');
     } else {
       const matched = members.filter((record) =>
         record.lastname.toLowerCase().includes(inputLastName.toLowerCase())
@@ -510,7 +512,6 @@ const FormWithQRCode = () => {
               required
               autoComplete="off"
             /> */}
-
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="lastName"
@@ -521,7 +522,7 @@ const FormWithQRCode = () => {
               required
               autoComplete="off"
             />
-
+            {/* Show Matched names */}
             {lastName.trim().length >= 3 && matchedNames.length > 0 && (
               <ul className="mt-2 p-2 border border-gray-300 bg-gray-100 rounded-md">
                 {matchedNames.map((matchedName, index) => (
@@ -814,13 +815,6 @@ const FormWithQRCode = () => {
               </div>
             </>
           )}
-          <div className="m-4">
-            <p className="italic text-gray-600 text-sm">
-              Disclaimer: The information you provide will solely be used for
-              Ligaya ng Panginoon purposes. We prioritize data privacy and do
-              not share your data with third parties.
-            </p>
-          </div>
         </form>
         {/* Render the confirmation modal when showConfirmationModal is true */}
         {showConfirmationModal && (
@@ -829,6 +823,11 @@ const FormWithQRCode = () => {
               firstname: firstName,
               lastname: lastName,
               birthdate: dob,
+              civilstatus: status,
+              address: address,
+              gender: gender,
+              invitedBy: invitedBy,
+              contact: contact,
               // Add more fields as needed
             }}
             onClose={handleConfirmationModalClose}
