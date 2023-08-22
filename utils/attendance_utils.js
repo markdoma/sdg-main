@@ -1,5 +1,3 @@
-import { db } from '../utils/firebase';
-
 // Capitalize Names
 export const capitalizeName = (name) => {
   return name
@@ -33,44 +31,4 @@ export const getEventDetailsFromGoogleCalendar = async () => {
   } catch (error) {
     console.error('Error fetching events:', error);
   }
-};
-
-// Function to add a new attendance record to the "attendance" collection
-const addAttendanceRecord = (
-  event,
-  id,
-  no,
-  firstName,
-  lastName,
-  pl,
-  invitedBy,
-  sdg_class,
-  first
-) => {
-  const newAttendanceRecord = {
-    date: new Date(event.start.dateTime), // Replace with the actual event date from Google Calendar
-    event: event.summary, // Replace with the actual event name from Google Calendar
-    id: id,
-    no: no,
-    firstname: capitalizeName(firstName),
-    lastname: capitalizeName(lastName),
-    pastoral_leader: pl,
-    invitedBy: invitedBy,
-    sdg_class: sdg_class,
-    first_timer: first,
-  };
-  db.collection('master_data')
-    .doc(id)
-    .collection('attendance')
-    // db.collection('attendance')
-    .add(newAttendanceRecord)
-    .then((docRef) => {
-      console.log('Attendance record added with ID: ', docRef.id);
-      // If you need to do anything after successfully adding the record, you can put it here.
-    })
-    .catch((error) => {
-      console.error('Error adding attendance record: ', error);
-    });
-
-  setIsPresentButtonClicked(true);
 };

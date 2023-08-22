@@ -1,10 +1,10 @@
-import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
-import FormWithQRCode from "@/components/FormWithQRCode";
-import QRCodeScanner from "@/components/QRCodeScanner";
+import Header from '@/components/Header';
+import Sidebar from '@/components/Sidebar';
+import FormWithQRCode from '@/components/FormWithQRCode';
+import Html5QrcodePlugin from '../components/Html5QrcodePlugin';
 
-import { Fragment, useState } from "react";
-import { Dialog, Menu, Transition } from "@headlessui/react";
+import { Fragment, useState } from 'react';
+import { Dialog, Menu, Transition } from '@headlessui/react';
 import {
   Bars3Icon,
   BellIcon,
@@ -16,11 +16,17 @@ import {
   HomeIcon,
   UsersIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline';
 import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
-} from "@heroicons/react/20/solid";
+} from '@heroicons/react/20/solid';
+
+const onNewScanResult = (decodedText, decodedResult) => {
+  // handle decoded results here
+
+  alert(decodedText);
+};
 
 export default function Sample() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -29,17 +35,6 @@ export default function Sample() {
   //   console.log("Scanned QR Code:", data);
   //   // Add your logic to handle the scanned QR code data here
   // };
-
-  const [scanResult, setScanResult] = useState("");
-
-  const handleScan = (data) => {
-    setScanResult(data);
-    // console.log("Scanned QR Code:", data);
-  };
-
-  const resetScanResult = () => {
-    setScanResult("");
-  };
 
   return (
     <>
@@ -135,9 +130,11 @@ export default function Sample() {
               <div>Back</div>
 
               {/* <button onClick={resetScanResult}>Reset Scan Result</button> */}
-              <QRCodeScanner
-                onScan={handleScan}
-                resetScanResult={resetScanResult}
+              <Html5QrcodePlugin
+                fps={10}
+                qrbox={250}
+                disableFlip={false}
+                qrCodeSuccessCallback={onNewScanResult}
               />
             </div>
           </main>

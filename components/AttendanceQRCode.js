@@ -21,6 +21,9 @@ const QRCodeScanner = () => {
   }, []);
 
   const handleScan = (data) => {
+    if (eventDetails.isEmpty()) {
+      Alert('No event!');
+    }
     if (data) {
       setQRData(data);
       checkDatabaseForAttendance(data);
@@ -46,10 +49,9 @@ const QRCodeScanner = () => {
       const no = doc.data().no;
       const pl = doc.data().pl;
       const sdg_class = doc.data().sdg_class;
-
       const fullName = firstName + ' ' + lastName;
 
-      if (fullName === qrData) {
+      if (fullName === qrData && !eventDetails.isEmpty()) {
         // Insert attendance record and reset QR settings
         const attendanceRef = doc.ref.collection('attendance');
         attendanceRef.add({

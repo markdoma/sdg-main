@@ -22,6 +22,7 @@
     "firebase": "^8.10.1",
     "html-to-pdf": "^0.1.11",
     "html2canvas": "^1.4.1",
+    "html5-qrcode": "^2.3.8",
     "jspdf": "^2.5.1",
     "next": "^13.4.7",
     "papaparse": "^5.4.1",
