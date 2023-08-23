@@ -1,9 +1,12 @@
 import Header from '@/components/Header';
+
 import Sidebar from '@/components/Sidebar';
 import FormWithQRCode from '@/components/FormWithQRCode';
 import Html5QrcodePlugin from '../components/Html5QrcodePlugin';
+import { getEventDetailsFromGoogleCalendar } from '../utils/attendance_utils';
+import { db } from '../utils/firebase';
 
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Menu, Transition } from '@headlessui/react';
 import {
   Bars3Icon,
@@ -22,19 +25,82 @@ import {
   MagnifyingGlassIcon,
 } from '@heroicons/react/20/solid';
 
-const onNewScanResult = (decodedText, decodedResult) => {
-  // handle decoded results here
-
-  alert(decodedText);
-};
-
 export default function Sample() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [qrData, setQRData] = useState(null);
+  const [eventDetails, setEventDetails] = useState(null);
 
   // const handleScan = (data) => {
   //   console.log("Scanned QR Code:", data);
   //   // Add your logic to handle the scanned QR code data here
+
+  useEffect(() => {
+    // Fetch event details from Google Calendar when the component mounts
+    getEventDetailsFromGoogleCalendar()
+      .then((event) => {
+        setEventDetails(event);
+      })
+      .catch((error) => {
+        console.error('Error fetching event details: ', error);
+      });
+  }, []);
   // };
+
+  const onNewScanResult = (decodedText, decodedResult) => {
+    // handle decoded results here
+    // if (eventDetails.isEmpty()) {
+    //   Alert('No event!');
+    // }
+    if (decodedText) {
+      setQRData(decodedText);
+      checkDatabaseForAttendance(decodedText);
+    }
+    html5QrcodeScanner.clear();
+    // alert(decodedText);
+  };
+
+  const checkDatabaseForAttendance = async (qrData) => {
+    // const [qrFirstName, qrLastName] = qrData.split(' ');
+
+    // Query Firestore to fetch all documents
+    const masterDataRef = db.collection('master_data');
+    const querySnapshot = await masterDataRef.get();
+
+    // Loop through the documents and compare concatenated name with qrData
+    querySnapshot.forEach((doc) => {
+      const firstName = doc.data().firstname;
+      const lastName = doc.data().lastname;
+      const doc_id = doc.data().doc_id;
+      const no = doc.data().no;
+      const pl = doc.data().pl;
+      const sdg_class = doc.data().sdg_class;
+      const fullName = firstName + ' ' + lastName;
+
+      if (fullName === qrData) {
+        // Insert attendance record and reset QR settings
+        const attendanceRef = doc.ref.collection('attendance');
+        attendanceRef.add({
+          event: eventDetails,
+          // event: 'test',
+          id: doc_id,
+          no,
+          firstname: firstName,
+          lastname: lastName,
+          pl,
+          invitedBy: null,
+          sdg_class,
+          first: 'no',
+        });
+
+        alert(`Successfully Added! ${firstName} ${lastName}`);
+
+        // TODO: Reset QR settings
+      }
+    });
+
+    // No record found, show modal
+    // setModalVisible(true);
+  };
 
   return (
     <>

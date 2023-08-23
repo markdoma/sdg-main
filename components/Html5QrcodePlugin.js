@@ -1,4 +1,4 @@
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5QrcodeScanner, Html5QrcodeScanType } from 'html5-qrcode';
 import { useEffect } from 'react';
 
 const qrcodeRegionId = 'html5qr-code-full-region';
@@ -18,6 +18,9 @@ const createConfig = (props) => {
   if (props.disableFlip !== undefined) {
     config.disableFlip = props.disableFlip;
   }
+
+  config.supportedScanTypes = [Html5QrcodeScanType.SCAN_TYPE_CAMERA];
+
   return config;
 };
 
@@ -48,7 +51,7 @@ const Html5QrcodePlugin = (props) => {
     };
   }, []);
 
-  return <div id={qrcodeRegionId} />;
+  return <div id={qrcodeRegionId} className="html5-qrcode-element p-10" />;
 };
 
 export default Html5QrcodePlugin;
