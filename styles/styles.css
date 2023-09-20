@@ -67,10 +67,16 @@ button#html5-qrcode-button-camera-stop.html5-qrcode-element:active {
   background-color: #1f6da4;
 }
 
+/* Hide the text by setting font size to 0 */
 #html5qr-code-full-region__dashboard_section_csr {
-  font-size: 0; /* Hide the text by setting font size to 0 */
+  font-size: 0; 
 }
-
+/* Set font size back to normal for the select element */
 select#html5-qrcode-select-camera.html5-qrcode-element {
-  font-size: 16px; /* Set font size back to normal for the select element */
+  font-size: 16px; 
 }
+button#html5-qrcode-button-camera-permission.html5-qrcode-element {
+  font-size: 16px; 
+} 
+
+

@@ -1,8 +1,8 @@
-import { useState } from "react";
-import WithPastoralLeader from "../components/WithPastoralLeader";
-import ExistingAttendeePage from "../pages/existing-attendee";
-import NewAttendeePage from "../pages/new-attendee";
-import GuestAttendeePage from "../pages/guest-attendee";
+import { useState } from 'react';
+import WithPastoralLeader from '../components/WithPastoralLeader';
+// import ExistingAttendeePage from "../pages/existing-attendee";
+import NewAttendeePage from '../pages/new-attendee';
+import GuestAttendeePage from '../pages/guest-attendee';
 
 const AttendancePage = () => {
   const [modalVisible, setModalVisible] = useState(true);

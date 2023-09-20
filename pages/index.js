@@ -1,12 +1,7 @@
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
-import IDpreview from '@/components/IDpreview';
-import CsvUploader from '@/components/CsvUploader';
-import GoogleCalendarEvents from '@/components/GoogleCalendarEvents';
-import PDFGenerator from '@/components/PDFGenerator';
 import FormWithQRCode from '@/components/FormWithQRCode';
 import PageHeadingcopy from '@/components/PageHeadingcopy';
-import ChildrenCSVUploader from '@/components/ChildrenCSVUploader';
 
 import { Fragment, useState } from 'react';
 import { Dialog, Menu, Transition } from '@headlessui/react';

@@ -43,6 +43,7 @@ const FormWithQRCode = () => {
 
   // Modals
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+
   const handleConfirmationModalConfirm = () => {
     // Handle the form submission here after the user confirms the information
     setShowConfirmationModal(false);
@@ -138,6 +139,31 @@ const FormWithQRCode = () => {
   const handleConfirmationModalClose = () => {
     // Hide the confirmation modal when the user clicks on "Edit"
     setShowConfirmationModal(false);
+  };
+  const getEventDetailsFromGoogleCalendar = async () => {
+    try {
+      const response = await axios.get(
+        `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events`,
+        {
+          params: {
+            // key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
+            key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
+          },
+        }
+      );
+      const currentDate = new Date();
+      // const data = await response.json();
+      const data = response.data.items;
+      const eventsForCurrentDay = data.filter((event) => {
+        const eventDate = new Date(event.start.dateTime);
+
+        return eventDate.toDateString() === currentDate.toDateString();
+      });
+
+      return eventsForCurrentDay.length > 0 ? eventsForCurrentDay[0] : null;
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    }
   };
 
   // Function to add a new attendance record to the "attendance" collection
