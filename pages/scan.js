@@ -34,7 +34,7 @@ export default function Scan() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [eventDetails, setEventDetails] = useState(null);
-  const [scannerActive, setScannerActive] = useState(true);
+  const [scannerActive, setScannerActive] = useState(false);
   const [qrData, setQRData] = useState(null);
 
   const [attendanceList, setAttendanceList] = useState([]);
