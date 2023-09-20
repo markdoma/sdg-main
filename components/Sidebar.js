@@ -1,5 +1,5 @@
-import { Fragment, useState } from "react";
-import { Dialog, Menu, Transition } from "@headlessui/react";
+import { Fragment, useState } from 'react';
+import { Dialog, Menu, Transition } from '@headlessui/react';
 import {
   Bars3Icon,
   BellIcon,
@@ -11,17 +11,17 @@ import {
   HomeIcon,
   UsersIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline';
 import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
-} from "@heroicons/react/20/solid";
+} from '@heroicons/react/20/solid';
 
-import Link from "next/link";
+import Link from 'next/link';
 
-import Members from "../components/Members";
+// import Members from '../components/Members';
 
-import Attendance from "@/components/Attendance";
+// import Attendance from '@/components/Attendance';
 
 // const navigation = [
 //   { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
@@ -45,29 +45,35 @@ const navigation = [
   // { name: 'Members', href: '/members', icon: HomeIcon, component: 'Members' },
   // { name: 'Scan QR', href: '/scan', icon: HomeIcon, component: 'Scan' },
   {
-    name: "Home",
-    href: "/",
+    name: 'Home',
+    href: '/',
     icon: UsersIcon,
-    component: "Attendance",
+    component: 'Attendance',
   },
   {
-    name: "Summary Report",
-    href: "/summary",
+    name: 'Summary Report',
+    href: '/summary',
     icon: HomeIcon,
-    component: "AttendanceSummaryReport",
+    component: 'AttendanceSummaryReport',
   },
   {
-    name: "Attendance and Registration",
-    href: "/attendance",
+    name: 'Attendance and Registration',
+    href: '/attendance',
     icon: UsersIcon,
-    component: "Attendance",
+    component: 'Attendance',
+  },
+  {
+    name: 'QR Code Scanner',
+    href: '/scan',
+    icon: CalendarIcon,
+    component: 'Scan',
   },
 
   {
-    name: "Calendar",
-    href: "/calendar",
+    name: 'Calendar',
+    href: '/calendar',
     icon: CalendarIcon,
-    component: "Attendance",
+    component: 'Attendance',
   },
 
   //   { name: "Projects", href: "#", icon: FolderIcon, component: Projects },
@@ -82,12 +88,12 @@ const navigation = [
 ];
 
 const userNavigation = [
-  { name: "Your profile", href: "#" },
-  { name: "Sign out", href: "#" },
+  { name: 'Your profile', href: '#' },
+  { name: 'Sign out', href: '#' },
 ];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ');
 }
 
 function Sidebar({ setActiveComponent }) {
@@ -119,17 +125,17 @@ function Sidebar({ setActiveComponent }) {
                     href={item.href}
                     className={classNames(
                       item.current
-                        ? "bg-gray-50 text-indigo-600"
-                        : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
-                      "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                        ? 'bg-gray-50 text-indigo-600'
+                        : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50',
+                      'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
                     )}
                   >
                     <item.icon
                       className={classNames(
                         item.current
-                          ? "text-indigo-600"
-                          : "text-gray-400 group-hover:text-indigo-600",
-                        "h-6 w-6 shrink-0"
+                          ? 'text-indigo-600'
+                          : 'text-gray-400 group-hover:text-indigo-600',
+                        'h-6 w-6 shrink-0'
                       )}
                       aria-hidden="true"
                     />
@@ -150,8 +156,8 @@ function Sidebar({ setActiveComponent }) {
                     href={item.href}
                     className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${
                       activeIndex === index
-                        ? "bg-gray-50 text-indigo-600"
-                        : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                        ? 'bg-gray-50 text-indigo-600'
+                        : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
                     }`}
                     onClick={() => handleItemClick(index, item.href)}
                   >

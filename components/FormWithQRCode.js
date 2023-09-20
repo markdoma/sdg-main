@@ -7,12 +7,10 @@ import axios from 'axios';
 import Modal from '../components/Modal';
 import FormConfirmationModal from '../components/FormConfirmationModal';
 
-const capitalizeName = (name) => {
-  return name
-    .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
-};
+import {
+  getEventDetailsFromGoogleCalendar,
+  capitalizeName,
+} from '../utils/attendance_utils';
 
 const FormWithQRCode = () => {
   const [firstName, setFirstName] = useState('');
@@ -45,6 +43,7 @@ const FormWithQRCode = () => {
 
   // Modals
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+
   const handleConfirmationModalConfirm = () => {
     // Handle the form submission here after the user confirms the information
     setShowConfirmationModal(false);
@@ -141,9 +140,6 @@ const FormWithQRCode = () => {
     // Hide the confirmation modal when the user clicks on "Edit"
     setShowConfirmationModal(false);
   };
-
-  // Function to retrieve event details from Google Calendar's event list for the current day
-
   const getEventDetailsFromGoogleCalendar = async () => {
     try {
       const response = await axios.get(

@@ -23,7 +23,7 @@ import {
   MagnifyingGlassIcon,
 } from '@heroicons/react/20/solid';
 
-export default function Sample() {
+export default function Attendance() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // const handleScan = (data) => {
