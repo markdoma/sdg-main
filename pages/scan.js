@@ -36,6 +36,7 @@ export default function Scan() {
   const [eventDetails, setEventDetails] = useState(null);
   const [scannerActive, setScannerActive] = useState(false);
   const [qrData, setQRData] = useState(null);
+  const [fullnameToDetailsMapping, setFullnameToDetailsMapping] = useState({});
 
   const [attendanceList, setAttendanceList] = useState([]);
 
@@ -98,81 +99,55 @@ export default function Scan() {
     };
   }, []);
 
-  // useEffect(() => {
-  //   // Fetch all attendance data from collectionGroup
-  //   const unsubscribe = db
-  //     .collectionGroup('attendance')
-  //     .onSnapshot((snapshot) => {
-  //       const fetchedAttendance = snapshot.docs.map((doc) => doc.data());
-  //       console.log('hello from useEffect');
-  //       console.log(fetchedAttendance);
-  //       // Convert Firestore timestamps to JavaScript Date objects and filter by event date
-  //       const specificEventDate = '8/28 /2023'; // Replace with the specific event date
-  //       const processedAttendanceData = fetchedAttendance.filter((item) => {
-  //         const eventDate = new Date(
-  //           item.date.seconds * 1000
-  //         ).toLocaleDateString('en-US');
-  //         // const eventDate = firebase.firestore.Timestamp.fromDate(
-  //         //   new Date(item.date)
-  //         console.log('from eventdate');
-  //         console.log(eventDate);
-  //         return eventDate === specificEventDate;
-  //       });
-
-  //       console.log(processedAttendanceData);
-  //       setAttendanceData(processedAttendanceData);
-  //     });
-
-  //   return () => {
-  //     // Unsubscribe from the snapshot listener when the component unmounts
-  //     unsubscribe();
-  //   };
-  // }, [attendanceList]);
-
   const onNewScanResult = (decodedText, decodedResult) => {
-    console.log(decodedText);
+    // console.log(decodedText);
     if (decodedText) {
       setQRData(decodedText);
 
       checkDatabaseForAttendance(decodedText);
+    }
+  };
 
-      // Introduce a delay of 0.5 seconds using setTimeout
-      // setTimeout(() => {
-      //   checkDatabaseForAttendance(decodedText);
-      // }, 200); // Delay of 500 milliseconds (0.5 seconds)
+  const fetchMasterDataAndMappings = async () => {
+    try {
+      const masterDataRef = db.collection('master_data');
+      const querySnapshot = await masterDataRef.get();
+
+      let attendanceRecordExists = false;
+
+      // Mapping to store other details for each fullname
+      const newFullnameToDetailsMapping = {};
+
+      querySnapshot.forEach((doc) => {
+        const fullName = doc.data().firstname + ' ' + doc.data().lastname;
+        newFullnameToDetailsMapping[fullName] = doc.data().doc_id;
+
+        // Store other details in the fullnameToDetailsMapping
+        newFullnameToDetailsMapping[fullName] = {
+          id: doc.data().doc_id,
+          sdg_class: doc.data().sdg_class,
+          pastoral_leader: doc.data().pl,
+          firstname: doc.data().firstname,
+          lastname: doc.data().lastname,
+          no: doc.data().no,
+        };
+      });
+
+      // Now you have the mappings and can use them as needed
+      // console.log(newFullnameToDetailsMapping);
+
+      // Set the state with the new mapping
+      setFullnameToDetailsMapping(newFullnameToDetailsMapping);
+      // console.log(fullnameToDetailsMapping);
+    } catch (error) {
+      console.error('Error fetching master data and mappings: ', error);
     }
   };
 
   const checkDatabaseForAttendance = async (qrData) => {
-    const masterDataRef = db.collection('master_data');
-    const querySnapshot = await masterDataRef.get();
-
-    let attendanceRecordExists = false;
-
-    // Mapping to store the relationship between fullname and no
-    const fullnameToNoMapping = {};
-
-    // Mapping to store other details for each fullname
-    const fullnameToDetailsMapping = {};
-    querySnapshot.forEach((doc) => {
-      const fullName = doc.data().firstname + ' ' + doc.data().lastname;
-      fullnameToNoMapping[fullName] = doc.data().doc_id;
-
-      // Store other details in the fullnameToDetailsMapping
-      fullnameToDetailsMapping[fullName] = {
-        id: doc.data().doc_id,
-        sdg_class: doc.data().sdg_class,
-        pastoral_leader: doc.data().pl,
-        firstname: doc.data().firstname,
-        lastname: doc.data().lastname,
-        no: doc.data().no,
-        // invitedBy: doc.data().invitedBy,
-      };
-    });
-
-    console.log(fullnameToDetailsMapping);
-
     const fullName = qrData; // Replace with the actual fullname
+    // console.log(fullName);
+    // console.log(fullnameToDetailsMapping);
 
     if (!fullnameToDetailsMapping[fullName]) {
       // If the fullName does not exist in the mapping
@@ -189,7 +164,7 @@ export default function Scan() {
     const lastname = fullnameToDetailsMapping[fullName].lastname;
     const no = fullnameToDetailsMapping[fullName].no;
     const invitedBy = fullnameToDetailsMapping[fullName].invitedBy;
-
+    // console.log(firstname);
     setQRDetails({
       qrDataId,
       sdgClass,
@@ -204,7 +179,7 @@ export default function Scan() {
       const eventDate = new Date(eventDetails.start.dateTime);
       const eventTimestamp = firebase.firestore.Timestamp.fromDate(eventDate);
 
-      // console.log(lastname);
+      // console.log('with data');
       // Check if attendance already exists for the event and individual
       db.collectionGroup('attendance')
         .where('id', '==', qrDataId) // Use "id" as the query key
@@ -212,7 +187,7 @@ export default function Scan() {
         .where('date', '==', eventTimestamp)
         .get()
         .then((querySnapshot) => {
-          console.log(querySnapshot);
+          // console.log(querySnapshot.empty);
           if (!querySnapshot.empty) {
             // Attendance already captured for this event and individual
             console.log(
@@ -221,7 +196,10 @@ export default function Scan() {
             setShowExistingModal(true); // Show the existing modal
           } else {
             // Attendance not captured, proceed to add new attendance
+            // console.log(showConfirmationModal);
+
             setShowConfirmationModal(true); // Show the confirmation modal
+            // console.log(`after - ${showConfirmationModal}`);
           }
         })
         .catch((error) => {
@@ -270,6 +248,8 @@ export default function Scan() {
   const handleCancelConfirmation = () => {
     // User canceled the confirmation, so close the modal
     setShowConfirmationModal(false);
+    setQRData(null); // Reset QR data
+    setScannerActive(true); // Reinitialize the scanner for another scan
   };
 
   const handleNoRecordConfirmation = () => {
@@ -288,6 +268,8 @@ export default function Scan() {
   useEffect(() => {
     // Add event listener for scanning results
     document.addEventListener('decoded', onNewScanResult);
+    fetchMasterDataAndMappings();
+    // console.log(fullnameToDetailsMapping);
 
     // Cleanup the event listener when the component unmounts
     return () => {
@@ -385,7 +367,9 @@ export default function Scan() {
                       ? 'bg-transparent'
                       : 'bg-blue-500 hover:bg-blue-600'
                   } text-white font-semibold rounded shadow-lg focus:outline-none`}
-                  onClick={() => setScannerActive(!scannerActive)}
+                  onClick={() => {
+                    setScannerActive(!scannerActive);
+                  }}
                 >
                   {scannerActive ? '' : 'Activate Scanner'}
                 </button>

@@ -155,10 +155,15 @@ const FormWithQRCode = () => {
       // const data = await response.json();
       const data = response.data.items;
       const eventsForCurrentDay = data.filter((event) => {
+        const summary = event.summary.toLowerCase();
         const eventDate = new Date(event.start.dateTime);
-
-        return eventDate.toDateString() === currentDate.toDateString();
+        // return eventDate.toDateString() === currentDate.toDateString();
+        return (
+          eventDate.toDateString() === currentDate.toDateString() &&
+          (summary.startsWith('sdg: district') || summary.startsWith('open'))
+        );
       });
+      console.log(eventsForCurrentDay);
 
       return eventsForCurrentDay.length > 0 ? eventsForCurrentDay[0] : null;
     } catch (error) {
