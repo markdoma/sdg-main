@@ -127,8 +127,10 @@ const AttendanceGrouping = () => {
       if (!groupedData[gender]) {
         groupedData[gender] = [];
       }
-
-      groupedData[gender].push({ ...attendee, age });
+      if (age > 20) {
+        // Filter attendees with age > 20
+        groupedData[gender].push({ ...attendee, age });
+      }
     });
 
     // Divide each gender group based on the divisor and Male-Female pairs
