@@ -285,17 +285,17 @@ export default function Scan() {
 
   return (
     <>
-      <body className="bg-gradient-to-b from-pink-400 to-blue-400">
+      <div>
         {/* Main section */}
         {/* <main className="py-10"> */}
-        <main className="py-10 ">
+        <main className="py-10 bg-gradient-to-b from-pink-400 to-blue-400">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
-              <h1 className="text-4xl font-semibold text-white mb-2">
+              <h1 className="text-8xl font-semibold text-white mb-2">
                 Beyond I Do
               </h1>
-              <p className="text-lg text-white">
-                Strengthening Relationships and Building Bonds
+              <p className="text-2xl text-white italic">
+                Discover the joy in your Marriage
               </p>
             </div>
             <div className="flex justify-center">
@@ -492,7 +492,7 @@ export default function Scan() {
           </div>
           {/* </div> */}
         </main>
-      </body>
+      </div>
     </>
   );
 }
