@@ -160,7 +160,9 @@ const FormWithQRCode = () => {
         // return eventDate.toDateString() === currentDate.toDateString();
         return (
           eventDate.toDateString() === currentDate.toDateString() &&
-          (summary.startsWith('sdg: district') || summary.startsWith('open'))
+          (summary.startsWith('sdg: district') ||
+            summary.startsWith('open') ||
+            summary.startsWith('beyond'))
         );
       });
       console.log(eventsForCurrentDay);

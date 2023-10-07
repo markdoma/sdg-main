@@ -63,7 +63,9 @@ export default function Summary() {
         const filteredEvents = response.data.items.filter((item) => {
           const summary = item.summary.toLowerCase();
           return (
-            summary.startsWith('sdg: district') || summary.startsWith('open')
+            summary.startsWith('sdg: district') ||
+            summary.startsWith('open') ||
+            summary.startsWith('beyond')
           );
         });
 
