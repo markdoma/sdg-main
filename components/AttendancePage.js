@@ -56,8 +56,8 @@ const AttendancePage = () => {
   useEffect(() => {
     // Filter attendanceData based on the selected eventOptions
     const filteredAttendanceData = attendanceData.filter(
-      // (item) => item.date === selectedEvent[0]
-      (item) => item.event === 'Beyond I Do' //this is just temporary for this event only!!!!
+      (item) => item.date === selectedEvent[0]
+      // (item) => item.event === 'Beyond I Do' //this is just temporary for this event only!!!!
       // (item) => new Date(item.date) === db.Timestamp.fromDate(selectedEvent)
     );
 
