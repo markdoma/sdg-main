@@ -376,7 +376,7 @@ export default function Scan() {
               </div>
 
               {/* <button onClick={resetScanResult}>Reset Scan Result</button> */}
-              <Html5QrcodePlugin
+              {/* <Html5QrcodePlugin
                 scannerActive={scannerActive}
                 // scannerActive="True"
                 fps={80}
@@ -384,7 +384,19 @@ export default function Scan() {
                 disableFlip={false}
                 qrCodeSuccessCallback={onNewScanResult}
                 onUnmount={() => setScannerActive(false)} // Deactivate scanner on unmount
-              />
+              /> */}
+
+              <div className="mx-auto max-w-md">
+                <Html5QrcodePlugin
+                  scannerActive={scannerActive}
+                  fps={10}
+                  aspectRatio={1.0}
+                  qrbox={200}
+                  disableFlip={false}
+                  qrCodeSuccessCallback={onNewScanResult}
+                  onUnmount={() => setScannerActive(false)} // Deactivate scanner on unmount
+                />
+              </div>
 
               {/* Display QR code data */}
 
