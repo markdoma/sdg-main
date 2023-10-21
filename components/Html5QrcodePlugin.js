@@ -78,7 +78,7 @@ const Html5QrcodePlugin = (props) => {
     props.scannerActive,
   ]);
 
-  return <div id={qrcodeRegionId} className="html5-qrcode-element p-10" />;
+  return <div id={qrcodeRegionId} className="html5-qrcode-element" />;
 };
 
 export default Html5QrcodePlugin;

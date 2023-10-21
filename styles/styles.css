@@ -79,4 +79,12 @@ button#html5-qrcode-button-camera-permission.html5-qrcode-element {
   font-size: 16px; 
 } 
 
+.html5-qrcode-element{
+  /* box-shadow: none !important; */
+  border: none;
+  outline:  1px solid trasparent;
+
+  /* border: 1px solid red; Adds a 1px solid red border */
+}
+
 

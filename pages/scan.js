@@ -380,7 +380,7 @@ export default function Scan() {
                 scannerActive={scannerActive}
                 // scannerActive="True"
                 fps={80}
-                // qrbox={50}
+                qrbox={500}
                 disableFlip={false}
                 qrCodeSuccessCallback={onNewScanResult}
                 onUnmount={() => setScannerActive(false)} // Deactivate scanner on unmount

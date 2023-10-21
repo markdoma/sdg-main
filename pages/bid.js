@@ -288,8 +288,8 @@ export default function Scan() {
       <div>
         {/* Main section */}
         {/* <main className="py-10"> */}
-        <main className="py-10 bg-gradient-to-b from-pink-400 to-blue-400">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <main className="py-10 bg-gradient-to-b from-pink-400 to-blue-400 min-h-screen w-screen">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10">
               <h1 className="text-8xl font-semibold text-white mb-2">
                 Beyond I Do
@@ -299,30 +299,30 @@ export default function Scan() {
               </p>
             </div>
             <div className="flex justify-center">
-              <button
-                className={`py-3 px-6 ${
-                  scannerActive
-                    ? 'bg-transparent border-pink-300 text-pink-300'
-                    : 'bg-pink-500 hover:bg-pink-600 border-pink-600 hover:border-pink-700 text-white'
-                } font-semibold rounded-full shadow-lg focus:outline-none`}
-                onClick={() => {
-                  setScannerActive(!scannerActive);
-                }}
-              >
-                {scannerActive ? 'Deactivate Scanner' : 'Activate Scanner'}
-              </button>
+              {scannerActive ? null : (
+                <button
+                  className={`py-3 px-6 bg-pink-500 hover:bg-pink-600 border-pink-600 hover:border-pink-700 text-white font-semibold rounded-full shadow-lg focus:outline-none`}
+                  onClick={() => {
+                    setScannerActive(true);
+                  }}
+                >
+                  Activate Scanner
+                </button>
+              )}
             </div>
             {/* <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"> */}
             {/* <button onClick={resetScanResult}>Reset Scan Result</button> */}
-            <Html5QrcodePlugin
-              scannerActive={scannerActive}
-              // scannerActive="True"
-              fps={80}
-              // qrbox={50}
-              disableFlip={false}
-              qrCodeSuccessCallback={onNewScanResult}
-              onUnmount={() => setScannerActive(false)} // Deactivate scanner on unmount
-            />
+            <div className="mx-auto max-w-md">
+              <Html5QrcodePlugin
+                scannerActive={scannerActive}
+                fps={10}
+                aspectRatio={1.0}
+                qrbox={200}
+                disableFlip={false}
+                qrCodeSuccessCallback={onNewScanResult}
+                onUnmount={() => setScannerActive(false)} // Deactivate scanner on unmount
+              />
+            </div>
 
             {/* Display QR code data */}
 
