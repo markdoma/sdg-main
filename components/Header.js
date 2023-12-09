@@ -1,5 +1,6 @@
-import { Fragment, useState } from "react";
-import { Dialog, Menu, Transition } from "@headlessui/react";
+import { Fragment, useState } from 'react';
+import { useAuth } from '../context/auth';
+import { Dialog, Menu, Transition } from '@headlessui/react';
 import {
   Bars3Icon,
   BellIcon,
@@ -11,47 +12,66 @@ import {
   HomeIcon,
   UsersIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline';
 import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
-} from "@heroicons/react/20/solid";
+} from '@heroicons/react/20/solid';
 
-import Members from "../components/Members";
-import Sidebar from "../components/Sidebar";
+import Members from '../components/Members';
+import Sidebar from '../components/Sidebar';
 
 const navigation = [
-  { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
-  { name: "Team", href: "#", icon: UsersIcon, current: false },
-  { name: "Projects", href: "#", icon: FolderIcon, current: false },
-  { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
-  { name: "Documents", href: "#", icon: DocumentDuplicateIcon, current: false },
-  { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
+  { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
+  { name: 'Team', href: '#', icon: UsersIcon, current: false },
+  { name: 'Projects', href: '#', icon: FolderIcon, current: false },
+  { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
+  { name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false },
+  { name: 'Reports', href: '#', icon: ChartPieIcon, current: false },
 ];
 const teams = [
-  { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
-  { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-  { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
+  { id: 1, name: 'Heroicons', href: '#', initial: 'H', current: false },
+  { id: 2, name: 'Tailwind Labs', href: '#', initial: 'T', current: false },
+  { id: 3, name: 'Workcation', href: '#', initial: 'W', current: false },
 ];
 const userNavigation = [
-  { name: "Your profile", href: "#" },
-  { name: "Sign out", href: "#" },
+  { name: 'Your profile', href: '#' },
+  { name: 'Sign out', href: '#' },
 ];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ');
 }
 
 function Header() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeComponent, setActiveComponent] = useState("Members");
+  const [activeComponent, setActiveComponent] = useState('Members');
+
+  const { user, signInWithGoogle, signOut } = useAuth();
 
   let renderedComponent;
-  if (activeComponent === "Members") {
+  if (activeComponent === 'Members') {
     renderedComponent = <Members />;
-  } else if (activeComponent === "Attendance") {
+  } else if (activeComponent === 'Attendance') {
     renderedComponent = <Attendance />;
   }
+
+  const handleSignInWithGoogle = async () => {
+    try {
+      await signInWithGoogle();
+      router.push('/'); // Redirect to home page after successful sign-in
+    } catch (error) {
+      console.error('Error signing in with Google:', error.message);
+    }
+  };
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push('/'); // Redirect to home page after sign-out
+    } catch (error) {
+      console.error('Error signing out:', error.message);
+    }
+  };
   return (
     <>
       <Transition.Root show={sidebarOpen} as={Fragment}>
@@ -168,6 +188,10 @@ function Header() {
                 className="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200"
                 aria-hidden="true"
               />
+              <button onClick={handleSignInWithGoogle}>
+                Sign In with Google
+              </button>
+              <button onClick={handleSignOut}>Sign Out</button>
 
               {/* Profile dropdown */}
               <Menu as="div" className="relative">
@@ -207,8 +231,8 @@ function Header() {
                           <a
                             href={item.href}
                             className={classNames(
-                              active ? "bg-gray-50" : "",
-                              "block px-3 py-1 text-sm leading-6 text-gray-900"
+                              active ? 'bg-gray-50' : '',
+                              'block px-3 py-1 text-sm leading-6 text-gray-900'
                             )}
                           >
                             {item.name}

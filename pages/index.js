@@ -3,6 +3,8 @@ import Sidebar from '@/components/Sidebar';
 import FormWithQRCode from '@/components/FormWithQRCode';
 import PageHeadingcopy from '@/components/PageHeadingcopy';
 
+import MasterDownload from '../utils/MasterDownload';
+
 import { Fragment, useState } from 'react';
 import { Dialog, Menu, Transition } from '@headlessui/react';
 import {
@@ -134,7 +136,8 @@ export default function Home() {
           <main className="py-10">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <PageHeadingcopy />
-              <FormWithQRCode />
+              <MasterDownload />
+              {/* <FormWithQRCode /> */}
               {/* <CsvUploader /> */}
               {/* <ChildrenCSVUploader /> */}
             </div>

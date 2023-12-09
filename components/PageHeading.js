@@ -35,7 +35,7 @@ export default function PageHeading({ eventsOptions }) {
             <a href="#" className="text-gray-900">
               {eventsOptions.label}
             </a>{' '}
-            on <time dateTime={eventsOptions.value}>July 30, 2023</time>
+            on <time dateTime={eventsOptions.value}>----</time>
           </p>
         </div>
       </div>

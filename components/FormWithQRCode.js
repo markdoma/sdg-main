@@ -147,7 +147,7 @@ const FormWithQRCode = () => {
         {
           params: {
             // key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
-            key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
+            key: 'AIzaSyAbX2qOg-8MGiK2HHxpNT0DAwCogdHpJJM',
           },
         }
       );
@@ -239,7 +239,8 @@ const FormWithQRCode = () => {
     // Fetch event details from Google Calendar when the component mounts
     getEventDetailsFromGoogleCalendar()
       .then((event) => {
-        setEventDetails(event);
+        // setEventDetails(event);
+        setEventDetails('October 7, 2023 at 2:00:00 PM UTC+8');
       })
       .catch((error) => {
         console.error('Error fetching event details: ', error);
