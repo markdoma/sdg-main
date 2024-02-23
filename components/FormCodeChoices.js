@@ -747,4 +747,4 @@ const FormWithQRCode = () => {
   );
 };
 
-export default FormWithQRCode;
+export default FormCodeChoices;
