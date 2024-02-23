@@ -107,18 +107,20 @@ const FormWithQRCode = () => {
         // Update the newData object with the doc_id
         newData.doc_id = docRef.id;
 
-        // Add the attendance record when the "Present" button is clicked
-        addAttendanceRecord(
-          eventDetails,
-          newData.doc_id,
-          newData.no,
-          newData.firstname,
-          newData.lastname,
-          newData.pl,
-          newData.invitedBy,
-          newData.sdg_class,
-          first
-        );
+        if (eventDetails) {
+          // Add the attendance record when the "Present" button is clicked
+          addAttendanceRecord(
+            eventDetails,
+            newData.doc_id,
+            newData.no,
+            newData.firstname,
+            newData.lastname,
+            newData.pl,
+            newData.invitedBy,
+            newData.sdg_class,
+            first
+          );
+        }
 
         // Update the "master_data" collection with the doc_id property
         db.collection("master_data")
