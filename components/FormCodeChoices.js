@@ -668,10 +668,8 @@ const FormWithQRCode = () => {
                         <select
                           className="shadow appearance-none hidden border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                           id="classification"
-                          // value={classification}
-                          value="Non-LNP-Guest"
-                          // onChange={(e) => setClassification(e.target.value)}
-                          required
+                          value={classification}
+                          onChange={(e) => setClassification(e.target.value)}
                         >
                           <option value="">Select Classification</option>
                           <option value="LNP Member SDG">LNP Member SDG</option>
