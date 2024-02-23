@@ -143,7 +143,7 @@ const FormWithQRCode = () => {
   const getEventDetailsFromGoogleCalendar = async () => {
     try {
       const response = await axios.get(
-        `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events`,
+        `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events/`,
         {
           params: {
             // key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
@@ -154,15 +154,25 @@ const FormWithQRCode = () => {
       const currentDate = new Date();
       // const data = await response.json();
       const data = response.data.items;
+      console.log(currentDate)
+      console.log(data)
       const eventsForCurrentDay = data.filter((event) => {
-        const summary = event.summary.toLowerCase();
+       
+
+        if (event.status === 'cancelled') {
+          // Exclude cancelled events
+          return false;
+      }
+
+      // console.log(event)
+        const summary = event.summary.toLowerCase()
         const eventDate = new Date(event.start.dateTime);
         // return eventDate.toDateString() === currentDate.toDateString();
         return (
           eventDate.toDateString() === currentDate.toDateString() &&
-          (summary.startsWith('sdg: district') ||
-            summary.startsWith('open') ||
-            summary.startsWith('beyond'))
+           (event.summary.startsWith('sdg: district') ||
+            event.summary.startsWith('Open') ||
+            event.summary.startsWith('beyond'))
         );
       });
       console.log(eventsForCurrentDay);
@@ -239,8 +249,8 @@ const FormWithQRCode = () => {
     // Fetch event details from Google Calendar when the component mounts
     getEventDetailsFromGoogleCalendar()
       .then((event) => {
-        // setEventDetails(event);
-        setEventDetails('October 7, 2023 at 2:00:00 PM UTC+8');
+        setEventDetails(event);
+        // setEventDetails('October 7, 2023 at 2:00:00 PM UTC+8');
       })
       .catch((error) => {
         console.error('Error fetching event details: ', error);
