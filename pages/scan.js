@@ -62,18 +62,36 @@ export default function Scan() {
         {
           params: {
             // key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
-            key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
+            key: 'AIzaSyAbX2qOg-8MGiK2HHxpNT0DAwCogdHpJJM',
           },
         }
       );
       const currentDate = new Date();
       // const data = await response.json();
       const data = response.data.items;
+      console.log(currentDate)
+      console.log(data)
       const eventsForCurrentDay = data.filter((event) => {
-        const eventDate = new Date(event.start.dateTime);
+       
 
-        return eventDate.toDateString() === currentDate.toDateString();
+        if (event.status === 'cancelled' || event.summary === '') {
+          // Exclude cancelled events with empty summary
+          return false;
+        }
+
+      // console.log(event)
+        const summary = event.summary.toLowerCase()
+        const eventDate = new Date(event.start.dateTime);
+        // return eventDate.toDateString() === currentDate.toDateString();
+        console.log(summary)
+        return (
+          eventDate.toDateString() === currentDate.toDateString() &&
+           (summary.startsWith('sdg: district') ||
+            summary.startsWith('open') ||
+            summary.startsWith('choices'))
+        );
       });
+      console.log(eventsForCurrentDay);
 
       return eventsForCurrentDay.length > 0 ? eventsForCurrentDay[0] : null;
     } catch (error) {

@@ -159,20 +159,21 @@ const FormWithQRCode = () => {
       const eventsForCurrentDay = data.filter((event) => {
        
 
-        if (event.status === 'cancelled') {
-          // Exclude cancelled events
+        if (event.status === 'cancelled' || event.summary === '') {
+          // Exclude cancelled events with empty summary
           return false;
-      }
+        }
 
       // console.log(event)
         const summary = event.summary.toLowerCase()
         const eventDate = new Date(event.start.dateTime);
         // return eventDate.toDateString() === currentDate.toDateString();
+        console.log(summary)
         return (
           eventDate.toDateString() === currentDate.toDateString() &&
-           (event.summary.startsWith('sdg: district') ||
-            event.summary.startsWith('Open') ||
-            event.summary.startsWith('beyond'))
+           (summary.startsWith('sdg: district') ||
+            summary.startsWith('open') ||
+            summary.startsWith('choices'))
         );
       });
       console.log(eventsForCurrentDay);
