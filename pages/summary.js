@@ -77,7 +77,8 @@ export default function Summary() {
             summary.startsWith("sdg: district") ||
             summary.startsWith("open") ||
             summary.startsWith("bid") ||
-            summary.startsWith("choices")
+            summary.startsWith("choices") ||
+            summary.startsWith("plt")
           );
         });
 
