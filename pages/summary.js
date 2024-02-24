@@ -1,19 +1,19 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
-import FormWithQRCode from '@/components/FormWithQRCode';
-import PageHeading from '@/components/PageHeading';
-import AttendanceSummaryReport from '@/components/AttendanceSummaryReport';
-import AttendancePage from '@/components/AttendancePage';
+import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
+import FormWithQRCode from "@/components/FormWithQRCode";
+import PageHeading from "@/components/PageHeading";
+import AttendanceSummaryReport from "@/components/AttendanceSummaryReport";
+import AttendancePage from "@/components/AttendancePage";
 
-import axios from 'axios';
+import axios from "axios";
 
 //Context
-import EventContext from '@/context/eventContext';
+import EventContext from "@/context/eventContext";
 
-import { Fragment, useState } from 'react';
-import { Dialog, Menu, Transition } from '@headlessui/react';
+import { Fragment, useState } from "react";
+import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
   BellIcon,
@@ -25,11 +25,11 @@ import {
   HomeIcon,
   UsersIcon,
   XMarkIcon,
-} from '@heroicons/react/24/outline';
+} from "@heroicons/react/24/outline";
 import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
-} from '@heroicons/react/20/solid';
+} from "@heroicons/react/20/solid";
 
 // const calEvents = [
 //   { date: '2023-12-02', eventName: 'Open Door' },
@@ -46,7 +46,7 @@ export default function Summary() {
   //   // Add your logic to handle the scanned QR code data here
   // };
 
-  const [scanResult, setScanResult] = useState('');
+  const [scanResult, setScanResult] = useState("");
 
   const handleScan = (data) => {
     setScanResult(data);
@@ -61,42 +61,43 @@ export default function Summary() {
           {
             params: {
               // key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
-              key: 'AIzaSyAbX2qOg-8MGiK2HHxpNT0DAwCogdHpJJM',
+              key: "AIzaSyAbX2qOg-8MGiK2HHxpNT0DAwCogdHpJJM",
             },
           }
         );
 
         // Filter events that start with "SDG" or "Open"
         const filteredEvents = response.data.items.filter((item) => {
-          if (item.status === 'cancelled') {
+          if (item.status === "cancelled") {
             // Exclude cancelled events
             return false;
-           }
+          }
           const summary = item.summary.toLowerCase();
           return (
-            summary.startsWith('sdg: district') ||
-            summary.startsWith('open') ||
-            summary.startsWith('beyond')
+            summary.startsWith("sdg: district") ||
+            summary.startsWith("open") ||
+            summary.startsWith("bid") ||
+            summary.startsWith("choices")
           );
         });
 
         // Filter events with dates between 07/30/23 and today's date
         const currentDate = new Date();
         const events = filteredEvents.map((item, index) => {
-          if (item.status === 'cancelled') {
+          if (item.status === "cancelled") {
             // Exclude cancelled events
             return false;
-        }
+          }
           let value;
           if (item.start.dateTime) {
-            value = new Date(item.start.dateTime).toLocaleDateString('en-US');
+            value = new Date(item.start.dateTime).toLocaleDateString("en-US");
           } else {
-            value = new Date(item.start.date).toLocaleDateString('en-US');
+            value = new Date(item.start.date).toLocaleDateString("en-US");
           }
 
           // Parse the date string and compare it with the currentDate
           const eventDate = new Date(value);
-          if (eventDate >= new Date('2023-07-29') && eventDate <= currentDate) {
+          if (eventDate >= new Date("2023-07-29") && eventDate <= currentDate) {
             return {
               value,
               label: item.summary,
@@ -111,7 +112,7 @@ export default function Summary() {
 
         setEventsOptions(filteredEventsOptions);
       } catch (error) {
-        console.error('Error fetching events:', error);
+        console.error("Error fetching events:", error);
       }
     };
 
