@@ -12,7 +12,7 @@ import {
   capitalizeName,
 } from "../utils/attendance_utils";
 
-const FormWithQRCode = () => {
+const FormCodeChoices = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dob, setDOB] = useState("");
