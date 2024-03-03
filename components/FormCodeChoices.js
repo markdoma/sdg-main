@@ -168,7 +168,7 @@ const FormCodeChoices = () => {
         const summary = event.summary.toLowerCase();
         const eventDate = new Date(event.start.dateTime);
         // return eventDate.toDateString() === currentDate.toDateString();
-        console.log(summary);
+        // console.log(summary);
         return (
           eventDate.toDateString() === currentDate.toDateString() &&
           (summary.startsWith("sdg: district") ||

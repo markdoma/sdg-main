@@ -1,30 +1,30 @@
-import { useState, useEffect } from 'react';
-import QRCode from 'qrcode.react';
-import { v4 as uuidv4 } from 'uuid';
-import { db } from '../utils/firebase';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import QRCode from "qrcode.react";
+import { v4 as uuidv4 } from "uuid";
+import { db } from "../utils/firebase";
+import axios from "axios";
 
-import Modal from '../components/Modal';
-import FormConfirmationModal from '../components/FormConfirmationModal';
+import Modal from "../components/Modal";
+import FormConfirmationModal from "../components/FormConfirmationModal";
 
 import {
   getEventDetailsFromGoogleCalendar,
   capitalizeName,
-} from '../utils/attendance_utils';
+} from "../utils/attendance_utils";
 
 const FormWithQRCode = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [dob, setDOB] = useState('');
-  const [gender, setGender] = useState('Male');
-  const [contact, setContact] = useState('');
-  const [address, setAddress] = useState('');
-  const [invitedBy, setInvitedBy] = useState('');
-  const [status, setStatus] = useState('');
-  const [first, setFirst] = useState('yes');
-  const [classification, setClassification] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dob, setDOB] = useState("");
+  const [gender, setGender] = useState("Male");
+  const [contact, setContact] = useState("");
+  const [address, setAddress] = useState("");
+  const [invitedBy, setInvitedBy] = useState("");
+  const [status, setStatus] = useState("");
+  const [first, setFirst] = useState("yes");
+  const [classification, setClassification] = useState("");
   const [showQRCode, setShowQRCode] = useState(false);
-  const [uniqueCode, setUniqueCode] = useState('');
+  const [uniqueCode, setUniqueCode] = useState("");
 
   const [dummyData, setDummyData] = useState([]);
   const [members, setMembers] = useState([]);
@@ -92,17 +92,17 @@ const FormWithQRCode = () => {
       long: null,
       qrCode: jsonData,
       insert_date: new Date(),
-      insert_by: 'Reg Team',
+      insert_by: "Reg Team",
       update_date: null,
       update_by: null,
       invitedBy: invitedBy,
     };
 
     // Add the data to the "master_data" collection in the database
-    db.collection('master_data')
+    db.collection("master_data")
       .add(newData)
       .then((docRef) => {
-        console.log('Document written with ID: ', docRef.id);
+        console.log("Document written with ID: ", docRef.id);
 
         // Update the newData object with the doc_id
         newData.doc_id = docRef.id;
@@ -121,18 +121,18 @@ const FormWithQRCode = () => {
         );
 
         // Update the "master_data" collection with the doc_id property
-        db.collection('master_data')
+        db.collection("master_data")
           .doc(docRef.id)
           .update({ doc_id: docRef.id })
           .then(() => {
-            console.log('Document updated with doc_id: ', docRef.id);
+            console.log("Document updated with doc_id: ", docRef.id);
           })
           .catch((error) => {
-            console.error('Error updating document with doc_id: ', error);
+            console.error("Error updating document with doc_id: ", error);
           });
       })
       .catch((error) => {
-        console.error('Error adding document: ', error);
+        console.error("Error adding document: ", error);
       });
   };
 
@@ -147,40 +147,38 @@ const FormWithQRCode = () => {
         {
           params: {
             // key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
-            key: 'AIzaSyAbX2qOg-8MGiK2HHxpNT0DAwCogdHpJJM',
+            key: "AIzaSyAbX2qOg-8MGiK2HHxpNT0DAwCogdHpJJM",
           },
         }
       );
       const currentDate = new Date();
       // const data = await response.json();
       const data = response.data.items;
-      console.log(currentDate)
-      console.log(data)
+      // console.log(currentDate)
+      // console.log(data)
       const eventsForCurrentDay = data.filter((event) => {
-       
-
-        if (event.status === 'cancelled' || event.summary === '') {
+        if (event.status === "cancelled" || event.summary === "") {
           // Exclude cancelled events with empty summary
           return false;
         }
 
-      // console.log(event)
-        const summary = event.summary.toLowerCase()
+        // console.log(event)
+        const summary = event.summary.toLowerCase();
         const eventDate = new Date(event.start.dateTime);
         // return eventDate.toDateString() === currentDate.toDateString();
-        console.log(summary)
+        // console.log(summary);
         return (
           eventDate.toDateString() === currentDate.toDateString() &&
-           (summary.startsWith('sdg: district') ||
-            summary.startsWith('open') ||
-            summary.startsWith('choices'))
+          (summary.startsWith("sdg: district") ||
+            summary.startsWith("open") ||
+            summary.startsWith("choices"))
         );
       });
       console.log(eventsForCurrentDay);
 
       return eventsForCurrentDay.length > 0 ? eventsForCurrentDay[0] : null;
     } catch (error) {
-      console.error('Error fetching events:', error);
+      console.error("Error fetching events:", error);
     }
   };
 
@@ -209,17 +207,17 @@ const FormWithQRCode = () => {
       sdg_class: sdg_class,
       first_timer: first,
     };
-    db.collection('master_data')
+    db.collection("master_data")
       .doc(id)
-      .collection('attendance')
+      .collection("attendance")
       // db.collection('attendance')
       .add(newAttendanceRecord)
       .then((docRef) => {
-        console.log('Attendance record added with ID: ', docRef.id);
+        console.log("Attendance record added with ID: ", docRef.id);
         // If you need to do anything after successfully adding the record, you can put it here.
       })
       .catch((error) => {
-        console.error('Error adding attendance record: ', error);
+        console.error("Error adding attendance record: ", error);
       });
 
     setIsPresentButtonClicked(true);
@@ -231,17 +229,17 @@ const FormWithQRCode = () => {
       const eventDateTime = new Date(eventDetails.start.dateTime);
 
       // Firestore query to check if a matching attendance record exists
-      db.collection('master_data')
+      db.collection("master_data")
         .doc(selectedName.doc_id)
-        .collection('attendance')
-        .where('no', '==', selectedName.no)
-        .where('date', '==', eventDateTime)
+        .collection("attendance")
+        .where("no", "==", selectedName.no)
+        .where("date", "==", eventDateTime)
         .get()
         .then((querySnapshot) => {
           setIsAttendanceCaptured(!querySnapshot.empty);
         })
         .catch((error) => {
-          console.error('Error checking attendance: ', error);
+          console.error("Error checking attendance: ", error);
         });
     }
   }, [eventDetails, selectedName]);
@@ -254,7 +252,7 @@ const FormWithQRCode = () => {
         // setEventDetails('October 7, 2023 at 2:00:00 PM UTC+8');
       })
       .catch((error) => {
-        console.error('Error fetching event details: ', error);
+        console.error("Error fetching event details: ", error);
       });
   }, []);
 
@@ -269,12 +267,12 @@ const FormWithQRCode = () => {
       selectedName.pl,
       null,
       selectedName.sdg_class,
-      'no'
+      "no"
     );
   };
 
   useEffect(() => {
-    const unsubscribe = db.collection('master_data').onSnapshot((snapshot) => {
+    const unsubscribe = db.collection("master_data").onSnapshot((snapshot) => {
       const fetchedMembers = snapshot.docs.map((doc) => doc.data());
       setMembers(fetchedMembers);
     });
@@ -317,9 +315,9 @@ const FormWithQRCode = () => {
 
     setSelectedName(null);
 
-    if (inputLastName.trim() === '') {
+    if (inputLastName.trim() === "") {
       setMatchedNames([]); // Clear the matched names list if the input is empty
-      setFirstName('');
+      setFirstName("");
     } else {
       const matched = members.filter((record) =>
         record.lastname.toLowerCase().includes(inputLastName.toLowerCase())
@@ -335,7 +333,7 @@ const FormWithQRCode = () => {
     const inputInvitedBy = e.target.value;
     setInvitedBy(inputInvitedBy);
 
-    if (inputInvitedBy.trim() === '') {
+    if (inputInvitedBy.trim() === "") {
       setMatchedInviter([]); // Clear the matched names list if the input is empty
     } else {
       const matched = members.filter((record) =>
@@ -371,19 +369,19 @@ const FormWithQRCode = () => {
   };
 
   const resetForm = () => {
-    setFirstName('');
-    setLastName('');
-    setDOB('');
-    setGender('');
-    setContact('');
-    setAddress('');
-    setInvitedBy('');
-    setStatus('');
-    setFirst('');
-    setClassification('');
+    setFirstName("");
+    setLastName("");
+    setDOB("");
+    setGender("");
+    setContact("");
+    setAddress("");
+    setInvitedBy("");
+    setStatus("");
+    setFirst("");
+    setClassification("");
     setSelectedName(null);
     setShowQRCode(false);
-    setUniqueCode('');
+    setUniqueCode("");
     setIsConfirmed(false);
   };
 
@@ -425,31 +423,31 @@ const FormWithQRCode = () => {
             <>
               <div className="flex flex-col mb-4">
                 <p>
-                  <span className="font-bold">Name:</span>{' '}
+                  <span className="font-bold">Name:</span>{" "}
                   <span className="font-italic">
                     {`${selectedName.firstname} ${selectedName.lastname}`}
                   </span>
                 </p>
                 <p>
-                  <span className="font-bold">Pastoral Leader:</span>{' '}
+                  <span className="font-bold">Pastoral Leader:</span>{" "}
                   <span className="font-italic">
-                    {selectedName.pl ? selectedName.pl : 'N/A'}
+                    {selectedName.pl ? selectedName.pl : "N/A"}
                   </span>
                 </p>
                 <p>
-                  <span className="font-bold">Today's Event:</span>{' '}
+                  <span className="font-bold">Today's Event:</span>{" "}
                   <span className="font-italic">
-                    {eventDetails ? eventDetails.summary : 'No event for today'}
+                    {eventDetails ? eventDetails.summary : "No event for today"}
                   </span>
                 </p>
                 <p>
-                  <span className="font-bold">Date:</span>{' '}
+                  <span className="font-bold">Date:</span>{" "}
                   <span className="font-italic">
                     {eventDetails
                       ? new Date(
                           eventDetails.start.dateTime
                         ).toLocaleDateString()
-                      : 'No event for today'}
+                      : "No event for today"}
                   </span>
                 </p>
               </div>
@@ -530,7 +528,7 @@ const FormWithQRCode = () => {
                       className="form-radio text-blue-500"
                       name="gender"
                       value="Male"
-                      checked={gender === 'Male'}
+                      checked={gender === "Male"}
                       onChange={(e) => setGender(e.target.value)}
                       required
                     />
@@ -542,7 +540,7 @@ const FormWithQRCode = () => {
                       className="form-radio text-pink-500"
                       name="gender"
                       value="Female"
-                      checked={gender === 'Female'}
+                      checked={gender === "Female"}
                       onChange={(e) => setGender(e.target.value)}
                       required
                     />
@@ -586,7 +584,7 @@ const FormWithQRCode = () => {
                   required
                   autoComplete="off"
                 />
-                {matchedInviter.length > 0 && invitedBy.trim() !== '' && (
+                {matchedInviter.length > 0 && invitedBy.trim() !== "" && (
                   <ul className="mt-2 p-2 border border-gray-300 bg-gray-100 rounded-md">
                     {matchedInviter.map((matchedName, index) => (
                       <li
@@ -607,7 +605,7 @@ const FormWithQRCode = () => {
                 className="block text-gray-700 text-sm font-bold mb-2"
                 htmlFor="dob"
               >
-                Is this your first time to attend?{' '}
+                Is this your first time to attend?{" "}
               </label>
               <div className="flex items-center space-x-4 mb-2">
                 <label className="flex items-center space-x-2 cursor-pointer">
@@ -616,7 +614,7 @@ const FormWithQRCode = () => {
                     className="form-radio text-blue-500"
                     name="first"
                     value="no"
-                    checked={first === 'no'}
+                    checked={first === "no"}
                     onChange={(e) => setFirst(e.target.value)}
                     required
                   />
@@ -628,7 +626,7 @@ const FormWithQRCode = () => {
                     className="form-radio text-pink-500"
                     name="first"
                     value="yes"
-                    checked={first === 'yes'}
+                    checked={first === "yes"}
                     onChange={(e) => setFirst(e.target.value)}
                     required
                   />
@@ -703,8 +701,8 @@ const FormWithQRCode = () => {
               setIsConfirmed(false);
               resetForm();
             }}
-            eventSummary={eventDetails ? eventDetails.summary : ''}
-            name={selectedName ? selectedName.firstname : ''}
+            eventSummary={eventDetails ? eventDetails.summary : ""}
+            name={selectedName ? selectedName.firstname : ""}
             // eventSummary={eventDetails ? eventDetails.summary : ""}
           />
         )}
