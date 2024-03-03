@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import AttendanceSelector from "@/components/AttendanceSelector";
+import AttendanceSelector from "../components/AttendanceSelector/AttendanceSelector";
 
 import { Fragment, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
