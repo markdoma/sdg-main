@@ -132,20 +132,35 @@ const AttendanceSelector = () => {
       >
         <h2>Available Members</h2>
         <ul>
-          {filteredBox1Members.map((member) => (
-            <li
-              key={member.id}
-              onClick={() => toggleSelectMember(member.id)}
-              style={{
-                backgroundColor: selectedBox1Members.includes(member.id)
-                  ? "lightblue"
-                  : "inherit",
-                cursor: "pointer",
-              }}
-            >
-              {member.name}
-            </li>
-          ))}
+          {filteredBox1Members
+            ? filteredBox1Members.map((member) => (
+                <li
+                  key={member.id}
+                  onClick={() => toggleSelectMember(member.id)}
+                  style={{
+                    backgroundColor: selectedBox1Members.includes(member.id)
+                      ? "lightblue"
+                      : "inherit",
+                    cursor: "pointer",
+                  }}
+                >
+                  {member.name}
+                </li>
+              ))
+            : box1Members.map((member) => (
+                <li
+                  key={member.id}
+                  onClick={() => toggleSelectMember(member.id)}
+                  style={{
+                    backgroundColor: selectedBox1Members.includes(member.id)
+                      ? "lightblue"
+                      : "inherit",
+                    cursor: "pointer",
+                  }}
+                >
+                  {member.name}
+                </li>
+              ))}
         </ul>
       </div>
       <div
@@ -164,7 +179,7 @@ const AttendanceSelector = () => {
       >
         <h2>Selected Members</h2>
         <ul>
-          {filteredBox2Members.map((member) => (
+          {box2Members.map((member) => (
             <li
               key={member.id}
               onClick={() => toggleSelectMemberFromBox2(member.id)}
