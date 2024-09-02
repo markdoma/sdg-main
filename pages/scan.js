@@ -1,15 +1,15 @@
-import Header from '@/components/Header';
+import Header from "@/components/Header";
 
-import Sidebar from '@/components/Sidebar';
-import FormWithQRCode from '@/components/FormWithQRCode';
-import Html5QrcodePlugin from '../components/Html5QrcodePlugin';
+import Sidebar from "@/components/Sidebar";
+import FormWithQRCode from "@/components/FormWithQRCode";
+import Html5QrcodePlugin from "../components/Html5QrcodePlugin";
 // import { getEventDetailsFromGoogleCalendar } from '../utils/attendance_utils';
 
-import axios from 'axios';
-import firebase, { db } from '../utils/firebase';
+import axios from "axios";
+import firebase, { db } from "../utils/firebase";
 
-import { Fragment, useState, useEffect } from 'react';
-import { Dialog, Menu, Transition } from '@headlessui/react';
+import { Fragment, useState, useEffect } from "react";
+import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
   BellIcon,
@@ -21,13 +21,13 @@ import {
   HomeIcon,
   UsersIcon,
   XMarkIcon,
-} from '@heroicons/react/24/outline';
+} from "@heroicons/react/24/outline";
 import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
-} from '@heroicons/react/20/solid';
+} from "@heroicons/react/20/solid";
 
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
 export default function Scan() {
   const router = useRouter(); // Use useRouter hook for navigation
@@ -62,40 +62,38 @@ export default function Scan() {
         {
           params: {
             // key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
-            key: 'AIzaSyAbX2qOg-8MGiK2HHxpNT0DAwCogdHpJJM',
+            key: "AIzaSyAbX2qOg-8MGiK2HHxpNT0DAwCogdHpJJM",
           },
         }
       );
       const currentDate = new Date();
       // const data = await response.json();
       const data = response.data.items;
-      console.log(currentDate)
-      console.log(data)
+      console.log(currentDate);
+      console.log(data);
       const eventsForCurrentDay = data.filter((event) => {
-       
-
-        if (event.status === 'cancelled' || event.summary === '') {
+        if (event.status === "cancelled" || event.summary === "") {
           // Exclude cancelled events with empty summary
           return false;
         }
 
-      // console.log(event)
-        const summary = event.summary.toLowerCase()
+        // console.log(event)
+        const summary = event.summary.toLowerCase();
         const eventDate = new Date(event.start.dateTime);
         // return eventDate.toDateString() === currentDate.toDateString();
-        console.log(summary)
+        console.log(summary);
         return (
           eventDate.toDateString() === currentDate.toDateString() &&
-           (summary.startsWith('sdg: district') ||
-            summary.startsWith('open') ||
-            summary.startsWith('choices'))
+          (summary.startsWith("sdg: district") ||
+            summary.startsWith("open") ||
+            summary.startsWith("choices"))
         );
       });
       console.log(eventsForCurrentDay);
 
       return eventsForCurrentDay.length > 0 ? eventsForCurrentDay[0] : null;
     } catch (error) {
-      console.error('Error fetching events:', error);
+      console.error("Error fetching events:", error);
     }
   };
 
@@ -106,7 +104,7 @@ export default function Scan() {
         setEventDetails(event);
       })
       .catch((error) => {
-        console.error('Error fetching event details: ', error);
+        console.error("Error fetching event details: ", error);
       });
   }, []);
 
@@ -128,7 +126,7 @@ export default function Scan() {
 
   const fetchMasterDataAndMappings = async () => {
     try {
-      const masterDataRef = db.collection('master_data');
+      const masterDataRef = db.collection("master_data");
       const querySnapshot = await masterDataRef.get();
 
       let attendanceRecordExists = false;
@@ -137,7 +135,7 @@ export default function Scan() {
       const newFullnameToDetailsMapping = {};
 
       querySnapshot.forEach((doc) => {
-        const fullName = doc.data().firstname + ' ' + doc.data().lastname;
+        const fullName = doc.data().firstname + " " + doc.data().lastname;
         newFullnameToDetailsMapping[fullName] = doc.data().doc_id;
 
         // Store other details in the fullnameToDetailsMapping
@@ -158,7 +156,7 @@ export default function Scan() {
       setFullnameToDetailsMapping(newFullnameToDetailsMapping);
       // console.log(fullnameToDetailsMapping);
     } catch (error) {
-      console.error('Error fetching master data and mappings: ', error);
+      console.error("Error fetching master data and mappings: ", error);
     }
   };
 
@@ -199,17 +197,17 @@ export default function Scan() {
 
       // console.log('with data');
       // Check if attendance already exists for the event and individual
-      db.collectionGroup('attendance')
-        .where('id', '==', qrDataId) // Use "id" as the query key
-        .where('event', '==', eventDetails.summary)
-        .where('date', '==', eventTimestamp)
+      db.collectionGroup("attendance")
+        .where("id", "==", qrDataId) // Use "id" as the query key
+        .where("event", "==", eventDetails.summary)
+        .where("date", "==", eventTimestamp)
         .get()
         .then((querySnapshot) => {
           // console.log(querySnapshot.empty);
           if (!querySnapshot.empty) {
             // Attendance already captured for this event and individual
             console.log(
-              'Attendance already captured for this event and individual.'
+              "Attendance already captured for this event and individual."
             );
             setShowExistingModal(true); // Show the existing modal
           } else {
@@ -221,10 +219,10 @@ export default function Scan() {
           }
         })
         .catch((error) => {
-          console.error('Error checking attendance: ', error);
+          console.error("Error checking attendance: ", error);
         });
     } else {
-      console.log('No attendance record found for this event and individual.');
+      console.log("No attendance record found for this event and individual.");
     }
   };
 
@@ -240,22 +238,22 @@ export default function Scan() {
       pastoral_leader: QRDetails.pastoralLeader, // Assuming there's only one matching doc
       invitedBy: null,
       sdg_class: QRDetails.sdgClass, // Assuming there's only one matching doc
-      first_timer: 'no',
+      first_timer: "no",
     };
 
     // Add new attendance entry
-    db.collection('master_data')
+    db.collection("master_data")
       .doc(QRDetails.qrDataId) // Assuming there's only one matching doc
-      .collection('attendance')
+      .collection("attendance")
       .add(newAttendance)
       .then((docRef) => {
-        console.log('Attendance record added with ID: ', docRef.id);
+        console.log("Attendance record added with ID: ", docRef.id);
         // Update attendance list with new data at the top
         setAttendanceList([newAttendance, ...attendanceList]);
         setQRData(null); // Reset QR data
       })
       .catch((error) => {
-        console.error('Error adding attendance record: ', error);
+        console.error("Error adding attendance record: ", error);
       });
     // After successful insertion, close the confirmation modal
     setShowConfirmationModal(false);
@@ -273,7 +271,7 @@ export default function Scan() {
   const handleNoRecordConfirmation = () => {
     // User canceled the confirmation, so close the modal
     setShowNoRecordModal(false);
-    router.push('/attendance');
+    router.push("/attendance");
   };
 
   const handleExistingModalClose = () => {
@@ -285,305 +283,215 @@ export default function Scan() {
 
   useEffect(() => {
     // Add event listener for scanning results
-    document.addEventListener('decoded', onNewScanResult);
+    document.addEventListener("decoded", onNewScanResult);
     fetchMasterDataAndMappings();
     // console.log(fullnameToDetailsMapping);
 
     // Cleanup the event listener when the component unmounts
     return () => {
-      document.removeEventListener('decoded', onNewScanResult);
+      document.removeEventListener("decoded", onNewScanResult);
     };
   }, []);
 
   return (
     <>
-      <div>
-        <Transition.Root show={sidebarOpen} as={Fragment}>
-          {/* Sidebar overlay */}
-          <Dialog
-            as="div"
-            className="fixed inset-0 z-50 lg:hidden"
-            onClose={setSidebarOpen}
-          >
-            {/* Sidebar overlay background */}
-            <Transition.Child
-              as={Fragment}
-              enter="transition-opacity ease-linear duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="transition-opacity ease-linear duration-300"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
+      <main className="py-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center">
+            <button
+              className={`py-2 px-4 ${
+                scannerActive
+                  ? "bg-transparent"
+                  : "bg-blue-500 hover:bg-blue-600"
+              } text-white font-semibold rounded shadow-lg focus:outline-none`}
+              onClick={() => {
+                setScannerActive(!scannerActive);
+              }}
             >
-              <div className="fixed inset-0 bg-gray-900/80" />
-            </Transition.Child>
+              {scannerActive ? "" : "Activate Scanner"}
+            </button>
+          </div>
 
-            {/* Sidebar panel */}
-            <div className="fixed inset-0 flex">
-              {/* Sidebar content */}
-              <Transition.Child
-                as={Fragment}
-                enter="transition ease-in-out duration-300 transform"
-                enterFrom="-translate-x-full"
-                enterTo="translate-x-0"
-                leave="transition ease-in-out duration-300 transform"
-                leaveFrom="translate-x-0"
-                leaveTo="-translate-x-full"
-              >
-                <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
-                  {/* Close button */}
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-in-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in-out duration-300"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <div className="absolute left-full top-0 flex w-16 justify-center pt-5">
-                      <button
-                        type="button"
-                        className="-m-2.5 p-2.5"
-                        onClick={() => setSidebarOpen(false)}
+          <div className="mx-auto max-w-md">
+            <Html5QrcodePlugin
+              scannerActive={scannerActive}
+              fps={10}
+              aspectRatio={1.0}
+              qrbox={200}
+              disableFlip={false}
+              qrCodeSuccessCallback={onNewScanResult}
+              onUnmount={() => setScannerActive(false)} // Deactivate scanner on unmount
+            />
+          </div>
+
+          {/* Display QR code data */}
+
+          {/* Display QR code data */}
+          {qrData && (
+            <div>
+              <p>QR Code Data: {qrData}</p>
+            </div>
+          )}
+          {/* {qrData && <p>QR Code Data: {qrData}</p>} */}
+          {/* Confirmation Modal */}
+          <Transition.Root show={showConfirmationModal} as={Fragment}>
+            <Dialog
+              as="div"
+              className="fixed inset-0 z-50 overflow-y-auto"
+              onClose={handleCancelConfirmation}
+            >
+              <div className="flex items-center justify-center min-h-screen px-4 text-center">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0"
+                  enterTo="opacity-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                  <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-30" />
+                </Transition.Child>
+
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 scale-95"
+                  enterTo="opacity-100 scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 scale-100"
+                  leaveTo="opacity-0 scale-95"
+                >
+                  <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg">
+                    {/* Modal content */}
+                    <div>
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-medium leading-6 text-gray-900"
                       >
-                        <span className="sr-only">Close sidebar</span>
-                        <XMarkIcon
-                          className="h-6 w-6 text-white"
-                          aria-hidden="true"
-                        />
+                        Confirm Attendance
+                      </Dialog.Title>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          {`Do you want to add ${QRDetails.firstname} ${QRDetails.lastname} to the
+                              attendance?`}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <button
+                        onClick={handleConfirmAttendance}
+                        className="px-4 py-2 mr-2 text-sm font-medium text-green-600 border border-transparent rounded-md hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                      >
+                        Confirm
+                      </button>
+                      <button
+                        onClick={handleCancelConfirmation}
+                        className="px-4 py-2 text-sm font-medium text-red-600 border border-transparent rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                      >
+                        Cancel
                       </button>
                     </div>
-                  </Transition.Child>
-
-                  {/* Sidebar */}
-                  <Sidebar />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </Dialog>
-        </Transition.Root>
-
-        {/* Static sidebar for desktop */}
-        <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-          {/* Sidebar */}
-          <Sidebar />
-        </div>
-
-        {/* Main content */}
-        <div className="lg:pl-72">
-          {/* Header */}
-          <Header />
-
-          {/* Main section */}
-          <main className="py-10">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-center">
-                <button
-                  className={`py-2 px-4 ${
-                    scannerActive
-                      ? 'bg-transparent'
-                      : 'bg-blue-500 hover:bg-blue-600'
-                  } text-white font-semibold rounded shadow-lg focus:outline-none`}
-                  onClick={() => {
-                    setScannerActive(!scannerActive);
-                  }}
-                >
-                  {scannerActive ? '' : 'Activate Scanner'}
-                </button>
+                  </div>
+                </Transition.Child>
               </div>
+            </Dialog>
+          </Transition.Root>
 
-              {/* <button onClick={resetScanResult}>Reset Scan Result</button> */}
-              {/* <Html5QrcodePlugin
-                scannerActive={scannerActive}
-                // scannerActive="True"
-                fps={80}
-                qrbox={500}
-                disableFlip={false}
-                qrCodeSuccessCallback={onNewScanResult}
-                onUnmount={() => setScannerActive(false)} // Deactivate scanner on unmount
-              /> */}
-
-              <div className="mx-auto max-w-md">
-                <Html5QrcodePlugin
-                  scannerActive={scannerActive}
-                  fps={10}
-                  aspectRatio={1.0}
-                  qrbox={200}
-                  disableFlip={false}
-                  qrCodeSuccessCallback={onNewScanResult}
-                  onUnmount={() => setScannerActive(false)} // Deactivate scanner on unmount
-                />
+          {/* Existing Modal */}
+          <Transition.Root show={showExistingModal} as={Fragment}>
+            <Dialog
+              as="div"
+              className="fixed inset-0 z-50 overflow-y-auto"
+              onClose={handleExistingModalClose}
+            >
+              <div className="flex items-center justify-center min-h-screen px-4 text-center">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 scale-95"
+                  enterTo="opacity-100 scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 scale-100"
+                  leaveTo="opacity-0 scale-95"
+                >
+                  <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg">
+                    {/* Modal content */}
+                    <div>
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-medium leading-6 text-gray-900"
+                      >
+                        Record Already Exists
+                      </Dialog.Title>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          {`${QRDetails.firstname} ${QRDetails.lastname} already exists for this event.`}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <button
+                        onClick={handleExistingModalClose}
+                        className="px-4 py-2 text-sm font-medium text-blue-600 border border-transparent rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      >
+                        OK
+                      </button>
+                    </div>
+                  </div>
+                </Transition.Child>
               </div>
+            </Dialog>
+          </Transition.Root>
 
-              {/* Display QR code data */}
-
-              {/* Display QR code data */}
-              {qrData && (
-                <div>
-                  <p>QR Code Data: {qrData}</p>
-                </div>
-              )}
-              {/* {qrData && <p>QR Code Data: {qrData}</p>} */}
-              {/* Confirmation Modal */}
-              <Transition.Root show={showConfirmationModal} as={Fragment}>
-                <Dialog
-                  as="div"
-                  className="fixed inset-0 z-50 overflow-y-auto"
-                  onClose={handleCancelConfirmation}
+          {/* No Record Modal */}
+          <Transition.Root show={showNoRecordModal} as={Fragment}>
+            <Dialog
+              as="div"
+              className="fixed inset-0 z-50 overflow-y-auto"
+              onClose={handleNoRecordConfirmation}
+            >
+              <div className="flex items-center justify-center min-h-screen px-4 text-center">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 scale-95"
+                  enterTo="opacity-100 scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 scale-100"
+                  leaveTo="opacity-0 scale-95"
                 >
-                  <div className="flex items-center justify-center min-h-screen px-4 text-center">
-                    <Transition.Child
-                      as={Fragment}
-                      enter="ease-out duration-300"
-                      enterFrom="opacity-0"
-                      enterTo="opacity-100"
-                      leave="ease-in duration-200"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
-                    >
-                      <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-30" />
-                    </Transition.Child>
-
-                    <Transition.Child
-                      as={Fragment}
-                      enter="ease-out duration-300"
-                      enterFrom="opacity-0 scale-95"
-                      enterTo="opacity-100 scale-100"
-                      leave="ease-in duration-200"
-                      leaveFrom="opacity-100 scale-100"
-                      leaveTo="opacity-0 scale-95"
-                    >
-                      <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg">
-                        {/* Modal content */}
-                        <div>
-                          <Dialog.Title
-                            as="h3"
-                            className="text-lg font-medium leading-6 text-gray-900"
-                          >
-                            Confirm Attendance
-                          </Dialog.Title>
-                          <div className="mt-2">
-                            <p className="text-sm text-gray-500">
-                              {`Do you want to add ${QRDetails.firstname} ${QRDetails.lastname} to the
-                              attendance?`}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="mt-4">
-                          <button
-                            onClick={handleConfirmAttendance}
-                            className="px-4 py-2 mr-2 text-sm font-medium text-green-600 border border-transparent rounded-md hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                          >
-                            Confirm
-                          </button>
-                          <button
-                            onClick={handleCancelConfirmation}
-                            className="px-4 py-2 text-sm font-medium text-red-600 border border-transparent rounded-md hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                          >
-                            Cancel
-                          </button>
-                        </div>
+                  <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg">
+                    {/* Modal content */}
+                    <div>
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-medium leading-6 text-gray-900"
+                      >
+                        Record does not exists
+                      </Dialog.Title>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          {`Do you want ${QRDetails.firstname} to the database?`}
+                        </p>
                       </div>
-                    </Transition.Child>
+                    </div>
+                    <div className="mt-4">
+                      <button
+                        onClick={handleNoRecordConfirmation}
+                        className="px-4 py-2 text-sm font-medium text-blue-600 border border-transparent rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      >
+                        OK
+                      </button>
+                    </div>
                   </div>
-                </Dialog>
-              </Transition.Root>
+                </Transition.Child>
+              </div>
+            </Dialog>
+          </Transition.Root>
 
-              {/* Existing Modal */}
-              <Transition.Root show={showExistingModal} as={Fragment}>
-                <Dialog
-                  as="div"
-                  className="fixed inset-0 z-50 overflow-y-auto"
-                  onClose={handleExistingModalClose}
-                >
-                  <div className="flex items-center justify-center min-h-screen px-4 text-center">
-                    <Transition.Child
-                      as={Fragment}
-                      enter="ease-out duration-300"
-                      enterFrom="opacity-0 scale-95"
-                      enterTo="opacity-100 scale-100"
-                      leave="ease-in duration-200"
-                      leaveFrom="opacity-100 scale-100"
-                      leaveTo="opacity-0 scale-95"
-                    >
-                      <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg">
-                        {/* Modal content */}
-                        <div>
-                          <Dialog.Title
-                            as="h3"
-                            className="text-lg font-medium leading-6 text-gray-900"
-                          >
-                            Record Already Exists
-                          </Dialog.Title>
-                          <div className="mt-2">
-                            <p className="text-sm text-gray-500">
-                              {`${QRDetails.firstname} ${QRDetails.lastname} already exists for this event.`}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="mt-4">
-                          <button
-                            onClick={handleExistingModalClose}
-                            className="px-4 py-2 text-sm font-medium text-blue-600 border border-transparent rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                          >
-                            OK
-                          </button>
-                        </div>
-                      </div>
-                    </Transition.Child>
-                  </div>
-                </Dialog>
-              </Transition.Root>
-
-              {/* No Record Modal */}
-              <Transition.Root show={showNoRecordModal} as={Fragment}>
-                <Dialog
-                  as="div"
-                  className="fixed inset-0 z-50 overflow-y-auto"
-                  onClose={handleNoRecordConfirmation}
-                >
-                  <div className="flex items-center justify-center min-h-screen px-4 text-center">
-                    <Transition.Child
-                      as={Fragment}
-                      enter="ease-out duration-300"
-                      enterFrom="opacity-0 scale-95"
-                      enterTo="opacity-100 scale-100"
-                      leave="ease-in duration-200"
-                      leaveFrom="opacity-100 scale-100"
-                      leaveTo="opacity-0 scale-95"
-                    >
-                      <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg">
-                        {/* Modal content */}
-                        <div>
-                          <Dialog.Title
-                            as="h3"
-                            className="text-lg font-medium leading-6 text-gray-900"
-                          >
-                            Record does not exists
-                          </Dialog.Title>
-                          <div className="mt-2">
-                            <p className="text-sm text-gray-500">
-                              {`Do you want ${QRDetails.firstname} to the database?`}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="mt-4">
-                          <button
-                            onClick={handleNoRecordConfirmation}
-                            className="px-4 py-2 text-sm font-medium text-blue-600 border border-transparent rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                          >
-                            OK
-                          </button>
-                        </div>
-                      </div>
-                    </Transition.Child>
-                  </div>
-                </Dialog>
-              </Transition.Root>
-
-              {/* Display attendance list */}
-              {/* <div>
+          {/* Display attendance list */}
+          {/* <div>
                 <ul className="border rounded-md divide-y divide-gray-300">
                   {attendanceData
                     .slice()
@@ -605,10 +513,8 @@ export default function Scan() {
                     ))}
                 </ul>
               </div> */}
-            </div>
-          </main>
         </div>
-      </div>
+      </main>
     </>
   );
 }
