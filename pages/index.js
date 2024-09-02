@@ -1,12 +1,12 @@
-import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
-import FormWithQRCode from '@/components/FormWithQRCode';
-import PageHeadingcopy from '@/components/PageHeadingcopy';
+import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
+import Team from "@/components/Members/Team";
+import PageHeadingcopy from "@/components/PageHeadingcopy";
 
-import MasterDownload from '../utils/MasterDownload';
+import MasterDownload from "../utils/MasterDownload";
 
-import { Fragment, useState } from 'react';
-import { Dialog, Menu, Transition } from '@headlessui/react';
+import { Fragment, useState, useEffect } from "react";
+import { Dialog, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
   BellIcon,
@@ -18,130 +18,142 @@ import {
   HomeIcon,
   UsersIcon,
   XMarkIcon,
-} from '@heroicons/react/24/outline';
+} from "@heroicons/react/24/outline";
 import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
-} from '@heroicons/react/20/solid';
+} from "@heroicons/react/20/solid";
 
-export default function Home() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+import { db } from "../utils/firebase";
+import Link from "next/link";
 
-  // const handleScan = (data) => {
-  //   console.log("Scanned QR Code:", data);
-  //   // Add your logic to handle the scanned QR code data here
-  // };
+// export async function getServerSideProps() {
+//   // const membersCollection = db.collection("master_data");
 
-  const [scanResult, setScanResult] = useState('');
+//   try {
+//     const masterDataSnapshot = await db.collection("master_data").get();
+//     const members = masterDataSnapshot.docs.map((doc) => {
+//       const data = doc.data();
 
-  const handleScan = (data) => {
-    setScanResult(data);
-    // console.log("Scanned QR Code:", data);
-  };
+//       // Convert Firestore Timestamps to ISO strings
+//       const serializedData = {
+//         id: doc.id,
+//         ...data,
+//         insert_date: data.insert_date
+//           ? data.insert_date.toDate().toISOString()
+//           : null,
+//         birthdate: data.birthdate
+//           ? data.birthdate.toDate().toISOString()
+//           : null,
+//         weddingdate: data.weddingdate
+//           ? data.weddingdate.toDate().toISOString()
+//           : null,
+//         // Add other fields as necessary
+//       };
 
-  const resetScanResult = () => {
-    setScanResult('');
-  };
+//       return serializedData;
+//     });
+//     return {
+//       props: {
+//         members,
+//       },
+//     };
+//   } catch (error) {
+//     console.error("Error fetching documents:", error);
+//     return {
+//       props: {
+//         members: [],
+//       },
+//     };
+//   }
+// }
 
+export async function getServerSideProps() {
+  try {
+    const masterDataSnapshot = await db.collection("master_data").get();
+    const members = masterDataSnapshot.docs.map((doc) => {
+      const data = doc.data();
+
+      return {
+        id: doc.id,
+        ...data,
+        insert_date: data.insert_date
+          ? data.insert_date.toDate().toISOString()
+          : null,
+        birthdate: data.birthdate
+          ? data.birthdate.toDate().toISOString()
+          : null,
+        weddingdate: data.weddingdate
+          ? data.weddingdate.toDate().toISOString()
+          : null,
+      };
+    });
+
+    return {
+      props: { members },
+    };
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+    return {
+      props: {
+        members: [],
+      },
+    };
+  }
+}
+
+export default function Home({ members }) {
+  const [cachedMembers, setCachedMembers] = useState([]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const cachedData = localStorage.getItem("members");
+      if (cachedData) {
+        // Use cached data if available
+        setCachedMembers(JSON.parse(cachedData));
+      } else {
+        // Cache the data if not present
+        localStorage.setItem("members", JSON.stringify(members));
+        setCachedMembers(members);
+      }
+    }
+  }, [members]);
   return (
     <>
-      {/*
-          This example requires updating your template:
-  
-          ```
-          <html class="h-full bg-white">
-          <body class="h-full">
-          ```
-        */}
-      <div>
-        <Transition.Root show={sidebarOpen} as={Fragment}>
-          {/* Sidebar overlay */}
-          <Dialog
-            as="div"
-            className="fixed inset-0 z-50 lg:hidden"
-            onClose={setSidebarOpen}
+      <div className="bg-white py-8">
+        <div className="mx-auto max-w-7xl px-6 text-center lg:px-8">
+          <div className="mx-auto max-w-2xl">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Doma MWG
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-gray-600">
+              We’re a dynamic group of individuals who are passionate about what
+              we do.
+            </p>
+          </div>
+          <ul
+            role="list"
+            className="mx-auto mt-20 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3"
           >
-            {/* Sidebar overlay background */}
-            <Transition.Child
-              as={Fragment}
-              enter="transition-opacity ease-linear duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="transition-opacity ease-linear duration-300"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="fixed inset-0 bg-gray-900/80" />
-            </Transition.Child>
-
-            {/* Sidebar panel */}
-            <div className="fixed inset-0 flex">
-              {/* Sidebar content */}
-              <Transition.Child
-                as={Fragment}
-                enter="transition ease-in-out duration-300 transform"
-                enterFrom="-translate-x-full"
-                enterTo="translate-x-0"
-                leave="transition ease-in-out duration-300 transform"
-                leaveFrom="translate-x-0"
-                leaveTo="-translate-x-full"
-              >
-                <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
-                  {/* Close button */}
-                  <Transition.Child
-                    as={Fragment}
-                    enter="ease-in-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in-out duration-300"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <div className="absolute left-full top-0 flex w-16 justify-center pt-5">
-                      <button
-                        type="button"
-                        className="-m-2.5 p-2.5"
-                        onClick={() => setSidebarOpen(false)}
-                      >
-                        <span className="sr-only">Close sidebar</span>
-                        <XMarkIcon
-                          className="h-6 w-6 text-white"
-                          aria-hidden="true"
-                        />
-                      </button>
-                    </div>
-                  </Transition.Child>
-
-                  {/* Sidebar */}
-                  <Sidebar />
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </Dialog>
-        </Transition.Root>
-
-        {/* Static sidebar for desktop */}
-        <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-          {/* Sidebar */}
-          <Sidebar />
-        </div>
-
-        {/* Main content */}
-        <div className="lg:pl-72">
-          {/* Header */}
-
-          <Header />
-
-          {/* Main section */}
-          <main className="py-10">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <PageHeadingcopy />
-              {/* <MasterDownload /> */}
-              <FormWithQRCode />
-              {/* <CsvUploader /> */}
-              {/* <ChildrenCSVUploader /> */}
-            </div>
-          </main>
+            {cachedMembers.map((member) => (
+              <li key={member.id}>
+                <Link href={`/members/${member.id}`}>
+                  <img
+                    alt=""
+                    src="https://i.pravatar.cc/300"
+                    // src={member.imageUrl}
+                    className="mx-auto h-56 w-56 rounded-full"
+                  />
+                  <h3 className="mt-6 text-base font-semibold leading-7 tracking-tight text-gray-900">
+                    {member.firstname} {member.lastname}
+                  </h3>
+                  <p className="text-sm leading-6 text-gray-600">
+                    {member.ligaya_class}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </>
