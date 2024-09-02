@@ -102,7 +102,7 @@ export async function getServerSideProps() {
   }
 }
 
-export default function Home({ members }) {
+export default function LigayaSdg({ members }) {
   const [cachedMembers, setCachedMembers] = useState([]);
 
   useEffect(() => {
