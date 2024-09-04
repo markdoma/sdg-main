@@ -1,6 +1,7 @@
 "use client";
 
 import FormWithQRCode from "@/components/FormWithQRCode";
+import { useAuth } from "../../context/AuthContext";
 
 import { useState } from "react";
 import {
@@ -37,7 +38,7 @@ import {
 } from "@heroicons/react/20/solid";
 
 const navigation = [
-  { name: "Home", href: "/", icon: HomeIcon, current: true },
+  { name: "Home", href: "/home", icon: HomeIcon, current: true },
   { name: "Attendance", href: "/attendance", icon: ClockIcon, current: false },
   { name: "Tithes", href: "#", icon: ScaleIcon, current: false },
   { name: "Summary", href: "/summary", icon: UserGroupIcon, current: false },
@@ -74,6 +75,9 @@ function classNames(...classes) {
 export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const { user } = useAuth();
+
+  console.log(user);
   return (
     <>
       <div className="min-h-full">
@@ -275,13 +279,16 @@ export default function Layout({ children }) {
                     <MenuButton className="relative flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 lg:rounded-md lg:p-2 lg:hover:bg-gray-50">
                       <span className="absolute -inset-1.5 lg:hidden" />
                       <img
-                        alt=""
-                        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        alt={user?.displayName || "User Photo"}
+                        src={
+                          user?.photoURL || "https://via.placeholder.com/150"
+                        }
+                        // src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                         className="h-8 w-8 rounded-full"
                       />
                       <span className="ml-3 hidden text-sm font-medium text-gray-700 lg:block">
                         <span className="sr-only">Open user menu for </span>
-                        Emilia Birch
+                        {user?.displayName || "User Name"}
                       </span>
                       <ChevronDownIcon
                         aria-hidden="true"
@@ -311,7 +318,7 @@ export default function Layout({ children }) {
                     </MenuItem>
                     <MenuItem>
                       <a
-                        href="#"
+                        href="/signout"
                         className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                       >
                         Logout
@@ -331,19 +338,26 @@ export default function Layout({ children }) {
                     {/* Profile */}
                     <div className="flex items-center">
                       <img
-                        alt=""
-                        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.6&w=256&h=256&q=80"
+                        alt={user?.displayName || "User Photo"}
+                        src={
+                          user?.photoURL || "https://via.placeholder.com/150"
+                        }
+                        // src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.6&w=256&h=256&q=80"
                         className="hidden h-16 w-16 rounded-full sm:block"
                       />
                       <div>
                         <div className="flex items-center">
                           <img
-                            alt=""
-                            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.6&w=256&h=256&q=80"
+                            alt={user?.displayName || "User Photo"}
+                            src={
+                              user?.photoURL ||
+                              "https://via.placeholder.com/150"
+                            }
+                            // src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.6&w=256&h=256&q=80"
                             className="h-16 w-16 rounded-full sm:hidden"
                           />
                           <h1 className="ml-3 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:leading-9">
-                            Good morning, Emilia Birch
+                            Good morning, {user?.displayName || "User Name"}
                           </h1>
                         </div>
                         <dl className="mt-6 flex flex-col sm:ml-3 sm:mt-1 sm:flex-row sm:flex-wrap">

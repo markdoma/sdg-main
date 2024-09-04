@@ -9,6 +9,7 @@ import firebase from "firebase/app";
 import "firebase/auth"; // Import the Firebase Authentication module
 import "firebase/firestore";
 import "firebase/storage";
+// import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyApAFNETwBUvoIbDzySJGjFVTHdUItD4XE",
@@ -24,17 +25,14 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-export const auth = firebase.auth(); // Export the Firebase Authentication instance
-export const db = firebase.firestore();
+const auth = firebase.auth(); // Export the Firebase Authentication instance
+const db = firebase.firestore();
 
-// db.enablePersistence().catch((err) => {
-//   if (err.code === "failed-precondition") {
-//     console.error("Persistence failed: Multiple tabs open");
-//   } else if (err.code === "unimplemented") {
-//     console.error("Persistence is not available");
-//   }
-// });
+const provider = new firebase.auth.GoogleAuthProvider();
+const storage = firebase.storage();
+// Set the prompt parameter to 'select_account' to force account selection
+provider.setCustomParameters({
+  prompt: "select_account",
+});
 
-export const storage = firebase.storage();
-
-export default firebase; // Export the default Firebase object
+export { db, storage, auth, provider };

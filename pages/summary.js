@@ -136,15 +136,15 @@ export default function Summary() {
 
   return (
     <>
-      <EventContext.Provider value={[selectedEvent, setSelectedEvent]}>
-        {/* {eventsOptions.length > 0 && ( // Add this conditional check
+      {/* <EventContext.Provider value={[selectedEvent, setSelectedEvent]}> */}
+      {/* {eventsOptions.length > 0 && ( // Add this conditional check
                   <PageHeading eventOptions />
                 )} */}
-        {/* <PageHeading eventsOptions={eventsOptions} /> */}
+      {/* <PageHeading eventsOptions={eventsOptions} /> */}
 
-        {/* <AttendanceSummaryReport /> */}
-        <AttendancePage />
-      </EventContext.Provider>
+      {/* <AttendanceSummaryReport /> */}
+      <AttendancePage />
+      {/* </EventContext.Provider> */}
     </>
   );
 }
