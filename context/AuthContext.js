@@ -62,6 +62,8 @@ export function AuthProvider({ children }) {
         setNotRegistered(true); // Set state if user is not registered
         throw new Error("User role not found.");
       }
+      // Redirect to /home after sign-in
+      router.push("/home");
 
       const role = roleDoc.data().role;
       const pl_name = roleDoc.data().pl;
@@ -78,9 +80,6 @@ export function AuthProvider({ children }) {
         },
         { merge: true }
       );
-
-      // Redirect to /home after sign-in
-      router.push("/home");
     } catch (error) {
       console.error("Error signing in with Google:", error.message);
       setError(error.message);
