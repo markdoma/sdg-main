@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { db } from "../../utils/firebase";
 import MemberHeading from "@/components/Members/MemberHeading";
 import Details from "@/components/Members/Details";
+import Loading from "../../components/Misc/Loading";
 
 export default function MemberPage() {
   const router = useRouter();
@@ -66,7 +67,7 @@ export default function MemberPage() {
   }, [id]); // Dependency array includes `id` to re-run effect if `id` changes
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (error) {

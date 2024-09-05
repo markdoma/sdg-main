@@ -1,18 +1,24 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { auth, provider, db } from "../utils/firebase";
-import { useRouter } from "next/router";
 import Cookies from "js-cookie";
+import Loading from "../components/Misc/Loading";
+import { useRouter } from "next/router";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Added loading state
-  const [error, setError] = useState(null); // Added error state
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); // Initial loading state
   const router = useRouter();
+
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setUser(user);
+      if (user) {
+        // Fetch user data if user is authenticated
+        await fetchUserData(user.email);
+      }
       setLoading(false); // Set loading to false once user is determined
     });
 
@@ -30,16 +36,15 @@ export function AuthProvider({ children }) {
 
   const signInWithGoogle = async () => {
     setLoading(true);
-    setError(null); // Reset error before starting sign-in
+    router.push("/home");
     try {
       const result = await auth.signInWithPopup(provider);
       const user = result.user;
-      console.log("User signed in:", user);
-      setTokenInCookie();
+      await setTokenInCookie();
+
       // Fetch user role from Firestore
       const roleRef = db.collection("roles").doc(user.email);
       const roleDoc = await roleRef.get();
-      console.log(roleDoc);
 
       if (!roleDoc.exists) {
         throw new Error("User role not found.");
@@ -55,13 +60,13 @@ export function AuthProvider({ children }) {
           email: user.email,
           displayName: user.displayName,
           avatar: user.photoURL,
-          role: role, // Store user role
-          pl_name: pl_name, // Store pl name
+          role: role,
+          pl_name: pl_name,
         },
         { merge: true }
       );
-      router.push("/home");
-      // Handle post-sign-in logic (e.g., redirect or store user data)
+
+      // Redirect to /home after sign-in
     } catch (error) {
       console.error("Error signing in with Google:", error.message);
       setError(error.message);
@@ -70,9 +75,43 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Function to fetch user data from Firestore
+  const fetchUserData = async (email) => {
+    try {
+      const roleRef = db.collection("roles").doc(email);
+      const roleDoc = await roleRef.get();
+
+      if (!roleDoc.exists) {
+        throw new Error("User role not found.");
+      }
+
+      const role = roleDoc.data().role;
+      const pl_name = roleDoc.data().pl;
+
+      // Update Firestore with user information
+      const userRef = db.collection("users").doc(email);
+      await userRef.set(
+        {
+          email: email,
+          displayName: auth.currentUser.displayName,
+          avatar: auth.currentUser.photoURL,
+          role: role,
+          pl_name: pl_name,
+        },
+        { merge: true }
+      );
+    } catch (error) {
+      console.error("Error fetching user data:", error.message);
+    }
+  };
+
+  if (loading) {
+    return <Loading />; // Show loading while authentication state is determined
+  }
+
   return (
     <AuthContext.Provider value={{ user, signInWithGoogle }}>
-      {loading ? <div>Loading...</div> : children}
+      {children}
     </AuthContext.Provider>
   );
 }

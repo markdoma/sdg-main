@@ -66,6 +66,19 @@ const cards = [
   // More items...
 ];
 
+// Function to determine the appropriate greeting based on the current time
+const getGreeting = () => {
+  const currentHour = new Date().getHours();
+
+  if (currentHour < 12) {
+    return "Good morning";
+  } else if (currentHour < 18) {
+    return "Good afternoon";
+  } else {
+    return "Good evening";
+  }
+};
+
 //
 
 function classNames(...classes) {
@@ -114,9 +127,12 @@ export default function Layout({ children }) {
               </TransitionChild>
               <div className="flex flex-shrink-0 items-center px-4">
                 <img
-                  alt="Easywire logo"
-                  src="https://tailwindui.com/img/logos/mark.svg?color=cyan&shade=300"
-                  className="h-8 w-auto"
+                  // alt="Easywire logo"
+                  // src="https://tailwindui.com/img/logos/mark.svg?color=cyan&shade=300"
+
+                  src="/ligaya.png"
+                  alt="Ligaya ng Panginoon"
+                  className="h-20 w-auto"
                 />
               </div>
               <nav
@@ -175,9 +191,11 @@ export default function Layout({ children }) {
           <div className="flex flex-grow flex-col overflow-y-auto bg-cyan-700 pb-4 pt-5">
             <div className="flex flex-shrink-0 items-center px-4">
               <img
-                alt="Easywire logo"
-                src="https://tailwindui.com/img/logos/mark.svg?color=cyan&shade=300"
-                className="h-8 w-auto"
+                // alt="Easywire logo"
+                // src="https://tailwindui.com/img/logos/mark.svg?color=cyan&shade=300"
+                src="/ligaya.png"
+                alt="Ligaya ng Panginoon"
+                className="h-20 w-auto"
               />
             </div>
             <nav
@@ -357,7 +375,7 @@ export default function Layout({ children }) {
                             className="h-16 w-16 rounded-full sm:hidden"
                           />
                           <h1 className="ml-3 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:leading-9">
-                            Good morning, {user?.displayName || "User Name"}
+                            {getGreeting()}, {user?.displayName || "User Name"}
                           </h1>
                         </div>
                         <dl className="mt-6 flex flex-col sm:ml-3 sm:mt-1 sm:flex-row sm:flex-wrap">
