@@ -101,13 +101,27 @@ const Login = () => {
           </form> */}
 
           <div className="flex items-center justify-center">
-            <button
+            {/* <button
               onClick={signInWithGoogle}
               disabled={loading}
               className="px-10 py-5 bg-blue-500 text-white rounded"
             >
               {loading ? "Signing in..." : "Sign in with Google"}
-            </button>
+            </button> */}
+
+            <img
+              // src="https://developers.google.com/identity/images/g-logo.png" // Google logo image URL
+              src="/google.png" // Google logo image URL
+              alt="Sign in with Google"
+              className={`cursor-pointer ${
+                loading ? "opacity-50" : "opacity-100"
+              }`}
+              onClick={signInWithGoogle}
+              style={{ width: "200px", height: "auto" }} // Adjust size as needed
+            />
+            {loading && (
+              <p className="ml-4 text-sm text-gray-500">Signing in...</p> // Optional loading message
+            )}
           </div>
 
           <p className="mt-10 text-center text-sm text-gray-500">

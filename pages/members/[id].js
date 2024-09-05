@@ -17,12 +17,12 @@ export default function MemberPage() {
     if (!id) return; // Wait until ID is available
 
     // Check localStorage for cached data
-    const cachedData = localStorage.getItem(`member_${id}`);
-    if (cachedData) {
-      setMember(JSON.parse(cachedData));
-      setLoading(false);
-      return;
-    }
+    // const cachedData = localStorage.getItem(`member_${id}`);
+    // if (cachedData) {
+    //   setMember(JSON.parse(cachedData));
+    //   setLoading(false);
+    //   return;
+    // }
 
     // If no cached data, fetch from Firestore
     const fetchMember = async () => {
@@ -52,7 +52,7 @@ export default function MemberPage() {
         };
 
         // Cache the fetched data in localStorage
-        localStorage.setItem(`member_${id}`, JSON.stringify(memberData));
+        // localStorage.setItem(`member_${id}`, JSON.stringify(memberData));
 
         setMember(memberData);
         setLoading(false);
