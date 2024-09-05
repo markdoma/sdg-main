@@ -29,17 +29,19 @@ const Login = () => {
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
-            alt="Your Company"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            className="mx-auto h-10 w-auto"
+            // alt="Your Company"
+            // src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+            src="/ligaya.png"
+            alt="Ligaya ng Panginoon"
+            className="mx-auto h-30 w-auto"
           />
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Sign in to your account
-          </h2>
+          {/* <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+              Sign in to your Google Account account
+            </h2> */}
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-6">
+          {/* <form action="#" method="POST" className="space-y-6">
             <div>
               <label
                 htmlFor="email"
@@ -87,15 +89,7 @@ const Login = () => {
                 />
               </div>
             </div>
-            <div>
-              <button
-                onClick={signInWithGoogle}
-                disabled={loading}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-              >
-                {loading ? "Signing in..." : "Sign in with Google"}
-              </button>
-            </div>
+
             <div>
               <button
                 type="submit"
@@ -104,15 +98,25 @@ const Login = () => {
                 Sign in
               </button>
             </div>
-          </form>
+          </form> */}
+
+          <div className="flex items-center justify-center">
+            <button
+              onClick={signInWithGoogle}
+              disabled={loading}
+              className="px-10 py-5 bg-blue-500 text-white rounded"
+            >
+              {loading ? "Signing in..." : "Sign in with Google"}
+            </button>
+          </div>
 
           <p className="mt-10 text-center text-sm text-gray-500">
-            Not a member?{" "}
+            No Account yet?{" "}
             <a
               href="#"
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
-              Start a 14 day free trial
+              Contact markdoma10@gmail.com
             </a>
           </p>
         </div>

@@ -38,7 +38,13 @@ export default function MemberHeading({ member }) {
             <img
               alt=""
               // src={profile.avatar}
-              src="https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
+              // src="https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80"
+
+              src={
+                member.gender === "Female"
+                  ? "https://avatar.iran.liara.run/public/girl"
+                  : "https://avatar.iran.liara.run/public/boy"
+              }
               className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32"
             />
           </div>
