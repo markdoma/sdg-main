@@ -10,7 +10,18 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true); // Initial loading state
+  const [notRegistered, setNotRegistered] = useState(false); // State for not registered users
   const router = useRouter();
+
+  const handleBackToLogin = () => {
+    // Refresh the page
+    window.location.reload();
+
+    // Navigate to the home page after a short delay to ensure the reload occurs first
+    setTimeout(() => {
+      router.push("/login");
+    }, 100); // 100ms delay to ensure the reload has time to take effect
+  };
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -36,7 +47,8 @@ export function AuthProvider({ children }) {
 
   const signInWithGoogle = async () => {
     setLoading(true);
-    router.push("/home");
+    setError(null); // Reset error before starting sign-in
+
     try {
       const result = await auth.signInWithPopup(provider);
       const user = result.user;
@@ -47,6 +59,7 @@ export function AuthProvider({ children }) {
       const roleDoc = await roleRef.get();
 
       if (!roleDoc.exists) {
+        setNotRegistered(true); // Set state if user is not registered
         throw new Error("User role not found.");
       }
 
@@ -67,6 +80,7 @@ export function AuthProvider({ children }) {
       );
 
       // Redirect to /home after sign-in
+      router.push("/home");
     } catch (error) {
       console.error("Error signing in with Google:", error.message);
       setError(error.message);
@@ -102,11 +116,28 @@ export function AuthProvider({ children }) {
       );
     } catch (error) {
       console.error("Error fetching user data:", error.message);
+      setError(error.message);
     }
   };
 
   if (loading) {
     return <Loading />; // Show loading while authentication state is determined
+  }
+
+  if (notRegistered) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen px-4 py-6 text-center">
+        <p className="text-lg text-blue-600">
+          You are not registered as a user. Kindly contact{" "}
+          <a href="mailto:markdoma10@gmail.com" className="underline">
+            markdoma10@gmail.com
+          </a>
+        </p>
+        <button className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <a href="/login"> Sign in as Different User</a>
+        </button>
+      </div>
+    );
   }
 
   return (

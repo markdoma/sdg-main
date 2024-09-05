@@ -385,7 +385,7 @@ export default function Layout({ children }) {
                               aria-hidden="true"
                               className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
                             />
-                            Duke street studio
+                            Ligaya SDG
                           </dd>
                           <dt className="sr-only">Account status</dt>
                           <dd className="mt-3 flex items-center text-sm font-medium capitalize text-gray-500 sm:mr-6 sm:mt-0">
@@ -393,7 +393,7 @@ export default function Layout({ children }) {
                               aria-hidden="true"
                               className="mr-1.5 h-5 w-5 flex-shrink-0 text-green-400"
                             />
-                            Verified account
+                            Pastoral Leader
                           </dd>
                         </dl>
                       </div>
