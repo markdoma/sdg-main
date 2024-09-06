@@ -148,13 +148,13 @@ export default function home({ members }) {
                     <img
                       alt=""
                       // src="https://i.pravatar.cc/300"
-                      // src="https://avatar.iran.liara.run/public/boy"
+                      src={`https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${member.firstname} ${member.lastname}`}
                       // src={member.imageUrl}
-                      src={
-                        member.gender === "Female"
-                          ? "https://avatar.iran.liara.run/public/girl"
-                          : "https://avatar.iran.liara.run/public/boy"
-                      }
+                      // src={
+                      //   member.gender === "Female"
+                      //     ? "https://avatar.iran.liara.run/public/girl"
+                      //     : "https://avatar.iran.liara.run/public/boy"
+                      // }
                       className="mx-auto h-56 w-56 rounded-full"
                     />
                     <h3 className="mt-6 text-base font-semibold leading-7 tracking-tight text-gray-900">
