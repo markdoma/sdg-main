@@ -46,10 +46,12 @@ export function AuthProvider({ children }) {
   };
 
   const signInWithGoogle = async () => {
-    setLoading(true);
     setError(null); // Reset error before starting sign-in
 
     try {
+      setLoading(true);
+      // Redirect to /home after sign-in
+      router.push("/home");
       const result = await auth.signInWithPopup(provider);
       const user = result.user;
       await setTokenInCookie();
@@ -62,8 +64,6 @@ export function AuthProvider({ children }) {
         setNotRegistered(true); // Set state if user is not registered
         throw new Error("User role not found.");
       }
-      // Redirect to /home after sign-in
-      router.push("/home");
 
       const role = roleDoc.data().role;
       const pl_name = roleDoc.data().pl;
@@ -133,7 +133,7 @@ export function AuthProvider({ children }) {
           </a>
         </p>
         <button className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-          <a href="/login"> Sign in as Different User</a>
+          <a href="/"> Return to Home</a>
         </button>
       </div>
     );

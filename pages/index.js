@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useAuth } from "../context/AuthContext";
 
 const navigation = [
   { name: "Product", href: "#" },
@@ -13,6 +14,8 @@ const navigation = [
 
 export default function Ligayasdg() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { signInWithGoogle } = useAuth();
 
   return (
     <div className="bg-white">
@@ -142,7 +145,7 @@ export default function Ligayasdg() {
           </div>
           <div className="text-center">
             <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              Ligaya South Dristrict G
+              Ligaya South District G
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-600">
               Ligaya SDG is a vibrant and charismatic community that is part of
@@ -151,12 +154,25 @@ export default function Ligayasdg() {
               passion and devotion
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <a
+              {/* <a
                 href="/login"
                 className="rounded-md bg-indigo-600 px-8 py-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Login
-              </a>
+              </a> */}
+              <img
+                // src="https://developers.google.com/identity/images/g-logo.png" // Google logo image URL
+                src="/google.png" // Google logo image URL
+                alt="Sign in with Google"
+                className={`cursor-pointer ${
+                  loading ? "opacity-50" : "opacity-100"
+                }`}
+                onClick={signInWithGoogle}
+                style={{ width: "200px", height: "auto" }} // Adjust size as needed
+              />
+              {loading && (
+                <p className="ml-4 text-sm text-gray-500">Signing in...</p> // Optional loading message
+              )}
               {/* <a
                 href="#"
                 className="text-sm font-semibold leading-6 text-gray-900"
