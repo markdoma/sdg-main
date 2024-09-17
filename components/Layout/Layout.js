@@ -1,6 +1,7 @@
 "use client";
 
 import FormWithQRCode from "@/components/FormWithQRCode";
+import { useRouter } from "next/router";
 import { useAuth } from "../../context/AuthContext";
 
 import { useState } from "react";
@@ -86,9 +87,14 @@ function classNames(...classes) {
 }
 
 export default function Layout({ children }) {
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { user } = useAuth();
+
+  const gotToDashboard = () => {
+    router.push("/dashboard");
+  };
 
   console.log(user);
   return (
@@ -407,6 +413,7 @@ export default function Layout({ children }) {
                       Add Member
                     </button>
                     <button
+                      onClick={gotToDashboard}
                       type="button"
                       className="inline-flex items-center rounded-md bg-cyan-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
                     >
