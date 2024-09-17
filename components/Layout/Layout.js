@@ -40,22 +40,28 @@ import {
 
 const navigation = [
   { name: "Home", href: "/home", icon: HomeIcon, current: true },
-  { name: "Attendance", href: "/attendance", icon: ClockIcon, current: false },
-  { name: "Tithes", href: "#", icon: ScaleIcon, current: false },
-  { name: "Summary", href: "/summary", icon: UserGroupIcon, current: false },
+  {
+    name: "Registration",
+    href: "/registration",
+    icon: ClockIcon,
+    current: false,
+  },
+  { name: "Finance", href: "#", icon: ScaleIcon, current: false },
+
   {
     name: "Family Life Ministry",
     href: "/flm",
     icon: UserGroupIcon,
     current: false,
   },
-  { name: "Scanner", href: "/scan", icon: UserGroupIcon, current: false },
+  { name: "Tech", href: "/scan", icon: UserGroupIcon, current: false },
   {
     name: "Foundation Course",
     href: "#",
     icon: DocumentChartBarIcon,
     current: false,
   },
+  { name: "Hook Programs", href: "#", icon: UserGroupIcon, current: false },
 ];
 const secondaryNavigation = [
   { name: "Settings", href: "#", icon: CogIcon },
