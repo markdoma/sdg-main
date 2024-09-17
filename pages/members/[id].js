@@ -3,7 +3,16 @@ import { useRouter } from "next/router";
 import { db } from "../../utils/firebase";
 import MemberHeading from "@/components/Members/MemberHeading";
 import Details from "@/components/Members/Details";
+import AttendanceData from "@/components/Members/AttendanceData";
 import Loading from "../../components/Misc/Loading";
+
+const initialNavigation = [
+  { name: "Profile", href: "#", current: true },
+  { name: "Attendance", href: "#", current: false },
+  { name: "Foundation Course", href: "#", current: false },
+  // { name: "Collaborators", href: "#", current: false },
+  // { name: "Notifications", href: "#", current: false },
+];
 
 export default function MemberPage() {
   const router = useRouter();
@@ -13,6 +22,11 @@ export default function MemberPage() {
   const [attendanceData, setAttendanceData] = useState([]); // State for attendance data
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState("Profile"); // State for active tab
+
+  const handleBackToList = () => {
+    router.push("/home");
+  };
 
   useEffect(() => {
     if (!id) return; // Wait until ID is available
@@ -75,6 +89,10 @@ export default function MemberPage() {
     fetchMember();
   }, [id]); // Dependency array includes `id` to re-run effect if `id` changes
 
+  const handleNavClick = (name) => {
+    setActiveTab(name);
+  };
+
   if (loading) {
     return <Loading />;
   }
@@ -87,55 +105,48 @@ export default function MemberPage() {
     return <p>Member not found</p>;
   }
 
+  const updatedNavigation = initialNavigation.map((item) => ({
+    ...item,
+    current: item.name === activeTab,
+  }));
+
   return (
     <div>
       <MemberHeading member={member} />
-      <Details member={member} />
-      {/* Render attendance data */}
-      {attendanceData.length > 0 ? (
-        <div className="mx-auto mt-8 px-4 max-w-7xl">
-          <table className="min-w-full divide-y divide-gray-300  mx-auto mt-4 mb-8">
-            <thead>
-              <tr>
-                {/* <th
-                  scope="col"
-                  className="py-3.5 px-4 text-left text-sm font-semibold text-gray-900 sm:pl-0"
-                >
-                  Firstname
-                </th> */}
-                <th
-                  scope="col"
-                  className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
-                >
-                  Event
-                </th>
-                <th
-                  scope="col"
-                  className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 sm:table-cell"
-                >
-                  Date
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
-              {attendanceData.map((item, index) => (
-                <tr key={index}>
-                  {/* <td className="py-4 px-4 text-sm font-medium text-gray-900">
-                    {item.firstname}
-                  </td> */}
-                  <td className="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-                    {item.event}
-                  </td>
-                  <td className="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">
-                    {item.date}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <p className="text-center mt-4">No attendance records found</p>
+      <div className="px-4 py-6 sm:px-6">
+        <button
+          onClick={handleBackToList}
+          className="mb-4 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          Back to list
+        </button>
+      </div>
+      <nav className="flex overflow-x-auto border-b border-white/10 py-4">
+        <ul
+          role="list"
+          className="flex min-w-full flex-none gap-x-6 px-4 text-sm font-semibold leading-6 text-black-200 sm:px-6 lg:px-8"
+        >
+          {updatedNavigation.map((item) => (
+            <li key={item.name}>
+              <a
+                href={item.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(item.name);
+                }}
+                className={
+                  item.current || activeTab === item.name ? "text-blue-400" : ""
+                }
+              >
+                {item.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      {activeTab === "Profile" && <Details member={member} />}
+      {activeTab === "Attendance" && (
+        <AttendanceData attendance={attendanceData} />
       )}
     </div>
   );

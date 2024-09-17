@@ -25,9 +25,12 @@ import {
 } from "@heroicons/react/20/solid";
 
 // import { db, auth } from "../utils/firebase";
-import { auth, db } from "../utils/firebaseAdmin";
+import { auth_server, db_server } from "../utils/firebaseAdmin";
+import { auth, db } from "../utils/firebase";
 import Link from "next/link";
 import cookie from "cookie";
+import { useAuth } from "@/context/AuthContext";
+import Loading from "../components/Misc/Loading";
 
 export async function getServerSideProps(context) {
   // const { req } = context;
@@ -43,7 +46,7 @@ export async function getServerSideProps(context) {
   if (!token) {
     return {
       redirect: {
-        destination: "/login",
+        destination: "/",
         permanent: false,
       },
     };
@@ -51,12 +54,12 @@ export async function getServerSideProps(context) {
 
   try {
     // Verify the ID token
-    const decodedToken = await auth.verifyIdToken(token);
+    const decodedToken = await auth_server.verifyIdToken(token);
     const userEmail = decodedToken.email;
     console.log(userEmail);
 
     // Fetch user data from Firestore
-    const userDoc = await db.collection("users").doc(userEmail).get();
+    const userDoc = await db_server.collection("users").doc(userEmail).get();
     const userData = userDoc.data();
 
     console.log(userData);
@@ -67,14 +70,14 @@ export async function getServerSideProps(context) {
     }
 
     // Fetch and filter other data based on user data
-    const masterDataSnapshot = await db
+    const masterDataSnapshot = await db_server
       .collection("master_data")
       .where("pl", "==", userData.pl_name)
       .get();
 
     // console.log(masterDataSnapshot);
 
-    const members = masterDataSnapshot.docs.map((doc) => {
+    const initialMembers = masterDataSnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
         id: doc.id,
@@ -91,10 +94,10 @@ export async function getServerSideProps(context) {
       };
     });
 
-    console.log(members);
+    console.log(initialMembers);
 
     return {
-      props: { members },
+      props: { initialMembers },
     };
   } catch (error) {
     console.error("Error verifying token or fetching data:", error);
@@ -107,7 +110,10 @@ export async function getServerSideProps(context) {
   }
 }
 
-export default function home({ members }) {
+export default function home({ initialMembers }) {
+  const [user, setUser] = useState(null);
+  const [members, setMembers] = useState([initialMembers]);
+  const [loading, setLoading] = useState(true);
   // const [cachedMembers, setCachedMembers] = useState([]);
 
   // useEffect(() => {
@@ -123,6 +129,76 @@ export default function home({ members }) {
   //     }
   //   }
   // }, [members]);
+
+  useEffect(() => {
+    // Listen for authentication state changes
+    const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
+      if (authUser) {
+        setUser(authUser);
+      } else {
+        setUser(null);
+        setMembers([]); // Clear members if no user
+      }
+      setLoading(false);
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user) {
+        try {
+          // Fetch user data from Firestore
+          const userDoc = await db.collection("users").doc(user.email).get();
+          const userData = userDoc.data();
+
+          if (userData) {
+            // Fetch members based on the user's data
+            const masterDataSnapshot = await db
+              .collection("master_data")
+              .where("pl", "==", userData.pl_name)
+              .get();
+
+            const updatedMembers = masterDataSnapshot.docs.map((doc) => {
+              const data = doc.data();
+              return {
+                id: doc.id,
+                ...data,
+                insert_date: data.insert_date
+                  ? data.insert_date.toDate().toISOString()
+                  : null,
+                birthdate: data.birthdate
+                  ? data.birthdate.toDate().toISOString()
+                  : null,
+                weddingdate: data.weddingdate
+                  ? data.weddingdate.toDate().toISOString()
+                  : null,
+              };
+            });
+
+            setMembers(updatedMembers);
+          } else {
+            setError("User data not found.");
+            setMembers([]); // Clear members if user data is not found
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          setError("Error fetching data.");
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <>
       <div className="bg-white py-8">
@@ -148,13 +224,13 @@ export default function home({ members }) {
                     <img
                       alt=""
                       // src="https://i.pravatar.cc/300"
-                      src={`https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${member.firstname} ${member.lastname}`}
+                      // src={`https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${member.firstname} ${member.lastname}`}
                       // src={member.imageUrl}
-                      // src={
-                      //   member.gender === "Female"
-                      //     ? "https://avatar.iran.liara.run/public/girl"
-                      //     : "https://avatar.iran.liara.run/public/boy"
-                      // }
+                      src={
+                        member.gender === "Female"
+                          ? "https://avatar.iran.liara.run/public/girl"
+                          : "https://avatar.iran.liara.run/public/boy"
+                      }
                       className="mx-auto h-56 w-56 rounded-full"
                     />
                     <h3 className="mt-6 text-base font-semibold leading-7 tracking-tight text-gray-900">

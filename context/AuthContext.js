@@ -47,11 +47,11 @@ export function AuthProvider({ children }) {
 
   const signInWithGoogle = async () => {
     setError(null); // Reset error before starting sign-in
+    setNotRegistered(false);
 
     try {
       setLoading(true);
-      // Redirect to /home after sign-in
-      router.push("/home");
+
       const result = await auth.signInWithPopup(provider);
       const user = result.user;
       await setTokenInCookie();
@@ -80,11 +80,14 @@ export function AuthProvider({ children }) {
         },
         { merge: true }
       );
+
+      // Redirect to /home after sign-in
     } catch (error) {
       console.error("Error signing in with Google:", error.message);
       setError(error.message);
     } finally {
       setLoading(false);
+      router.push("/home");
     }
   };
 
@@ -132,9 +135,21 @@ export function AuthProvider({ children }) {
             markdoma10@gmail.com
           </a>
         </p>
-        <button className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-          <a href="/"> Return to Home</a>
-        </button>
+        {/* <button className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <a href="/login"> Return to Home</a>
+        </button> */}
+
+        <img
+          // src="https://developers.google.com/identity/images/g-logo.png" // Google logo image URL
+          src="/google.png" // Google logo image URL
+          alt="Sign in with Google"
+          className={`cursor-pointer ${loading ? "opacity-50" : "opacity-100"}`}
+          onClick={signInWithGoogle}
+          style={{ width: "200px", height: "auto" }} // Adjust size as needed
+        />
+        {loading && (
+          <p className="ml-4 text-sm text-gray-500">Signing in...</p> // Optional loading message
+        )}
       </div>
     );
   }
