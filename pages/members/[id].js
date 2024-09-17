@@ -144,6 +144,7 @@ export default function MemberPage() {
           ))}
         </ul>
       </nav>
+
       {activeTab === "Profile" && <Details member={member} />}
       {activeTab === "Attendance" && (
         <AttendanceData attendance={attendanceData} />
