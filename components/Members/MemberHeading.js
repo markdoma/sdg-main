@@ -21,13 +21,12 @@ import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
 
 // Function to detect if the user is on a mobile device, including iPhone and Android
 const isMobileDevice = () => {
-  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-  // Check for iPhone and Android devices
-  return /iPhone|iPad|iPod|Android/i.test(userAgent);
+  return /Mobi|Android/i.test(navigator.userAgent);
 };
 export default function MemberHeading({ member }) {
   // Define the handlers for messaging and calling
   const handleMessageClick = (e) => {
+    console.log("message");
     e.stopPropagation(); // Prevent event from bubbling up if needed
     if (isMobileDevice()) {
       // On mobile devices, use the phone number for messaging
@@ -39,7 +38,8 @@ export default function MemberHeading({ member }) {
 
   const handleCallClick = (e) => {
     e.stopPropagation(); // Prevent event from bubbling up if needed
-    if (member.contact && member.contact.phone) {
+    console.log("call");
+    if (member.contact) {
       window.location.href = `tel:${member.contact}`;
     }
   };
@@ -82,22 +82,22 @@ export default function MemberHeading({ member }) {
               <button
                 type="button"
                 className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                onClick={handleMessageClick}
               >
                 <EnvelopeIcon
                   aria-hidden="true"
                   className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
-                  onClick={handleMessageClick}
                 />
                 <span>Message</span>
               </button>
               <button
                 type="button"
                 className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                onClick={handleCallClick}
               >
                 <PhoneIcon
                   aria-hidden="true"
                   className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
-                  onClick={handleCallClick}
                 />
                 <span>Call</span>
               </button>
