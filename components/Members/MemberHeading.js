@@ -19,7 +19,30 @@ import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
 //   ],
 // };
 
+// Function to detect if the user is on a mobile device, including iPhone and Android
+const isMobileDevice = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  // Check for iPhone and Android devices
+  return /iPhone|iPad|iPod|Android/i.test(userAgent);
+};
 export default function MemberHeading({ member }) {
+  // Define the handlers for messaging and calling
+  const handleMessageClick = (e) => {
+    e.stopPropagation(); // Prevent event from bubbling up if needed
+    if (isMobileDevice()) {
+      // On mobile devices, use the phone number for messaging
+      window.location.href = `sms:${member.contact}`;
+    } else {
+      window.location.href = `mailto:${member.emailadd}`;
+    }
+  };
+
+  const handleCallClick = (e) => {
+    e.stopPropagation(); // Prevent event from bubbling up if needed
+    if (member.contact && member.contact.phone) {
+      window.location.href = `tel:${member.contact}`;
+    }
+  };
   console.log("hello biboy!!!");
   console.log({ member });
   return (
@@ -63,6 +86,7 @@ export default function MemberHeading({ member }) {
                 <EnvelopeIcon
                   aria-hidden="true"
                   className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
+                  onClick={handleMessageClick}
                 />
                 <span>Message</span>
               </button>
@@ -73,6 +97,7 @@ export default function MemberHeading({ member }) {
                 <PhoneIcon
                   aria-hidden="true"
                   className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400"
+                  onClick={handleCallClick}
                 />
                 <span>Call</span>
               </button>
