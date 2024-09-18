@@ -48,13 +48,17 @@ export function AuthProvider({ children }) {
   const signInWithGoogle = async () => {
     setError(null); // Reset error before starting sign-in
     setNotRegistered(false);
+    setLoading(true);
 
     try {
-      setLoading(true);
-
+      console.log("firebase checks");
       const result = await auth.signInWithPopup(provider);
       const user = result.user;
+
       await setTokenInCookie();
+
+      // Redirect to /home after sign-in
+      router.push("/home");
 
       // Fetch user role from Firestore
       const roleRef = db.collection("roles").doc(user.email);
@@ -67,21 +71,23 @@ export function AuthProvider({ children }) {
 
       const role = roleDoc.data().role;
       const pl_name = roleDoc.data().pl;
-
-      // Update Firestore with user information
+      // Check if the user already exists in the users collection
       const userRef = db.collection("users").doc(user.email);
-      await userRef.set(
-        {
-          email: user.email,
-          displayName: user.displayName,
-          avatar: user.photoURL,
-          role: role,
-          pl_name: pl_name,
-        },
-        { merge: true }
-      );
+      const userDoc = await userRef.get();
 
-      // Redirect to /home after sign-in
+      if (!userDoc.exists) {
+        // Only set user information if the user does not already exist
+        await userRef.set(
+          {
+            email: user.email,
+            displayName: user.displayName,
+            avatar: user.photoURL,
+            role: role,
+            pl_name: pl_name,
+          },
+          { merge: true }
+        );
+      }
     } catch (error) {
       console.error("Error signing in with Google:", error.message);
       setError(error.message);
@@ -143,7 +149,9 @@ export function AuthProvider({ children }) {
           // src="https://developers.google.com/identity/images/g-logo.png" // Google logo image URL
           src="/google.png" // Google logo image URL
           alt="Sign in with Google"
-          className={`cursor-pointer ${loading ? "opacity-50" : "opacity-100"}`}
+          className={`cursor-pointer ${
+            loading ? "opacity-50" : "opacity-100"
+          } mt-4`}
           onClick={signInWithGoogle}
           style={{ width: "200px", height: "auto" }} // Adjust size as needed
         />

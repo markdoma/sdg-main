@@ -78,11 +78,11 @@ const getGreeting = () => {
   const currentHour = new Date().getHours();
 
   if (currentHour < 12) {
-    return "Good morning";
+    return "Blessed morning";
   } else if (currentHour < 18) {
-    return "Good afternoon";
+    return "Blessed afternoon";
   } else {
-    return "Good evening";
+    return "Blessed evening";
   }
 };
 
@@ -387,7 +387,10 @@ export default function Layout({ children }) {
                             className="h-16 w-16 rounded-full sm:hidden"
                           />
                           <h1 className="ml-3 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:leading-9">
-                            {getGreeting()}, {user?.displayName || "User Name"}
+                            {getGreeting()},{" "}
+                            {user?.displayName
+                              ? `${user.displayName.split(" ")[0]}!`
+                              : "User Name"}
                           </h1>
                         </div>
                         <dl className="mt-6 flex flex-col sm:ml-3 sm:mt-1 sm:flex-row sm:flex-wrap">
