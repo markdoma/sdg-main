@@ -31,6 +31,7 @@ import Link from "next/link";
 import cookie from "cookie";
 import { useAuth } from "@/context/AuthContext";
 import Loading from "../components/Misc/Loading";
+import { useRouter } from "next/router";
 
 export async function getServerSideProps(context) {
   // const { req } = context;
@@ -56,7 +57,7 @@ export async function getServerSideProps(context) {
     // Verify the ID token
     const decodedToken = await auth_server.verifyIdToken(token);
     const userEmail = decodedToken.email;
-    console.log(userEmail);
+    // console.log(userEmail);
 
     // Fetch user data from Firestore
     const userDoc = await db_server.collection("users").doc(userEmail).get();
@@ -65,7 +66,10 @@ export async function getServerSideProps(context) {
     console.log(userData);
     if (!userData) {
       return {
-        notFound: true,
+        props: {
+          notRegistered: true,
+          isLoading: true,
+        },
       };
     }
 
@@ -94,109 +98,60 @@ export async function getServerSideProps(context) {
       };
     });
 
-    console.log(initialMembers);
+    // console.log(initialMembers);
 
     return {
-      props: { initialMembers },
+      props: { initialMembers, isLoading: true },
     };
   } catch (error) {
     console.error("Error verifying token or fetching data:", error);
     return {
       redirect: {
-        destination: "/login",
+        destination: "/",
         permanent: false,
       },
     };
   }
 }
 
-export default function home({ initialMembers }) {
+export default function home({ initialMembers, notRegistered, isLoading }) {
   const [user, setUser] = useState(null);
-  const [members, setMembers] = useState([initialMembers]);
-  const [loading, setLoading] = useState(true);
-  // const [cachedMembers, setCachedMembers] = useState([]);
+  const [members, setMembers] = useState(initialMembers);
+  const [loading, setLoading] = useState(isLoading);
+  const router = useRouter();
 
-  // useEffect(() => {
-  //   if (typeof window !== "undefined") {
-  //     const cachedData = localStorage.getItem("members");
-  //     if (cachedData) {
-  //       // Use cached data if available
-  //       setCachedMembers(JSON.parse(cachedData));
-  //     } else {
-  //       // Cache the data if not present
-  //       localStorage.setItem("members", JSON.stringify(members));
-  //       setCachedMembers(members);
-  //     }
-  //   }
-  // }, [members]);
-
+  // Simulate a delay to show loading for a short period (e.g., 2 seconds)
   useEffect(() => {
-    // Listen for authentication state changes
-    const unsubscribe = auth.onAuthStateChanged(async (authUser) => {
-      if (authUser) {
-        setUser(authUser);
-      } else {
-        setUser(null);
-        setMembers([]); // Clear members if no user
-      }
+    const timer = setTimeout(() => {
       setLoading(false);
-    });
+    }, 1000); // 2-second delay for the loading screen
 
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
+    // Clear the timer if the component unmounts to avoid memory leaks
+    return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (user) {
-        try {
-          // Fetch user data from Firestore
-          const userDoc = await db.collection("users").doc(user.email).get();
-          const userData = userDoc.data();
-
-          if (userData) {
-            // Fetch members based on the user's data
-            const masterDataSnapshot = await db
-              .collection("master_data")
-              .where("pl", "==", userData.pl_name)
-              .get();
-
-            const updatedMembers = masterDataSnapshot.docs.map((doc) => {
-              const data = doc.data();
-              return {
-                id: doc.id,
-                ...data,
-                insert_date: data.insert_date
-                  ? data.insert_date.toDate().toISOString()
-                  : null,
-                birthdate: data.birthdate
-                  ? data.birthdate.toDate().toISOString()
-                  : null,
-                weddingdate: data.weddingdate
-                  ? data.weddingdate.toDate().toISOString()
-                  : null,
-              };
-            });
-
-            setMembers(updatedMembers);
-          } else {
-            setError("User data not found.");
-            setMembers([]); // Clear members if user data is not found
-          }
-        } catch (error) {
-          console.error("Error fetching data:", error);
-          setError("Error fetching data.");
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchData();
-  }, [user]);
 
   if (loading) {
     return <Loading />;
+  }
+
+  // Check if the user is not registered
+  if (notRegistered) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <p className="text-lg text-blue-600">
+          You are not registered as a user. Kindly contact{" "}
+          <a href="mailto:markdoma10@gmail.com" className="underline">
+            markdoma10@gmail.com
+          </a>
+        </p>
+        <button
+          onClick={() => router.push("/login")}
+          className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          Return to Login
+        </button>
+      </div>
+    );
   }
 
   return (
