@@ -101,7 +101,7 @@ export async function getServerSideProps(context) {
     // console.log(initialMembers);
 
     return {
-      props: { initialMembers, isLoading: true },
+      props: { initialMembers, isLoading: true, notRegistered: false },
     };
   } catch (error) {
     console.error("Error verifying token or fetching data:", error);

@@ -4,7 +4,7 @@ import FormWithQRCode from "@/components/FormWithQRCode";
 import { useRouter } from "next/router";
 import { useAuth } from "../../context/AuthContext";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -38,31 +38,6 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
 
-const navigation = [
-  { name: "Home", href: "/home", icon: HomeIcon, current: true },
-  {
-    name: "Registration",
-    href: "/registration",
-    icon: ClockIcon,
-    current: false,
-  },
-  { name: "Finance", href: "#", icon: ScaleIcon, current: false },
-
-  {
-    name: "Family Life Ministry",
-    href: "/flm",
-    icon: UserGroupIcon,
-    current: false,
-  },
-  { name: "Tech", href: "/scan", icon: UserGroupIcon, current: false },
-  {
-    name: "Foundation Course",
-    href: "#",
-    icon: DocumentChartBarIcon,
-    current: false,
-  },
-  { name: "Hook Programs", href: "#", icon: UserGroupIcon, current: false },
-];
 const secondaryNavigation = [
   { name: "Settings", href: "#", icon: CogIcon },
   { name: "Help", href: "#", icon: QuestionMarkCircleIcon },
@@ -86,8 +61,6 @@ const getGreeting = () => {
   }
 };
 
-//
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -96,10 +69,30 @@ export default function Layout({ children }) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const { user } = useAuth();
+  const { user, navigation, logout } = useAuth();
+
+  console.log(navigation);
 
   const gotToDashboard = () => {
     router.push("/dashboard");
+  };
+
+  const [activePath, setActivePath] = useState(router.pathname);
+
+  useEffect(() => {
+    const handleRouteChange = (url) => {
+      setActivePath(url);
+    };
+
+    router.events.on("routeChangeComplete", handleRouteChange);
+
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router]);
+
+  const handleNavClick = (href) => {
+    setActivePath(href);
   };
 
   console.log(user);
@@ -152,25 +145,30 @@ export default function Layout({ children }) {
                 className="mt-5 h-full flex-shrink-0 divide-y divide-cyan-800 overflow-y-auto"
               >
                 <div className="space-y-1 px-2">
-                  {navigation.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      aria-current={item.current ? "page" : undefined}
-                      className={classNames(
-                        item.current
-                          ? "bg-cyan-800 text-white"
-                          : "text-cyan-100 hover:bg-cyan-600 hover:text-white",
-                        "group flex items-center rounded-md px-2 py-2 text-base font-medium"
-                      )}
-                    >
-                      <item.icon
-                        aria-hidden="true"
-                        className="mr-4 h-6 w-6 flex-shrink-0 text-cyan-200"
-                      />
-                      {item.name}
-                    </a>
-                  ))}
+                  {navigation.map((item) => {
+                    const isActive = activePath === item.href; // Declare isActive here
+
+                    return (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        onClick={() => handleNavClick(item.href)}
+                        aria-current={isActive ? "page" : undefined}
+                        className={classNames(
+                          isActive
+                            ? "bg-cyan-800 text-white"
+                            : "text-cyan-100 hover:bg-cyan-600 hover:text-white",
+                          "group flex items-center rounded-md px-2 py-2 text-base font-medium"
+                        )}
+                      >
+                        <item.icon
+                          aria-hidden="true"
+                          className="mr-4 h-6 w-6 flex-shrink-0 text-cyan-200"
+                        />
+                        {item.name}
+                      </a>
+                    );
+                  })}
                 </div>
                 <div className="mt-6 pt-6">
                   <div className="space-y-1 px-2">
@@ -215,25 +213,30 @@ export default function Layout({ children }) {
               className="mt-5 flex flex-1 flex-col divide-y divide-cyan-800 overflow-y-auto"
             >
               <div className="space-y-1 px-2">
-                {navigation.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    aria-current={item.current ? "page" : undefined}
-                    className={classNames(
-                      item.current
-                        ? "bg-cyan-800 text-white"
-                        : "text-cyan-100 hover:bg-cyan-600 hover:text-white",
-                      "group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6"
-                    )}
-                  >
-                    <item.icon
-                      aria-hidden="true"
-                      className="mr-4 h-6 w-6 flex-shrink-0 text-cyan-200"
-                    />
-                    {item.name}
-                  </a>
-                ))}
+                {navigation.map((item) => {
+                  const isActive = activePath === item.href; // Declare isActive here
+
+                  return (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => handleNavClick(item.href)}
+                      aria-current={isActive ? "page" : undefined}
+                      className={classNames(
+                        isActive
+                          ? "bg-cyan-800 text-white"
+                          : "text-cyan-100 hover:bg-cyan-600 hover:text-white",
+                        "group flex items-center rounded-md px-2 py-2 text-base font-medium"
+                      )}
+                    >
+                      <item.icon
+                        aria-hidden="true"
+                        className="mr-4 h-6 w-6 flex-shrink-0 text-cyan-200"
+                      />
+                      {item.name}
+                    </a>
+                  );
+                })}
               </div>
               <div className="mt-6 pt-6">
                 <div className="space-y-1 px-2">
@@ -243,10 +246,10 @@ export default function Layout({ children }) {
                       href={item.href}
                       className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white"
                     >
-                      <item.icon
+                      {/* <item.icon
                         aria-hidden="true"
                         className="mr-4 h-6 w-6 text-cyan-200"
-                      />
+                      /> */}
                       {item.name}
                     </a>
                   ))}
@@ -347,12 +350,12 @@ export default function Layout({ children }) {
                       </a>
                     </MenuItem>
                     <MenuItem>
-                      <a
-                        href="/signout"
+                      <button
+                        onClick={logout}
                         className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                       >
                         Logout
-                      </a>
+                      </button>
                     </MenuItem>
                   </MenuItems>
                 </Menu>
