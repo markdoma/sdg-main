@@ -16,6 +16,7 @@ import "firebase/firestore";
 export default function Extract() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [data, setData] = useState([]);
+  const [attendanceData, setAttendanceData] = useState([]);
 
   // useEffect(() => {
   //   // Function to fetch data from Firebase
@@ -48,7 +49,7 @@ export default function Extract() {
 
   useEffect(() => {
     // Fetch all attendance data from collectionGroup
-    const unsubscribe = db
+    const unsubscribeMasterData = db
       .collectionGroup("master_data")
       .onSnapshot((snapshot) => {
         const fetchedData = snapshot.docs.map((doc) => doc.data());
@@ -76,10 +77,27 @@ export default function Extract() {
         });
         setData(processedMasterData);
       });
+    // Fetch all attendance data from collectionGroup
+    const unsubscribeAttendanceData = db
+      .collectionGroup("attendance")
+      .onSnapshot((snapshot) => {
+        const fetchedAttendanceData = snapshot.docs.map((doc) => doc.data());
 
+        const processedAttendanceData = fetchedAttendanceData.map((item) => {
+          const processedItem = { ...item };
+          if (processedItem.date)
+            processedItem.date = processedItem.date
+              .toDate()
+              .toLocaleDateString("en-US");
+          return processedItem;
+        });
+
+        setAttendanceData(processedAttendanceData);
+      });
     return () => {
-      // Unsubscribe from the snapshot listener when the component unmounts
-      unsubscribe();
+      // Unsubscribe from the snapshot listeners when the component unmounts
+      unsubscribeMasterData();
+      unsubscribeAttendanceData();
     };
   }, []);
 
@@ -102,6 +120,34 @@ export default function Extract() {
   //   document.body.removeChild(link);
   // };
 
+  // const downloadExcel = () => {
+  //   const currentDate = new Date();
+  //   const formattedDate = currentDate.toISOString().split("T")[0]; // Get the current date in YYYY-MM-DD format
+  //   const formattedTime = currentDate
+  //     .toTimeString()
+  //     .split(" ")[0]
+  //     .replace(/:/g, ""); // Get the current time in HHMMSS format
+
+  //   const filename = `ligaya_data_${formattedDate}_${formattedTime}.xlsx`; // Generate the filename with date and time
+
+  //   const ws = XLSX.utils.json_to_sheet(data);
+  //   const wb = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(wb, ws, "Ligaya Data");
+
+  //   const excelBuffer = XLSX.write(wb, { type: "array", bookType: "xlsx" });
+
+  //   const blob = new Blob([excelBuffer], {
+  //     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  //   });
+  //   const href = URL.createObjectURL(blob);
+  //   const link = document.createElement("a");
+  //   link.href = href;
+  //   link.download = filename; // Set the filename for download
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
+
   const downloadExcel = () => {
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split("T")[0]; // Get the current date in YYYY-MM-DD format
@@ -112,11 +158,21 @@ export default function Extract() {
 
     const filename = `ligaya_data_${formattedDate}_${formattedTime}.xlsx`; // Generate the filename with date and time
 
-    const ws = XLSX.utils.json_to_sheet(data);
+    // Create a new workbook
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Ligaya Data");
+
+    // Add the master data sheet
+    const wsMaster = XLSX.utils.json_to_sheet(data);
+    XLSX.utils.book_append_sheet(wb, wsMaster, "Ligaya Data");
+
+    // Add the attendance data sheet
+    const wsAttendance = XLSX.utils.json_to_sheet(attendanceData);
+    XLSX.utils.book_append_sheet(wb, wsAttendance, "Attendance");
+
+    // Write the workbook to a buffer
     const excelBuffer = XLSX.write(wb, { type: "array", bookType: "xlsx" });
 
+    // Create a blob from the buffer
     const blob = new Blob([excelBuffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
