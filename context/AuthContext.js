@@ -72,8 +72,21 @@ export function AuthProvider({ children }) {
       await setTokenInCookie(); // Set token in cookies (optional)
       console.log("Hello before /home");
       // Once the loading is shown, navigate to the /home page
-      setLoading(false);
-      router.push("/home");
+      // setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+        // router.push("/home");
+      }, 2000);
+
+      // setTimeout(() => {
+      //   // setLoading(false);
+      //   router.push("/home");
+      // }, 1000);
+
+      // Redirect to home page if user is authenticated and registered
+      if (!notRegistered) {
+        router.push("/home");
+      }
     } catch (error) {
       console.error("Error signing in with Google:", error.message);
       setError(error.message);
@@ -137,7 +150,15 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, signInWithGoogle, navigation, logout, loading }}
+      value={{
+        user,
+        loading,
+        signInWithGoogle,
+        logout,
+        error,
+        notRegistered,
+        navigation,
+      }}
     >
       {children}
     </AuthContext.Provider>
