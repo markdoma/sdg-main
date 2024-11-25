@@ -62,28 +62,28 @@ export function AuthProvider({ children }) {
   const signInWithGoogle = async () => {
     setError(null); // Reset error before starting sign-in
     setNotRegistered(false);
-    setLoading(true);
+    setLoading(true); // Set loading to true before starting sign-in process
 
     try {
-      console.log("firebase checks");
-      const result = await auth.signInWithPopup(provider);
+      // Trigger the Google Sign-In Popup and wait for account selection
+      const result = await auth.signInWithPopup(provider); // This will show the Google account selector
       const user = result.user;
 
-      await setTokenInCookie();
-
-      // Redirect to /home after sign-in
-      // router.push("/home");
+      await setTokenInCookie(); // Set token in cookies (optional)
+      console.log("Hello before /home");
+      // Once the loading is shown, navigate to the /home page
+      setLoading(false);
+      router.push("/home");
     } catch (error) {
       console.error("Error signing in with Google:", error.message);
       setError(error.message);
-    } finally {
       setLoading(false);
-      router.push("/home");
     }
   };
 
   const logout = async () => {
     await auth.signOut();
+    setLoading(true);
     Cookies.remove("token"); // Remove the token from cookies
     setUser(null);
     setNotRegistered(false);
@@ -96,7 +96,7 @@ export function AuthProvider({ children }) {
       { name: "Foundation Course", href: "/fc", icon: DocumentChartBarIcon },
       { name: "Hook Programs", href: "/hook", icon: UserGroupIcon },
     ]);
-
+    setLoading(false);
     router.push("/"); // Redirect to the home page
   };
 
@@ -137,7 +137,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, signInWithGoogle, navigation, logout }}
+      value={{ user, signInWithGoogle, navigation, logout, loading }}
     >
       {children}
     </AuthContext.Provider>
