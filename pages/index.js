@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useAuth } from "../context/AuthContext";
 import Loading from "../components/Misc/Loading";
+import { useRouter } from "next/router";
 
 const navigation = [
   { name: "Product", href: "#" },
@@ -15,8 +16,16 @@ const navigation = [
 
 export default function Ligayasdg() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { signInWithGoogle, loading } = useAuth();
-  console.log(`from the index ${loading}`);
+  // Automatically redirect to /home if loading is false and user is authenticated
+  const { signInWithGoogle, loading, user } = useAuth();
+  const router = useRouter();
+  useEffect(() => {
+    if (!loading && user) {
+      router.push("/home");
+    }
+  }, [loading, user, router]); // Only run effect when loading or user changes
+
+  console.log(`Loading state from AuthContext: ${loading}`);
 
   return (
     <div className="bg-white">
