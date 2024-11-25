@@ -24,7 +24,7 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true); // Initial loading state
+  // const [loading, setLoading] = useState(true); // Initial loading state
   const [notRegistered, setNotRegistered] = useState(false); // State for not registered users
   const router = useRouter();
   const [navigation, setNavigation] = useState([
@@ -44,7 +44,7 @@ export function AuthProvider({ children }) {
         // Fetch user data if user is authenticated
         await fetchUserData(user.email);
       }
-      setLoading(false); // Set loading to false once user is determined
+      // setLoading(false); // Set loading to false once user is determined
     });
 
     return () => unsubscribe(); // Clean up subscription on unmount
@@ -62,7 +62,7 @@ export function AuthProvider({ children }) {
   const signInWithGoogle = async () => {
     setError(null); // Reset error before starting sign-in
     setNotRegistered(false);
-    setLoading(true); // Set loading to true before starting sign-in process
+    // setLoading(true); // Set loading to true before starting sign-in process
 
     try {
       // Trigger the Google Sign-In Popup and wait for account selection
@@ -73,10 +73,10 @@ export function AuthProvider({ children }) {
       console.log("Hello before /home");
       // Once the loading is shown, navigate to the /home page
       // setLoading(false);
-      setTimeout(() => {
-        setLoading(false);
-        // router.push("/home");
-      }, 2000);
+      // setTimeout(() => {
+      //   // setLoading(false);
+      //   // router.push("/home");
+      // }, 2000);
 
       // setTimeout(() => {
       //   // setLoading(false);
@@ -90,13 +90,13 @@ export function AuthProvider({ children }) {
     } catch (error) {
       console.error("Error signing in with Google:", error.message);
       setError(error.message);
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
   const logout = async () => {
     await auth.signOut();
-    setLoading(true);
+    // setLoading(true);
     Cookies.remove("token"); // Remove the token from cookies
     setUser(null);
     setNotRegistered(false);
@@ -109,7 +109,7 @@ export function AuthProvider({ children }) {
       { name: "Foundation Course", href: "/fc", icon: DocumentChartBarIcon },
       { name: "Hook Programs", href: "/hook", icon: UserGroupIcon },
     ]);
-    setLoading(false);
+    // setLoading(false);
     router.push("/"); // Redirect to the home page
   };
 
@@ -152,7 +152,7 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
-        loading,
+        // loading,
         signInWithGoogle,
         logout,
         error,

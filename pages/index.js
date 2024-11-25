@@ -17,13 +17,18 @@ const navigation = [
 export default function Ligayasdg() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // Automatically redirect to /home if loading is false and user is authenticated
-  const { signInWithGoogle, loading, user } = useAuth();
+  const { signInWithGoogle, user } = useAuth();
   const router = useRouter();
+  const [loading, setLoading] = useState(false); // Initial loading state
   useEffect(() => {
     if (!loading && user) {
+      setLoading(true);
       router.push("/home");
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     }
-  }, [loading, user, router]); // Only run effect when loading or user changes
+  }, [user, router]); // Only run effect when loading or user changes
 
   console.log(`Loading state from AuthContext: ${loading}`);
 
@@ -36,7 +41,7 @@ export default function Ligayasdg() {
         >
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
+              <span className="sr-only">Ligaya SDG</span>
               <img
                 src="/ligaya.png"
                 alt="Ligaya ng Panginoon"
