@@ -23,10 +23,10 @@ export default function Ligayasdg() {
   useEffect(() => {
     if (!loading && user) {
       setLoading(true);
-      router.push("/home");
       setTimeout(() => {
         setLoading(false);
       }, 2000);
+      router.push("/home");
     }
   }, [user, router]); // Only run effect when loading or user changes
 

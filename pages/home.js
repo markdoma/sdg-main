@@ -124,7 +124,7 @@ export default function home({ initialMembers, notRegistered, isLoading }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000); // 2-second delay for the loading screen
+    }, 500); // 2-second delay for the loading screen
 
     // Clear the timer if the component unmounts to avoid memory leaks
     return () => clearTimeout(timer);
