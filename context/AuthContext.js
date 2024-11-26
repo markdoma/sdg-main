@@ -84,9 +84,9 @@ export function AuthProvider({ children }) {
       // }, 1000);
 
       // Redirect to home page if user is authenticated and registered
-      if (!notRegistered) {
-        router.push("/home");
-      }
+      // if (!notRegistered) {
+      //   router.push("/home");
+      // }
     } catch (error) {
       console.error("Error signing in with Google:", error.message);
       setError(error.message);
