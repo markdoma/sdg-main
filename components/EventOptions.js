@@ -1,12 +1,14 @@
-import React, { useState, useContext, useEffect } from 'react';
-import EventContext from '@/context/eventContext';
+import React, { useState, useContext, useEffect } from "react";
+import EventContext from "@/context/eventContext";
 
 function EventOptions({ eventsOptions }) {
-  const [selectedEvent, setSelectedEvent] = useContext(EventContext);
+  // const [selectedEvent, setSelectedEvent] = useContext(EventContext);
+  const [selectedEvent, setSelectedEvent] = useState(eventsOptions[0]);
 
+  console.log(`${eventsOptions} - from eventsOPtions`);
   const handleChange = (event) => {
     // Handle the event selection here
-    const dateObject = new Date(event.target.value).toLocaleDateString('en-US');
+    const dateObject = new Date(event.target.value).toLocaleDateString("en-US");
     // console.log(dateObject);
     setSelectedEvent(dateObject);
     // console.log(selectedEvent);
@@ -24,8 +26,8 @@ function EventOptions({ eventsOptions }) {
     const lastDate =
       sortedEventsOptions.length > 0
         ? sortedEventsOptions[sortedEventsOptions.length - 1].value
-        : '';
-    setSelectedEvent(new Date(lastDate).toLocaleDateString('en-US'));
+        : "";
+    setSelectedEvent(new Date(lastDate).toLocaleDateString("en-US"));
   }, [eventsOptions, setSelectedEvent]);
 
   return (
