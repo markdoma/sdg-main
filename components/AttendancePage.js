@@ -139,7 +139,7 @@ const AttendancePage = () => {
   useEffect(() => {
     // Filter attendanceData based on the selected eventOptions
     // Define the target date: September 1, 2024
-    const targetDate = new Date("2024-09-01T00:00:00.000Z");
+    const targetDate = new Date("2024-12-01T00:00:00.000Z");
     const convertedDate = new Date(targetDate);
     console.log(convertedDate);
     const filteredAttendanceData = attendanceData.filter(
