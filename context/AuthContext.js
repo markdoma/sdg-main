@@ -116,8 +116,8 @@ export function AuthProvider({ children }) {
   // Function to fetch user data from Firestore
   const fetchUserData = async (email) => {
     try {
-      const userDoc = await db.collection("users").doc(email).get();
-      if (!userDoc.exists) {
+      const roleDoc = await db.collection("roles").doc(email).get();
+      if (!roleDoc.exists) {
         setNotRegistered(true);
         setNavigation([
           { name: "Registration", href: "/registration", icon: ClockIcon },
