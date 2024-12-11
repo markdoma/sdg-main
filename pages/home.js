@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import Team from "@/components/Members/Team";
 import PageHeadingcopy from "@/components/PageHeadingcopy";
+import MembersNotYetRegistered from "@/components/Members/MembersNotYetRegistered";
 
 import MasterDownload from "../utils/MasterDownload";
 
@@ -63,11 +64,37 @@ export async function getServerSideProps(context) {
     const userDoc = await db_server.collection("users").doc(userEmail).get();
     const userData = userDoc.data();
 
+    const userSnapshot = await db_server
+      .collection("master_data")
+      .where("emailadd", "==", userEmail)
+      .get();
+
+    let userInMasterData = null;
+    if (!userSnapshot.empty) {
+      userInMasterData = userSnapshot.docs[0].data();
+    }
+
     console.log(userData);
+
+    // Check if the user is not registered but exists in master_data
     if (!userData) {
+      if (userInMasterData) {
+        // User is in master_data but not in 'users' collection
+        return {
+          props: {
+            notRegistered: true,
+            sdgNotYetRegistered: true,
+            isLoading: true,
+            userEmail: userEmail,
+          },
+        };
+      }
+
+      // User is neither in 'users' nor in 'master_data'
       return {
         props: {
           notRegistered: true,
+          sdgNotYetRegistered: false,
           isLoading: true,
         },
       };
@@ -101,7 +128,13 @@ export async function getServerSideProps(context) {
     // console.log(initialMembers);
 
     return {
-      props: { initialMembers, isLoading: true, notRegistered: false },
+      props: {
+        initialMembers,
+        isLoading: true,
+        notRegistered: false,
+        sdgNotYetRegistered: false,
+        userEmail: userEmail,
+      },
     };
   } catch (error) {
     console.error("Error verifying token or fetching data:", error);
@@ -114,7 +147,13 @@ export async function getServerSideProps(context) {
   }
 }
 
-export default function home({ initialMembers, notRegistered, isLoading }) {
+export default function home({
+  initialMembers,
+  notRegistered,
+  isLoading,
+  sdgNotYetRegistered,
+  userEmail,
+}) {
   const [user, setUser] = useState(null);
   const [members, setMembers] = useState(initialMembers);
   const [loading, setLoading] = useState(isLoading);
@@ -137,7 +176,7 @@ export default function home({ initialMembers, notRegistered, isLoading }) {
   }
 
   // Check if the user is not registered
-  if (notRegistered) {
+  if (notRegistered && !sdgNotYetRegistered) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <p className="text-lg text-blue-600">
@@ -156,6 +195,10 @@ export default function home({ initialMembers, notRegistered, isLoading }) {
         </button>
       </div>
     );
+  }
+
+  if (sdgNotYetRegistered) {
+    return <MembersNotYetRegistered userEmail={userEmail} />;
   }
 
   return (
