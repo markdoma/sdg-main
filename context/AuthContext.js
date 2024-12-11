@@ -40,10 +40,10 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setUser(user);
-      if (user) {
-        // Fetch user data if user is authenticated
-        await fetchUserData(user.email);
-      }
+      // if (user) {
+      //   // Fetch user data if user is authenticated
+      //   await fetchUserData(user.email);
+      // }
       // setLoading(false); // Set loading to false once user is determined
     });
 

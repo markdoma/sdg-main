@@ -120,6 +120,8 @@ export default function home({ initialMembers, notRegistered, isLoading }) {
   const [loading, setLoading] = useState(isLoading);
   const router = useRouter();
 
+  const { logout } = useAuth();
+
   // Simulate a delay to show loading for a short period (e.g., 2 seconds)
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -139,13 +141,15 @@ export default function home({ initialMembers, notRegistered, isLoading }) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <p className="text-lg text-blue-600">
-          You are not registered as a user. Kindly contact{" "}
+          As of the moment only pre-registered user from Ligaya SDG district are
+          allowed to access this site. Kindly contact{" "}
           <a href="mailto:markdoma10@gmail.com" className="underline">
             markdoma10@gmail.com
-          </a>
+          </a>{" "}
+          if you want to have access.
         </p>
         <button
-          onClick={() => router.push("/login")}
+          onClick={logout}
           className="mt-4 inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Return to Login
