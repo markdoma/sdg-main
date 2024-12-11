@@ -20,6 +20,42 @@ export default function Ligayasdg() {
   const { signInWithGoogle, user } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false); // Initial loading state
+
+  // Function to fetch user data from Firestore
+  const fetchUserData = async (email) => {
+    try {
+      const roleDoc = await db.collection("master").doc(email).get();
+      if (!roleDoc.exists) {
+        setNotRegistered(true);
+        setNavigation([
+          { name: "Registration", href: "/registration", icon: ClockIcon },
+        ]); // Only show registration
+        router.push("/registration");
+      } else {
+        setNotRegistered(false);
+      }
+
+      const role = roleDoc.data().role;
+      const pl_name = roleDoc.data().pl;
+
+      // Update Firestore with user information
+      const userRef = db.collection("users").doc(email);
+      await userRef.set(
+        {
+          email: email,
+          displayName: auth.currentUser.displayName,
+          avatar: auth.currentUser.photoURL,
+          role: role,
+          pl_name: pl_name,
+        },
+        { merge: true }
+      );
+    } catch (error) {
+      console.error("Error fetching user data:", error.message);
+      setError(error.message);
+    }
+  };
+
   useEffect(() => {
     if (!loading && user) {
       setLoading(true);
