@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Loading from "@/components/Misc/Loading";
 import MembersNotYetRegistered from "@/components/Members/MembersNotYetRegistered";
 import { db } from "@/utils/firebase";
+import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Home({ initialMembers, userEmail, userRole, plName }) {
@@ -9,6 +10,8 @@ export default function Home({ initialMembers, userEmail, userRole, plName }) {
   console.log(notRegistered);
   const [members, setMembers] = useState(initialMembers);
   const [loading, setLoading] = useState(false);
+
+  console.log(members);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -41,10 +44,13 @@ export default function Home({ initialMembers, userEmail, userRole, plName }) {
           {members
             .sort((a, b) => a.lastname.localeCompare(b.lastname))
             .map((member) => (
-              <li key={member.id}>
-                <div className="text-center">
+              <li key={member.doc_id}>
+                <Link href={`/members/${member.doc_id}`}>
                   <img
-                    alt={member.firstname}
+                    alt=""
+                    // src="https://i.pravatar.cc/300"
+                    // src={`https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${member.firstname} ${member.lastname}`}
+                    // src={member.imageUrl}
                     src={
                       member.gender === "Female"
                         ? "https://avatar.iran.liara.run/public/girl"
@@ -58,7 +64,7 @@ export default function Home({ initialMembers, userEmail, userRole, plName }) {
                   <p className="text-sm leading-6 text-gray-600">
                     {member.ligaya_class}
                   </p>
-                </div>
+                </Link>
               </li>
             ))}
         </ul>

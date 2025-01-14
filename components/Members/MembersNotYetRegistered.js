@@ -9,6 +9,7 @@ import {
   getDoc,
   updateDoc,
   setDoc,
+  Timestamp,
 } from "firebase/firestore"; // v9 modular imports
 
 import { useAuth } from "@/context/AuthContext";
@@ -55,7 +56,20 @@ const MembersNotYetRegistered = ({ userEmail }) => {
       if (!userSnapshot.empty) {
         const userInMasterData = userSnapshot.docs[0].data();
         setUserData(userInMasterData);
-        setFormData(userInMasterData); // Pre-fill the form with the existing data
+        // setFormData(userInMasterData);
+
+        setFormData({
+          firstname: userInMasterData.firstname || "",
+          middlename: userInMasterData.middlename || "",
+          lastname: userInMasterData.lastname || "",
+          bloodtype: userInMasterData.bloodtype || "",
+          city: userInMasterData.city || "",
+          contact: userInMasterData.contact || "",
+          birthdate:
+            userInMasterData.birthdate && userInMasterData.birthdate.toDate
+              ? userInMasterData.birthdate.toDate().toISOString().split("T")[0]
+              : userInMasterData.birthdate || "",
+        }); // Pre-fill the form with the existing data
       }
     };
 
@@ -83,15 +97,29 @@ const MembersNotYetRegistered = ({ userEmail }) => {
         where("emailadd", "==", userEmail)
       );
       const querySnapshot = await getDocs(q);
-      querySnapshot.forEach(async (doc) => {
-        await updateDoc(doc.ref, formData); // Update the existing document in master_data
-      });
+      if (!querySnapshot.empty) {
+        const userDocRef = querySnapshot.docs[0].ref;
+        await updateDoc(userDocRef, {
+          ...formData,
+          birthdate: formData.birthdate
+            ? Timestamp.fromDate(new Date(formData.birthdate))
+            : null,
+        });
 
-      // Also create or update the user in the users collection
+        setNotRegistered(false);
+        handleRegistrationSuccess();
+      } else {
+        console.error("User not found in master_data");
+      }
+      //   querySnapshot.forEach(async (doc) => {
+      //     await updateDoc(doc.ref, formData); // Update the existing document in master_data
+      //   });
+
+      //   // Also create or update the user in the users collection
       const userDocRef = doc(db, "users", userEmail);
       await setDoc(userDocRef, formData, { merge: true });
 
-      handleRegistrationSuccess(); // After successful registration, update state
+      //   handleRegistrationSuccess(); // After successful registration, update state
     } catch (error) {
       console.error("Error updating user data: ", error);
     } finally {

@@ -15,6 +15,7 @@ import {
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
+  const router = useRouter();
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [notRegistered, setNotRegistered] = useState(false); // Track if user is not registered
@@ -132,10 +133,15 @@ export function AuthProvider({ children }) {
 
   // Log out function
   const logout = async () => {
-    await auth.signOut();
-    Cookies.remove("token");
-    setUser(null);
-    setNotRegistered(false); // Reset registration state on logout
+    try {
+      await auth.signOut();
+      Cookies.remove("token");
+      router.push("/");
+      setUser(null);
+      setNotRegistered(false); // Reset registration state on logout
+    } catch (error) {
+      setError(error.message); // Set error message if sign-out fails
+    }
   };
 
   return (

@@ -33,6 +33,8 @@ export default function Ligayasdg() {
     loading, // Use loading from context
   } = useAuth();
 
+  console.log(initialMembers);
+
   if (loading) {
     return (
       <div className="text-center">
