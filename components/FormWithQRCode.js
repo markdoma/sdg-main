@@ -3,6 +3,14 @@ import QRCode from "qrcode.react";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../utils/firebase";
 import axios from "axios";
+import {
+  collection,
+  doc,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore"; // v9 modular imports
 
 import Modal from "../components/Modal";
 import FormConfirmationModal from "../components/FormConfirmationModal";
@@ -31,6 +39,7 @@ const FormWithQRCode = () => {
   const [matchedNames, setMatchedNames] = useState([]);
   const [matchedInviter, setMatchedInviter] = useState([]);
   const [selectedName, setSelectedName] = useState(null);
+
   // New state variable to hold event details
   const [eventDetails, setEventDetails] = useState(null);
   // State when Present button is submitted - For those who are in the database
@@ -43,6 +52,98 @@ const FormWithQRCode = () => {
 
   // Modals
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+
+  // const handleConfirmationModalConfirm = () => {
+  //   // Handle the form submission here after the user confirms the information
+  //   setShowConfirmationModal(false);
+  //   setIsConfirmed(true);
+  //   // Convert the data to JSON format using the new function
+  //   const jsonData = convertToJSON(firstName, lastName);
+
+  //   const generatedCode = uuidv4();
+  //   setUniqueCode(generatedCode);
+  //   setShowQRCode(true);
+
+  //   // Prepare the data to be saved in the database
+  //   const newData = {
+  //     no: getMaxNoValue() + 1,
+  //     parent_no: null,
+  //     lastname: capitalizeName(lastName),
+  //     firstname: capitalizeName(firstName),
+  //     middlename: null,
+  //     suffix: null,
+  //     nickname: null,
+  //     gender: gender,
+  //     birthdate: new Date(dob),
+  //     street: address,
+  //     brgy: null,
+  //     city: null,
+  //     province: null,
+  //     region: null,
+  //     civilstatus: status,
+  //     bloodtype: null,
+  //     weddingdate: null,
+  //     contact: contact,
+  //     emailadd: null,
+  //     fathersname: null,
+  //     mothersname: null,
+  //     profession_course: null,
+  //     company_school: null,
+  //     cwryear: null,
+  //     entry: null,
+  //     sdg_class: classification,
+  //     status: null,
+  //     pl: null,
+  //     service_role: null,
+  //     ligaya: null,
+  //     chrurch: null,
+  //     lat: null,
+  //     long: null,
+  //     qrCode: jsonData,
+  //     insert_date: new Date(),
+  //     insert_by: "Reg Team",
+  //     update_date: null,
+  //     update_by: null,
+  //     invitedBy: invitedBy,
+  //   };
+
+  //   // Add the data to the "master_data" collection in the database
+  //   db.collection("master_data")
+  //     .add(newData)
+  //     .then((docRef) => {
+  //       console.log("Document written with ID: ", docRef.id);
+
+  //       // Update the newData object with the doc_id
+  //       newData.doc_id = docRef.id;
+
+  //       // Add the attendance record when the "Present" button is clicked
+  //       addAttendanceRecord(
+  //         eventDetails,
+  //         newData.doc_id,
+  //         newData.no,
+  //         newData.firstname,
+  //         newData.lastname,
+  //         newData.pl,
+  //         newData.invitedBy,
+  //         newData.sdg_class,
+  //         first
+  //       );
+
+  //       // Update the "master_data" collection with the doc_id property
+  //       db.collection("master_data")
+  //         .doc(docRef.id)
+  //         .update({ doc_id: docRef.id })
+  //         .then(() => {
+  //           console.log("Document updated with doc_id: ", docRef.id);
+  //         })
+  //         .catch((error) => {
+  //           console.error("Error updating document with doc_id: ", error);
+  //         });
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error adding document: ", error);
+  //     });
+  // };
 
   const handleConfirmationModalConfirm = () => {
     // Handle the form submission here after the user confirms the information
@@ -99,8 +200,7 @@ const FormWithQRCode = () => {
     };
 
     // Add the data to the "master_data" collection in the database
-    db.collection("master_data")
-      .add(newData)
+    addDoc(collection(db, "master_data"), newData)
       .then((docRef) => {
         console.log("Document written with ID: ", docRef.id);
 
@@ -121,9 +221,7 @@ const FormWithQRCode = () => {
         );
 
         // Update the "master_data" collection with the doc_id property
-        db.collection("master_data")
-          .doc(docRef.id)
-          .update({ doc_id: docRef.id })
+        updateDoc(doc(db, "master_data", docRef.id), { doc_id: docRef.id })
           .then(() => {
             console.log("Document updated with doc_id: ", docRef.id);
           })
@@ -229,18 +327,21 @@ const FormWithQRCode = () => {
       const eventDateTime = new Date(eventDetails.start.dateTime);
 
       // Firestore query to check if a matching attendance record exists
-      db.collection("master_data")
-        .doc(selectedName.doc_id)
-        .collection("attendance")
-        .where("no", "==", selectedName.no)
-        .where("date", "==", eventDateTime)
-        .get()
-        .then((querySnapshot) => {
+      const checkAttendance = async () => {
+        try {
+          const attendanceQuery = query(
+            collection(db, `master_data/${selectedName.doc_id}/attendance`),
+            where("no", "==", selectedName.no),
+            where("date", "==", eventDateTime)
+          );
+          const querySnapshot = await getDocs(attendanceQuery);
           setIsAttendanceCaptured(!querySnapshot.empty);
-        })
-        .catch((error) => {
+        } catch (error) {
           console.error("Error checking attendance: ", error);
-        });
+        }
+      };
+
+      checkAttendance();
     }
   }, [eventDetails, selectedName]);
 
@@ -272,7 +373,8 @@ const FormWithQRCode = () => {
   };
 
   useEffect(() => {
-    const unsubscribe = db.collection("master_data").onSnapshot((snapshot) => {
+    const membersCollection = collection(db, "master_data");
+    const unsubscribe = onSnapshot(membersCollection, (snapshot) => {
       const fetchedMembers = snapshot.docs.map((doc) => doc.data());
       setMembers(fetchedMembers);
     });

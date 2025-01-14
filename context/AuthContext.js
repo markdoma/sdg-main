@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true); // Manage loading state
   const [initialMembers, setInitialMembers] = useState([]);
   const [navigation, setNavigation] = useState([
-    { name: "Home", href: "/home", icon: "HomeIcon" },
+    { name: "Home", href: "/", icon: "HomeIcon" },
     { name: "Registration", href: "/registration", icon: "ClockIcon" },
     { name: "Finance", href: "/finance", icon: "ScaleIcon" },
     { name: "Family Life Ministry", href: "/flm", icon: "UserGroupIcon" },
