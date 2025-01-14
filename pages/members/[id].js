@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import {
+  doc,
+  getDoc,
+  collectionGroup,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import MemberHeading from "@/components/Members/MemberHeading";
 import Details from "@/components/Members/Details";
@@ -36,7 +44,7 @@ export default function MemberPage() {
   const [activeTab, setActiveTab] = useState("Profile"); // State for active tab
 
   const handleBackToList = () => {
-    router.push("/home");
+    router.push("/");
   };
 
   useEffect(() => {
@@ -45,37 +53,36 @@ export default function MemberPage() {
     // Fetch member data from Firestore
     const fetchMember = async () => {
       try {
-        const memberRef = db.collection("master_data").doc(id);
-        const doc = await memberRef.get();
+        const memberRef = doc(db, "master_data", id);
+        const docSnap = await getDoc(memberRef);
 
-        if (!doc.exists) {
+        if (!docSnap.exists()) {
           setError("Member not found");
-          setLoading(false);
-          return;
-        }
+        } else {
+          const data = docSnap.data();
+          const memberData = {
+            id: docSnap.id,
+            ...data,
+            insert_date: data.insert_date
+              ? data.insert_date.toDate().toISOString()
+              : null,
+            birthdate: data.birthdate
+              ? data.birthdate.toDate().toISOString()
+              : null,
+            weddingdate: data.weddingdate
+              ? data.weddingdate.toDate().toISOString()
+              : null,
+          };
 
-        const data = doc.data();
-        const memberData = {
-          id: doc.id,
-          ...data,
-          insert_date: data.insert_date
-            ? data.insert_date.toDate().toISOString()
-            : null,
-          birthdate: data.birthdate
-            ? data.birthdate.toDate().toISOString()
-            : null,
-          weddingdate: data.weddingdate
-            ? data.weddingdate.toDate().toISOString()
-            : null,
-        };
+          setMember(memberData);
 
-        setMember(memberData);
+          // Fetch attendance data
+          const attendanceQuery = query(
+            collectionGroup(db, "attendance"),
+            where("id", "==", id) // Assuming 'id' is the field that references the member
+          );
 
-        // Fetch attendance data
-        const unsubscribe = db
-          .collectionGroup("attendance")
-          .where("id", "==", id) // Assuming 'memberId' is the field that references the member
-          .onSnapshot((snapshot) => {
+          const unsubscribe = onSnapshot(attendanceQuery, (snapshot) => {
             const fetchedAttendance = snapshot.docs.map((doc) => doc.data());
             // Convert Firestore timestamps to JavaScript Date objects
             const processedAttendanceData = fetchedAttendance.map((item) => ({
@@ -85,13 +92,10 @@ export default function MemberPage() {
             setAttendanceData(processedAttendanceData);
           });
 
-        return () => {
-          // Unsubscribe from the snapshot listener when the component unmounts
-          unsubscribe();
-        };
-      } catch (error) {
-        console.error("Error fetching document:", error);
-        setError("Error fetching data");
+          return unsubscribe; // Return the unsubscribe function to clean up the listener
+        }
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }

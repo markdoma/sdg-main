@@ -1,5 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../utils/firebase"; // Ensure db is correctly initialized
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc,
+  setDoc,
+  Timestamp,
+} from "firebase/firestore"; // v9 modular imports
+
+import { useAuth } from "@/context/AuthContext";
 
 const MembersNotYetRegistered = ({ userEmail }) => {
   const [userData, setUserData] = useState(null);
@@ -14,18 +27,49 @@ const MembersNotYetRegistered = ({ userEmail }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { setNotRegistered } = useAuth();
+
+  // After registration success, update sdgNotYetRegistered and load members
+  const handleRegistrationSuccess = () => {
+    const fetchMembers = async () => {
+      try {
+        const membersSnapshot = await getDocs(collection(db, "master_data"));
+        const membersData = membersSnapshot.docs.map((doc) => doc.data());
+        // After fetching members, set `sdgNotYetRegistered` to false
+        setNotRegistered(false);
+      } catch (error) {
+        console.error("Error fetching members:", error);
+      }
+    };
+    fetchMembers();
+  };
+
   // Fetch user data from master_data collection when the component loads
   useEffect(() => {
     const fetchUserData = async () => {
-      const userSnapshot = await db
-        .collection("master_data")
-        .where("emailadd", "==", userEmail)
-        .get();
+      const q = query(
+        collection(db, "master_data"),
+        where("emailadd", "==", userEmail)
+      );
+      const userSnapshot = await getDocs(q);
 
       if (!userSnapshot.empty) {
         const userInMasterData = userSnapshot.docs[0].data();
         setUserData(userInMasterData);
-        setFormData(userInMasterData); // Pre-fill the form with the existing data
+        // setFormData(userInMasterData);
+
+        setFormData({
+          firstname: userInMasterData.firstname || "",
+          middlename: userInMasterData.middlename || "",
+          lastname: userInMasterData.lastname || "",
+          bloodtype: userInMasterData.bloodtype || "",
+          city: userInMasterData.city || "",
+          contact: userInMasterData.contact || "",
+          birthdate:
+            userInMasterData.birthdate && userInMasterData.birthdate.toDate
+              ? userInMasterData.birthdate.toDate().toISOString().split("T")[0]
+              : userInMasterData.birthdate || "",
+        }); // Pre-fill the form with the existing data
       }
     };
 
@@ -48,26 +92,34 @@ const MembersNotYetRegistered = ({ userEmail }) => {
 
     try {
       // Update the user's data in the master_data collection
-      await db
-        .collection("master_data")
-        .where("emailadd", "==", userEmail)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach(async (doc) => {
-            await doc.ref.update(formData); // Update the existing document in master_data
-          });
+      const q = query(
+        collection(db, "master_data"),
+        where("emailadd", "==", userEmail)
+      );
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const userDocRef = querySnapshot.docs[0].ref;
+        await updateDoc(userDocRef, {
+          ...formData,
+          birthdate: formData.birthdate
+            ? Timestamp.fromDate(new Date(formData.birthdate))
+            : null,
         });
 
-      // Also create or update the user in the users collection
-      await db
-        .collection("users")
-        .doc(userEmail)
-        .set(formData, { merge: true });
+        setNotRegistered(false);
+        handleRegistrationSuccess();
+      } else {
+        console.error("User not found in master_data");
+      }
+      //   querySnapshot.forEach(async (doc) => {
+      //     await updateDoc(doc.ref, formData); // Update the existing document in master_data
+      //   });
 
-      // Optionally, display a success message or redirect
-      alert("Registration data updated successfully!");
+      //   // Also create or update the user in the users collection
+      const userDocRef = doc(db, "users", userEmail);
+      await setDoc(userDocRef, formData, { merge: true });
 
-      // You could redirect the user or show another message after successful registration
+      //   handleRegistrationSuccess(); // After successful registration, update state
     } catch (error) {
       console.error("Error updating user data: ", error);
     } finally {
@@ -78,14 +130,15 @@ const MembersNotYetRegistered = ({ userEmail }) => {
   // If we are in the process of submitting, show a loading message
   if (isSubmitting) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen">
+      <div className="flex flex-col items-center justify-center min-h-screen">
         <p className="text-lg text-blue-600">Updating, please wait...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center">
+      {/* // <div className="mx-auto max-w-7xl px-6 items-center justify-center text-center lg:px-8"> */}
       <h2 className="text-2xl font-semibold mb-4">Confirm Your Registration</h2>
       <p className="text-lg mb-6">
         Please review and confirm your information before completing your
