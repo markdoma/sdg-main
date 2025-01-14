@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../utils/firebase"; // Ensure db is correctly initialized
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc,
+  setDoc,
+} from "firebase/firestore"; // v9 modular imports
 
-const MembersNotYetRegistered = ({ userEmail }) => {
+const MembersNotYetRegistered = ({ userEmail, setSdgNotYetRegistered }) => {
   const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     firstname: "",
@@ -14,13 +24,29 @@ const MembersNotYetRegistered = ({ userEmail }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // After registration success, update sdgNotYetRegistered and load members
+  const handleRegistrationSuccess = () => {
+    const fetchMembers = async () => {
+      try {
+        const membersSnapshot = await getDocs(collection(db, "master_data"));
+        const membersData = membersSnapshot.docs.map((doc) => doc.data());
+        // After fetching members, set `sdgNotYetRegistered` to false
+        setSdgNotYetRegistered(false);
+      } catch (error) {
+        console.error("Error fetching members:", error);
+      }
+    };
+    fetchMembers();
+  };
+
   // Fetch user data from master_data collection when the component loads
   useEffect(() => {
     const fetchUserData = async () => {
-      const userSnapshot = await db
-        .collection("master_data")
-        .where("emailadd", "==", userEmail)
-        .get();
+      const q = query(
+        collection(db, "master_data"),
+        where("emailadd", "==", userEmail)
+      );
+      const userSnapshot = await getDocs(q);
 
       if (!userSnapshot.empty) {
         const userInMasterData = userSnapshot.docs[0].data();
@@ -48,26 +74,20 @@ const MembersNotYetRegistered = ({ userEmail }) => {
 
     try {
       // Update the user's data in the master_data collection
-      await db
-        .collection("master_data")
-        .where("emailadd", "==", userEmail)
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach(async (doc) => {
-            await doc.ref.update(formData); // Update the existing document in master_data
-          });
-        });
+      const q = query(
+        collection(db, "master_data"),
+        where("emailadd", "==", userEmail)
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach(async (doc) => {
+        await updateDoc(doc.ref, formData); // Update the existing document in master_data
+      });
 
       // Also create or update the user in the users collection
-      await db
-        .collection("users")
-        .doc(userEmail)
-        .set(formData, { merge: true });
+      const userDocRef = doc(db, "users", userEmail);
+      await setDoc(userDocRef, formData, { merge: true });
 
-      // Optionally, display a success message or redirect
-      alert("Registration data updated successfully!");
-
-      // You could redirect the user or show another message after successful registration
+      handleRegistrationSuccess(); // After successful registration, update state
     } catch (error) {
       console.error("Error updating user data: ", error);
     } finally {

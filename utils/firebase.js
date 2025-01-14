@@ -1,16 +1,10 @@
 // firebase.js
-// import { initializeApp } from "firebase/app";
-// import { getFirestore } from "firebase/firestore";
+import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
-// import { getDownloadURL, ref, getMetadata } from "@firebase/storage";
-// import { collection, addDoc } from "@firebase/firestore";
-
-import firebase from "firebase/app";
-import "firebase/auth"; // Import the Firebase Authentication module
-import "firebase/firestore";
-import "firebase/storage";
-// import { getAuth, GoogleAuthProvider } from "firebase/auth";
-
+// Your Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyApAFNETwBUvoIbDzySJGjFVTHdUItD4XE",
   authDomain: "ligayasdg.firebaseapp.com",
@@ -21,18 +15,18 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+const app = initializeApp(firebaseConfig);
 
-const auth = firebase.auth(); // Export the Firebase Authentication instance
-const db = firebase.firestore();
+// Get references to the services
+const auth = getAuth(app); // Firebase Authentication
+const db = getFirestore(app); // Firestore Database
+const storage = getStorage(app); // Firebase Storage
 
-const provider = new firebase.auth.GoogleAuthProvider();
-const storage = firebase.storage();
-// Set the prompt parameter to 'select_account' to force account selection
+// Set up Google Auth provider
+const provider = new GoogleAuthProvider();
 provider.setCustomParameters({
-  prompt: "select_account",
+  prompt: "select_account", // Force account selection
 });
 
+// Export the services
 export { db, storage, auth, provider };
