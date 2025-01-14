@@ -27,6 +27,7 @@ export default function Ligayasdg() {
     logout,
     error,
     notRegistered,
+    setNotRegistered,
     navigation,
     initialMembers,
     loading, // Use loading from context
@@ -57,7 +58,8 @@ export default function Ligayasdg() {
         userEmail={user.email}
         userRole={user.role}
         plName={user.pl_name}
-        sdgNotYetRegistered={notRegistered}
+        notRegistered={notRegistered}
+        setNotRegistered={setNotRegistered}
       />
     );
   }

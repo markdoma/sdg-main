@@ -24,7 +24,6 @@ function AppContent({ Component, pageProps }) {
   if (error) {
     return (
       <div className="text-center">
-        <p>{error}</p>
         <div className="bg-white">
           <header className="absolute inset-x-0 top-0 z-50">
             <nav
@@ -66,6 +65,9 @@ function AppContent({ Component, pageProps }) {
                   of Ligaya ng Panginoon. Based in Cavite, its members are
                   united by a shared covenant and commitment to living out their
                   faith with passion and devotion.
+                </p>
+                <p className="mt-5 text-lg italic bold text-red-500 ">
+                  {error}
                 </p>
                 <div className="mt-10 flex items-center justify-center gap-x-6">
                   <img

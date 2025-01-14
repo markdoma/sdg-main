@@ -56,12 +56,14 @@ export function AuthProvider({ children }) {
       const userDocRef = doc(db, "users", emailadd);
       const userDoc = await getDoc(userDocRef);
       const userFound = userDoc.exists();
+      console.log(userFound);
       if (!userFound) {
         setNotRegistered(true); // Mark as not registered
-        return;
+        // setUser();
+        // return;
       }
 
-      setNotRegistered(false); // User is registered
+      // setNotRegistered(false); // User is registered
 
       // Fetch members data based on the user's PL name
       let membersSnapshot = null;
@@ -144,6 +146,7 @@ export function AuthProvider({ children }) {
         logout,
         error,
         notRegistered,
+        setNotRegistered,
         navigation,
         initialMembers,
         loading, // Provide loading state to the context

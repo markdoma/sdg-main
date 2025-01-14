@@ -2,15 +2,11 @@ import React, { useState, useEffect } from "react";
 import Loading from "@/components/Misc/Loading";
 import MembersNotYetRegistered from "@/components/Members/MembersNotYetRegistered";
 import { db } from "@/utils/firebase";
+import { useAuth } from "@/context/AuthContext";
 
-export default function Home({
-  initialMembers,
-  sdgNotYetRegistered,
-  setSdgNotYetRegistered,
-  userEmail,
-  userRole,
-  plName,
-}) {
+export default function Home({ initialMembers, userEmail, userRole, plName }) {
+  const { notRegistered } = useAuth();
+  console.log(notRegistered);
   const [members, setMembers] = useState(initialMembers);
   const [loading, setLoading] = useState(false);
 
@@ -26,13 +22,8 @@ export default function Home({
   }
 
   // Handle non-registered users
-  if (sdgNotYetRegistered) {
-    return (
-      <MembersNotYetRegistered
-        userEmail={userEmail}
-        setSdgNotYetRegistered={setSdgNotYetRegistered}
-      />
-    );
+  if (notRegistered) {
+    return <MembersNotYetRegistered userEmail={userEmail} />;
   }
 
   return (

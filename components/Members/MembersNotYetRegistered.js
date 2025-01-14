@@ -11,7 +11,9 @@ import {
   setDoc,
 } from "firebase/firestore"; // v9 modular imports
 
-const MembersNotYetRegistered = ({ userEmail, setSdgNotYetRegistered }) => {
+import { useAuth } from "@/context/AuthContext";
+
+const MembersNotYetRegistered = ({ userEmail }) => {
   const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     firstname: "",
@@ -24,6 +26,8 @@ const MembersNotYetRegistered = ({ userEmail, setSdgNotYetRegistered }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { setNotRegistered } = useAuth();
+
   // After registration success, update sdgNotYetRegistered and load members
   const handleRegistrationSuccess = () => {
     const fetchMembers = async () => {
@@ -31,7 +35,7 @@ const MembersNotYetRegistered = ({ userEmail, setSdgNotYetRegistered }) => {
         const membersSnapshot = await getDocs(collection(db, "master_data"));
         const membersData = membersSnapshot.docs.map((doc) => doc.data());
         // After fetching members, set `sdgNotYetRegistered` to false
-        setSdgNotYetRegistered(false);
+        setNotRegistered(false);
       } catch (error) {
         console.error("Error fetching members:", error);
       }
@@ -98,14 +102,15 @@ const MembersNotYetRegistered = ({ userEmail, setSdgNotYetRegistered }) => {
   // If we are in the process of submitting, show a loading message
   if (isSubmitting) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen">
+      <div className="flex flex-col items-center justify-center min-h-screen">
         <p className="text-lg text-blue-600">Updating, please wait...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center">
+      {/* // <div className="mx-auto max-w-7xl px-6 items-center justify-center text-center lg:px-8"> */}
       <h2 className="text-2xl font-semibold mb-4">Confirm Your Registration</h2>
       <p className="text-lg mb-6">
         Please review and confirm your information before completing your
