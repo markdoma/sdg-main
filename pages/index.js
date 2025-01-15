@@ -36,23 +36,6 @@ export default function Ligayasdg() {
 
   console.log(error);
 
-  if (loading) {
-    return (
-      <div className="text-center">
-        <Loading />
-      </div>
-    );
-  }
-
-  // If there's an error, return the error as part of pageProps
-  // if (error) {
-  //   return {
-  //     props: {
-  //       error, // Pass error to _app.js through pageProps
-  //     },
-  //   };
-  // }
-
   // Conditional rendering: If user is authenticated and email is found in master_data, show the Home component
   if (user && initialMembers.length > 0) {
     return (

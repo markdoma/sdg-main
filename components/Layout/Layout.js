@@ -3,6 +3,7 @@
 import FormWithQRCode from "@/components/FormWithQRCode";
 import { useRouter } from "next/router";
 import { useAuth } from "../../context/AuthContext";
+import Link from "next/link";
 
 import { useState, useEffect } from "react";
 import {
@@ -158,7 +159,7 @@ export default function Layout({ children }) {
                           isActive
                             ? "bg-cyan-800 text-white"
                             : "text-cyan-100 hover:bg-cyan-600 hover:text-white",
-                          "group flex items-center rounded-md px-2 py-2 text-base font-medium"
+                          "group flex items-center rounded-md px-2 py-2 text-base font-medium text-left" // Added text-left class
                         )}
                       >
                         <item.icon
@@ -176,7 +177,7 @@ export default function Layout({ children }) {
                       <a
                         key={item.name}
                         href={item.href}
-                        className="group flex items-center rounded-md px-2 py-2 text-base font-medium text-cyan-100 hover:bg-cyan-600 hover:text-white"
+                        className="group flex items-center rounded-md px-2 py-2 text-base font-medium text-cyan-100 hover:bg-cyan-600 hover:text-white text-left" // Added text-left class
                       >
                         <item.icon
                           aria-hidden="true"
@@ -226,7 +227,7 @@ export default function Layout({ children }) {
                         isActive
                           ? "bg-cyan-800 text-white"
                           : "text-cyan-100 hover:bg-cyan-600 hover:text-white",
-                        "group flex items-center rounded-md px-2 py-2 text-base font-medium"
+                        "group flex items-center rounded-md px-2 py-2 text-base font-medium text-left" // Added text-left class
                       )}
                     >
                       <item.icon
@@ -244,7 +245,7 @@ export default function Layout({ children }) {
                     <a
                       key={item.name}
                       href={item.href}
-                      className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white"
+                      className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white text-left" // Added text-left class
                     >
                       {/* <item.icon
                         aria-hidden="true"
@@ -334,12 +335,12 @@ export default function Layout({ children }) {
                     className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                   >
                     <MenuItem>
-                      <a
-                        href="#"
+                      <Link
                         className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
+                        href="/profile"
                       >
                         Your Profile
-                      </a>
+                      </Link>
                     </MenuItem>
                     <MenuItem>
                       <a

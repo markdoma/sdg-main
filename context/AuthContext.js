@@ -10,6 +10,7 @@ import {
   getDocs,
   doc,
   getDoc,
+  updateDoc, // Import updateDoc from Firestore
 } from "firebase/firestore";
 
 const AuthContext = createContext();
@@ -30,6 +31,7 @@ export function AuthProvider({ children }) {
     { name: "Foundation Course", href: "/fc", icon: "DocumentChartBarIcon" },
     { name: "Hook Programs", href: "/hook", icon: "UserGroupIcon" },
   ]);
+  const [userDetails, setUserDetails] = useState(null); // Add state for user details
 
   // Fetch user data and check if the user exists in the "master_data" collection
   const fetchUserData = async (emailadd) => {
@@ -65,6 +67,9 @@ export function AuthProvider({ children }) {
         // return;
       }
 
+      // Set user details state
+      setUserDetails(roleDoc.data());
+
       // setNotRegistered(false); // User is registered
 
       // Fetch members data based on the user's PL name
@@ -89,6 +94,12 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false); // Set loading to false after the fetch completes
     }
+  };
+
+  // Function to update user details in the "master_data" collection
+  const updateUserDetails = async (updatedDetails) => {
+    const userDoc = doc(db, "master_data", updatedDetails.doc_id); // Ensure the correct document ID
+    await updateDoc(userDoc, updatedDetails);
   };
 
   useEffect(() => {
@@ -162,6 +173,9 @@ export function AuthProvider({ children }) {
         navigation,
         initialMembers,
         loading, // Provide loading state to the context
+        userDetails, // Provide user details to the context
+        setUserDetails,
+        updateUserDetails, // Provide update function to the context
       }}
     >
       {children}
