@@ -25,7 +25,8 @@ const storage = getStorage(app); // Firebase Storage
 // Set up Google Auth provider
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({
-  prompt: "select_account", // Force account selection
+  prompt: "consent", // Use Google component prompt for permission
+  login_hint: "user@example.com", // Optional: pre-fill the email field
 });
 
 // Export the services
