@@ -26,6 +26,7 @@ export default function Ligayasdg() {
     signInWithGoogle,
     logout,
     error,
+    setError,
     notRegistered,
     setNotRegistered,
     navigation,
@@ -33,7 +34,7 @@ export default function Ligayasdg() {
     loading, // Use loading from context
   } = useAuth();
 
-  console.log(initialMembers);
+  console.log(error);
 
   if (loading) {
     return (
@@ -44,13 +45,13 @@ export default function Ligayasdg() {
   }
 
   // If there's an error, return the error as part of pageProps
-  if (error) {
-    return {
-      props: {
-        error, // Pass error to _app.js through pageProps
-      },
-    };
-  }
+  // if (error) {
+  //   return {
+  //     props: {
+  //       error, // Pass error to _app.js through pageProps
+  //     },
+  //   };
+  // }
 
   // Conditional rendering: If user is authenticated and email is found in master_data, show the Home component
   if (user && initialMembers.length > 0) {
