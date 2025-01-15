@@ -42,10 +42,11 @@ export function AuthProvider({ children }) {
       const snapshot = await getDocs(masterDataQuery);
 
       if (snapshot.empty) {
-        setError("User not found in master data.");
         setUser(null); // Set user to null when logged out
-        // logout();
-        // setNotRegistered(true); // Mark as not registered
+        setError(
+          "User not found, kindly send to your PL your latest email address."
+        );
+
         return;
       }
 
@@ -95,6 +96,7 @@ export function AuthProvider({ children }) {
       if (user) {
         setUser(user); // Set user when logged in
         await fetchUserData(user.email); // Fetch user data when logged in
+        setError(null);
       } else {
         setUser(null); // Set user to null when logged out
         setNotRegistered(false); // Reset registration state when logged out
@@ -133,11 +135,14 @@ export function AuthProvider({ children }) {
 
   // Log out function
   const logout = async () => {
+    setLoading(true);
+    setError(null);
     try {
       await auth.signOut();
       Cookies.remove("token");
       router.push("/");
       setUser(null);
+
       setNotRegistered(false); // Reset registration state on logout
     } catch (error) {
       setError(error.message); // Set error message if sign-out fails
@@ -151,6 +156,7 @@ export function AuthProvider({ children }) {
         signInWithGoogle,
         logout,
         error,
+        setError,
         notRegistered,
         setNotRegistered,
         navigation,
