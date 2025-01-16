@@ -2,16 +2,10 @@ import { useState } from "react";
 
 export default function MemberLanding() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [feedbackCompleted, setFeedbackCompleted] = useState([
-    false,
-    false,
-    false,
-  ]);
-
   const announcements = [
-    "https://via.placeholder.com/600x300?text=Announcement+1",
-    "https://via.placeholder.com/600x300?text=Announcement+2",
-    "https://via.placeholder.com/600x300?text=Announcement+3",
+    "https://placeholder.pics/svg/300/5BFF20-CDFF74/test",
+    "https://placeholder.pics/svg/300/4DFFC4-CDFF74/sdsd",
+    "https://placeholder.pics/svg/300/FF0000-FF9595/sssss",
   ];
 
   const birthdayCelebrants = [
@@ -54,16 +48,6 @@ export default function MemberLanding() {
 
   const mwgEvents = ["MWG Meeting - Jan 10", "Day of Prayer - Feb 15"];
 
-  const feedbacks = ["Feedback 1", "Feedback 2", "Feedback 3"];
-
-  const handleFeedbackClick = (index) => {
-    setFeedbackCompleted((prev) => {
-      const newFeedbackCompleted = [...prev];
-      newFeedbackCompleted[index] = true;
-      return newFeedbackCompleted;
-    });
-  };
-
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % announcements.length);
   };
@@ -75,31 +59,47 @@ export default function MemberLanding() {
   };
 
   return (
-    <div className="bg-transparent py-24 sm:py-32">
+    <div className="bg-transparent py-8 sm:py-8">
       <div className="mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="card bg-gray-200 p-6 text-center border sm:col-span-2">
-            <div className="relative">
+          <div className="card bg-transparent p-6 text-center border rounded-lg shadow-lg sm:col-span-2 hidden sm:block">
+            <div className="relative flex justify-center items-center ">
               <img
                 src={announcements[currentSlide]}
                 alt="Announcement"
-                className="w-full"
+                className="md:w-1/3 md:h-1/3 w-6 h-6"
               />
-              <button
-                onClick={prevSlide}
-                className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1"
-              >
-                Prev
-              </button>
-              <button
-                onClick={nextSlide}
-                className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1"
-              >
-                Next
-              </button>
+              <div className="hidden sm:block">
+                <button
+                  onClick={prevSlide}
+                  className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1"
+                >
+                  Prev
+                </button>
+                <button
+                  onClick={nextSlide}
+                  className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1"
+                >
+                  Next
+                </button>
+              </div>
+              <div className="block sm:hidden">
+                <button
+                  onClick={prevSlide}
+                  className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1"
+                >
+                  &#9664;
+                </button>
+                <button
+                  onClick={nextSlide}
+                  className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1"
+                >
+                  &#9654;
+                </button>
+              </div>
             </div>
           </div>
-          <div className="card bg-gray-200 p-6 text-center border sm:row-span-2">
+          <div className="card bg-transparent p-6 text-center border rounded-lg shadow-lg sm:row-span-2">
             <h2 className="text-lg font-semibold">Birthday Celebrants</h2>
             <ul className="mt-4">
               {birthdayCelebrants.map((celebrant, index) => (
@@ -123,7 +123,7 @@ export default function MemberLanding() {
               </>
             )}
           </div>
-          <div className="card bg-gray-200 p-6 text-center border">
+          <div className="card bg-transparent p-6 text-center border rounded-lg shadow-lg">
             <div className="flow-root">
               <ul role="list" className="-mb-8">
                 {calendarOfEvents.map((event, eventIdx) => (
@@ -170,7 +170,7 @@ export default function MemberLanding() {
               </ul>
             </div>
           </div>
-          <div className="card bg-gray-200 p-6 text-center border">
+          <div className="card bg-transparent p-6 text-center border rounded-lg shadow-lg">
             <h2 className="text-lg font-semibold">MWG Events</h2>
             <ul className="mt-4">
               {mwgEvents.map((event, index) => (
@@ -180,27 +180,8 @@ export default function MemberLanding() {
               ))}
             </ul>
           </div>
-          <div className="card bg-gray-200 p-6 text-center border sm:col-span-2">
-            <h2 className="text-lg font-semibold">Feedback</h2>
-            <ul className="mt-4">
-              {feedbacks.map((feedback, index) => (
-                <li
-                  key={index}
-                  className="mt-2 flex justify-between items-center"
-                >
-                  {feedback}
-                  <button
-                    onClick={() => handleFeedbackClick(index)}
-                    className={`ml-4 px-4 py-2 text-white ${
-                      feedbackCompleted[index] ? "bg-gray-400" : "bg-blue-500"
-                    }`}
-                    disabled={feedbackCompleted[index]}
-                  >
-                    {feedbackCompleted[index] ? "Completed" : "Complete"}
-                  </button>
-                </li>
-              ))}
-            </ul>
+          <div className="card bg-transparent p-6 text-center border rounded-lg shadow-lg sm:col-span-2">
+            Card 5
           </div>
         </div>
       </div>

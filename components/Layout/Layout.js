@@ -70,7 +70,7 @@ export default function Layout({ children }) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const { user, navigation, logout } = useAuth();
+  const { user, navigation, logout, userDetails, setSearchQuery } = useAuth(); // Add setSearchQuery from context
 
   console.log(navigation);
 
@@ -245,12 +245,12 @@ export default function Layout({ children }) {
                     <a
                       key={item.name}
                       href={item.href}
-                      className="group flex items-center rounded-md px-2 py-2 text-sm font-medium leading-6 text-cyan-100 hover:bg-cyan-600 hover:text-white text-left" // Added text-left class
+                      className="group flex items-center rounded-md px-2 py-2 text-base font-medium text-cyan-100 hover:bg-cyan-600 hover:text-white text-left" // Added text-left class
                     >
-                      {/* <item.icon
+                      <item.icon
                         aria-hidden="true"
                         className="mr-4 h-6 w-6 text-cyan-200"
-                      /> */}
+                      />
                       {item.name}
                     </a>
                   ))}
@@ -270,33 +270,37 @@ export default function Layout({ children }) {
               <span className="sr-only">Open sidebar</span>
               <Bars3CenterLeftIcon aria-hidden="true" className="h-6 w-6" />
             </button>
-            {/* Search bar */}
             <div className="flex flex-1 justify-between px-4 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8">
-              <div className="flex flex-1">
-                <form action="#" method="GET" className="flex w-full md:ml-0">
-                  <label htmlFor="search-field" className="sr-only">
-                    Search
-                  </label>
-                  <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-y-0 left-0 flex items-center"
-                    >
-                      <MagnifyingGlassIcon
+              {userDetails?.service_role === "pl" ? (
+                <div className="flex flex-1">
+                  <form action="#" method="GET" className="flex w-full md:ml-0">
+                    <label htmlFor="search-field" className="sr-only">
+                      Search
+                    </label>
+                    <div className="relative w-full text-gray-400 focus-within:text-gray-600">
+                      <div
                         aria-hidden="true"
-                        className="h-5 w-5"
+                        className="pointer-events-none absolute inset-y-0 left-0 flex items-center"
+                      >
+                        <MagnifyingGlassIcon
+                          aria-hidden="true"
+                          className="h-5 w-5"
+                        />
+                      </div>
+                      <input
+                        id="search-field"
+                        name="search-field"
+                        type="search"
+                        placeholder="Search members"
+                        className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+                        onChange={(e) => setSearchQuery(e.target.value)} // Update search query on input change
                       />
                     </div>
-                    <input
-                      id="search-field"
-                      name="search-field"
-                      type="search"
-                      placeholder="Search members"
-                      className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
-                    />
-                  </div>
-                </form>
-              </div>
+                  </form>
+                </div>
+              ) : (
+                <div className="flex flex-1" />
+              )}
               <div className="ml-4 flex items-center md:ml-6">
                 <button
                   type="button"
@@ -412,7 +416,7 @@ export default function Layout({ children }) {
                               aria-hidden="true"
                               className="mr-1.5 h-5 w-5 flex-shrink-0 text-green-400"
                             />
-                            Pastoral Leader
+                            {userDetails?.service_role}
                           </dd>
                         </dl>
                       </div>

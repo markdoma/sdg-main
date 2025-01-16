@@ -12,6 +12,13 @@ import {
   getDoc,
   updateDoc, // Import updateDoc from Firestore
 } from "firebase/firestore";
+import {
+  HomeIcon,
+  ClockIcon,
+  ScaleIcon,
+  UserGroupIcon,
+  DocumentChartBarIcon,
+} from "@heroicons/react/24/outline";
 
 const AuthContext = createContext();
 
@@ -23,15 +30,16 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true); // Manage loading state
   const [initialMembers, setInitialMembers] = useState([]);
   const [navigation, setNavigation] = useState([
-    { name: "Home", href: "/", icon: "HomeIcon" },
-    { name: "Registration", href: "/registration", icon: "ClockIcon" },
-    { name: "Finance", href: "/finance", icon: "ScaleIcon" },
-    { name: "Family Life Ministry", href: "/flm", icon: "UserGroupIcon" },
-    { name: "Tech", href: "/scan", icon: "UserGroupIcon" },
-    { name: "Foundation Course", href: "/fc", icon: "DocumentChartBarIcon" },
-    { name: "Hook Programs", href: "/hook", icon: "UserGroupIcon" },
+    { name: "Home", href: "/", icon: HomeIcon },
+    { name: "Registration", href: "/registration", icon: ClockIcon },
+    { name: "Finance", href: "/finance", icon: ScaleIcon },
+    { name: "Family Life Ministry", href: "/flm", icon: UserGroupIcon },
+    { name: "Tech", href: "/scan", icon: UserGroupIcon },
+    { name: "Foundation Course", href: "/fc", icon: DocumentChartBarIcon },
+    { name: "Hook Programs", href: "/hook", icon: UserGroupIcon },
   ]);
   const [userDetails, setUserDetails] = useState(null); // Add state for user details
+  const [searchQuery, setSearchQuery] = useState(""); // Add state for search query
 
   // Fetch user data and check if the user exists in the "master_data" collection
   const fetchUserData = async (emailadd) => {
@@ -176,6 +184,8 @@ export function AuthProvider({ children }) {
         userDetails, // Provide user details to the context
         setUserDetails,
         updateUserDetails, // Provide update function to the context
+        searchQuery, // Provide search query to the context
+        setSearchQuery, // Provide function to update search query
       }}
     >
       {children}
