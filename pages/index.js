@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import Loading from "../components/Misc/Loading";
 import { db } from "@/utils/firebase";
 import Home from "@/components/Members/Home";
-import Member from "@/components/Members/Member"; // Import Member component
+import MemberLanding from "@/components/Members/MemberLanding"; // Import Member component
 import {
   getDocs,
   query,
@@ -15,6 +15,7 @@ import {
   collection,
 } from "firebase/firestore";
 import { useRouter } from "next/router";
+import MemberLanding from "@/components/Members/MemberLanding";
 
 export default function Ligayasdg() {
   // const [loading, setLoading] = useState(false);
@@ -53,7 +54,7 @@ export default function Ligayasdg() {
         />
       );
     } else {
-      return <Member />;
+      return <MemberLanding />;
     }
   }
   return null;
