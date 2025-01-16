@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Home({ initialMembers, userEmail, userRole, plName }) {
-  const { notRegistered } = useAuth();
+  const { notRegistered, searchQuery } = useAuth(); // Add searchQuery from context
   console.log(notRegistered);
   const [members, setMembers] = useState(initialMembers);
   const [loading, setLoading] = useState(false);
@@ -29,6 +29,12 @@ export default function Home({ initialMembers, userEmail, userRole, plName }) {
     return <MembersNotYetRegistered userEmail={userEmail} />;
   }
 
+  const filteredMembers = members.filter((member) =>
+    `${member.firstname} ${member.lastname}`
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="bg-white py-8">
       <div className="mx-auto max-w-7xl px-6 text-center lg:px-8">
@@ -41,7 +47,7 @@ export default function Home({ initialMembers, userEmail, userRole, plName }) {
           role="list"
           className="mx-auto mt-20 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3"
         >
-          {members
+          {filteredMembers
             .sort((a, b) => a.lastname.localeCompare(b.lastname))
             .map((member) => (
               <li key={member.doc_id}>

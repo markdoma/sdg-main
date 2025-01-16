@@ -52,6 +52,10 @@ export default function Profile() {
       label: "Birthdate",
       value: "birthdate",
     },
+    {
+      label: "Service Role",
+      value: "service_role",
+    },
     { label: "Blood Type", value: "bloodtype" },
     { label: "Barangay", value: "brgy" },
     { label: "Church", value: "chrurch" },
