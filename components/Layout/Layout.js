@@ -38,6 +38,7 @@ import {
   ChevronRightIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
+import ExtractMembers from "@/components/ExtractMembers";
 
 const secondaryNavigation = [
   { name: "Settings", href: "#", icon: CogIcon },
@@ -70,7 +71,14 @@ export default function Layout({ children }) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const { user, navigation, logout, userDetails, setSearchQuery } = useAuth(); // Add setSearchQuery from context
+  const {
+    user,
+    navigation,
+    logout,
+    initialMembers,
+    userDetails,
+    setSearchQuery,
+  } = useAuth(); // Add setSearchQuery from context
 
   console.log(navigation);
 
@@ -423,12 +431,13 @@ export default function Layout({ children }) {
                     </div>
                   </div>
                   <div className="mt-6 flex space-x-3 md:ml-4 md:mt-0">
-                    <button
+                    {/* <button
                       type="button"
                       className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                     >
-                      Add Member
-                    </button>
+                      Extract Data
+                    </button> */}
+                    <ExtractMembers initialMembers={initialMembers} />
                     <button
                       onClick={gotToDashboard}
                       type="button"
