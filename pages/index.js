@@ -40,7 +40,10 @@ export default function Ligayasdg() {
 
   // Conditional rendering: If user is authenticated and email is found in master_data, show the appropriate component
   if (user && initialMembers.length > 0) {
-    if (userDetails.service_role === "pl") {
+    if (
+      userDetails.pl === "Lito & Bless Saquilayan" ||
+      userDetails.pl === "Frat Group"
+    ) {
       // Use service_role from userDetails
       return (
         <Home

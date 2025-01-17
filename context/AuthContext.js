@@ -62,7 +62,6 @@ export function AuthProvider({ children }) {
 
       const roleDoc = snapshot.docs[0];
       const role = roleDoc.data().role;
-      const pl_name = roleDoc.data().pl;
 
       // Check if the user exists in the "users" collection
       const userDocRef = doc(db, "users", emailadd);
@@ -71,22 +70,32 @@ export function AuthProvider({ children }) {
       console.log(userFound);
       if (!userFound) {
         setNotRegistered(true); // Mark as not registered
-        // setUser();
-        // return;
       }
 
       // Set user details state
       setUserDetails(roleDoc.data());
 
-      // setNotRegistered(false); // User is registered
+      // Fetch the PL value from the roles collection
+      const rolesDocRef = doc(db, "roles", emailadd);
+      const rolesDoc = await getDoc(rolesDocRef);
+      const pl_name = rolesDoc.exists() ? rolesDoc.data().pl : null;
 
       // Fetch members data based on the user's PL name
       let membersSnapshot = null;
       if (pl_name) {
-        const plQuery = query(
-          collection(db, "master_data"),
-          where("pl", "==", pl_name)
-        );
+        let plQuery;
+        if (pl_name === "admin") {
+          plQuery = query(
+            collection(db, "master_data"),
+            where("sdg_class", "==", "LNP Member SDG"),
+            where("status", "==", "Active")
+          );
+        } else {
+          plQuery = query(
+            collection(db, "master_data"),
+            where("pl", "==", pl_name)
+          );
+        }
         membersSnapshot = await getDocs(plQuery);
       }
 
