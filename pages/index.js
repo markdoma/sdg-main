@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth, AuthProvider } from "../context/AuthContext"; // Ensure AuthProvider is imported
 import Loading from "../components/Misc/Loading";
 import { db } from "@/utils/firebase";
 import Home from "@/components/Members/Home";
@@ -39,25 +39,34 @@ export default function Ligayasdg() {
   console.log(error);
 
   // Conditional rendering: If user is authenticated and email is found in master_data, show the appropriate component
-  if (user && initialMembers.length > 0) {
-    if (
-      userDetails.pl === "Lito & Bless Saquilayan" ||
-      userDetails.pl === "Frat Group"
-    ) {
-      // Use service_role from userDetails
-      return (
-        <Home
-          initialMembers={initialMembers}
-          userEmail={user.email}
-          userRole={user.role}
-          plName={user.pl_name}
-          notRegistered={notRegistered}
-          setNotRegistered={setNotRegistered}
-        />
-      );
-    } else {
-      return <MemberLanding />;
-    }
+  if (
+    userDetails &&
+    (userDetails.pl === "Lito & Bless Saquilayan" ||
+      userDetails.pl === "Frat Group")
+  ) {
+    // Use service_role from userDetails
+    return (
+      <Home
+        initialMembers={initialMembers}
+        userEmail={user.email}
+        userRole={user.role}
+        plName={user.pl_name}
+        notRegistered={notRegistered}
+        setNotRegistered={setNotRegistered}
+      />
+    );
+  } else {
+    return <MemberLanding />;
   }
+
   return null;
+}
+
+// Ensure AuthProvider is used to wrap the application
+function App() {
+  return (
+    <AuthProvider>
+      <Ligayasdg />
+    </AuthProvider>
+  );
 }

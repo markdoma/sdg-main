@@ -45,23 +45,29 @@ export function AuthProvider({ children }) {
   const fetchUserData = async (emailadd) => {
     setLoading(true); // Set loading to true before starting the fetch
     try {
+      emailadd = emailadd.trim(); // Trim any leading or trailing whitespaces
+      console.log(`Fetching user data for email: '${emailadd}'`); // Log email address
+
       const masterDataQuery = query(
         collection(db, "master_data"),
         where("emailadd", "==", emailadd)
       );
       const snapshot = await getDocs(masterDataQuery);
+      console.log(snapshot);
 
       if (snapshot.empty) {
         setUser(null); // Set user to null when logged out
         setError(
           "User not found, kindly send to your PL your latest email address."
         );
-
+        console.log("failed");
         return;
       }
-
+      console.log("pass error check");
       const roleDoc = snapshot.docs[0];
       const role = roleDoc.data().role;
+
+      console.log(`this is the email ${emailadd}`);
 
       // Check if the user exists in the "users" collection
       const userDocRef = doc(db, "users", emailadd);
@@ -76,9 +82,17 @@ export function AuthProvider({ children }) {
       setUserDetails(roleDoc.data());
 
       // Fetch the PL value from the roles collection
+      console.log(`Checking roles collection for email: '${emailadd}'`); // Log email address before fetching roles
       const rolesDocRef = doc(db, "roles", emailadd);
       const rolesDoc = await getDoc(rolesDocRef);
+      console.log(`Roles document found: ${rolesDoc.exists()}`); // Log if roles document exists
+      if (!rolesDoc.exists()) {
+        console.error(
+          `No document found in roles collection for email: '${emailadd}'`
+        );
+      }
       const pl_name = rolesDoc.exists() ? rolesDoc.data().pl : null;
+      console.log(`pl name: ${pl_name}`);
 
       // Fetch members data based on the user's PL name
       let membersSnapshot = null;
@@ -107,6 +121,7 @@ export function AuthProvider({ children }) {
       const membersData = membersSnapshot.docs.map((doc) => doc.data());
       setInitialMembers(membersData);
     } catch (error) {
+      console.error("Error fetching user data:", error); // Log the error
       setError("Error fetching user data.");
     } finally {
       setLoading(false); // Set loading to false after the fetch completes
@@ -120,12 +135,17 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
+    console.log("useEffect called"); // Log when useEffect is called
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
+        console.log("User is logged in"); // Log when user is logged in
         setUser(user); // Set user when logged in
         await fetchUserData(user.email); // Fetch user data when logged in
+
+        console.log(user.email);
         setError(null);
       } else {
+        console.log("User is logged out"); // Log when user is logged out
         setUser(null); // Set user to null when logged out
         setNotRegistered(false); // Reset registration state when logged out
         setInitialMembers([]); // Reset initial members when logged out
@@ -134,7 +154,10 @@ export function AuthProvider({ children }) {
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      console.log("Cleaning up useEffect"); // Log when useEffect cleanup is called
+      unsubscribe();
+    };
   }, []);
 
   // Set Firebase ID token in cookies
