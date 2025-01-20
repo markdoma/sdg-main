@@ -8,6 +8,12 @@ const ExtractMembers = ({ initialMembers }) => {
     setMembers(initialMembers);
   }, [initialMembers]);
 
+  const formatDate = (date) => {
+    if (!date) return "";
+    const d = new Date(date.seconds ? date.seconds * 1000 : date);
+    return isNaN(d.getTime()) ? "" : d.toISOString().split("T")[0];
+  };
+
   const handleExport = () => {
     const fields = [
       "firstname",
@@ -43,7 +49,9 @@ const ExtractMembers = ({ initialMembers }) => {
 
     const data = members.map((member) =>
       fields.reduce((acc, field) => {
-        acc[field] = member[field] || "";
+        acc[field] = field.includes("date")
+          ? formatDate(member[field])
+          : member[field] || "";
         return acc;
       }, {})
     );
