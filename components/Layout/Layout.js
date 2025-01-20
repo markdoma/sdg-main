@@ -279,36 +279,32 @@ export default function Layout({ children }) {
               <Bars3CenterLeftIcon aria-hidden="true" className="h-6 w-6" />
             </button>
             <div className="flex flex-1 justify-between px-4 sm:px-6 lg:mx-auto lg:max-w-6xl lg:px-8">
-              {userDetails?.service_role === "pl" ? (
-                <div className="flex flex-1">
-                  <form action="#" method="GET" className="flex w-full md:ml-0">
-                    <label htmlFor="search-field" className="sr-only">
-                      Search
-                    </label>
-                    <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-                      <div
+              <div className="flex flex-1">
+                <form action="#" method="GET" className="flex w-full md:ml-0">
+                  <label htmlFor="search-field" className="sr-only">
+                    Search
+                  </label>
+                  <div className="relative w-full text-gray-400 focus-within:text-gray-600">
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-y-0 left-0 flex items-center"
+                    >
+                      <MagnifyingGlassIcon
                         aria-hidden="true"
-                        className="pointer-events-none absolute inset-y-0 left-0 flex items-center"
-                      >
-                        <MagnifyingGlassIcon
-                          aria-hidden="true"
-                          className="h-5 w-5"
-                        />
-                      </div>
-                      <input
-                        id="search-field"
-                        name="search-field"
-                        type="search"
-                        placeholder="Search members"
-                        className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
-                        onChange={(e) => setSearchQuery(e.target.value)} // Update search query on input change
+                        className="h-5 w-5"
                       />
                     </div>
-                  </form>
-                </div>
-              ) : (
-                <div className="flex flex-1" />
-              )}
+                    <input
+                      id="search-field"
+                      name="search-field"
+                      type="search"
+                      placeholder="Search members"
+                      className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm"
+                      onChange={(e) => setSearchQuery(e.target.value)} // Update search query on input change
+                    />
+                  </div>
+                </form>
+              </div>
               <div className="ml-4 flex items-center md:ml-6">
                 <button
                   type="button"
