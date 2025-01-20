@@ -38,7 +38,7 @@ import {
   ChevronRightIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
-import ExtractMembers from "@/components/ExtractMembers";
+import ExtractMembers from "@/components/Members/ExtractMembers";
 
 const secondaryNavigation = [
   { name: "Settings", href: "#", icon: CogIcon },
