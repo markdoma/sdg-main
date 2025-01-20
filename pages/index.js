@@ -17,11 +17,7 @@ import {
 import { useRouter } from "next/router";
 
 export default function Ligayasdg() {
-  // const [loading, setLoading] = useState(false);
-  // const [error, setError] = useState("");
   const [userData, setUserData] = useState(null);
-  // const [initialMembers, setInitialMembers] = useState([]);
-  // const [sdgNotYetRegistered, setSdgNotYetRegistered] = useState(false); // Track SDG registration status
   const {
     user,
     signInWithGoogle,
@@ -38,6 +34,10 @@ export default function Ligayasdg() {
 
   console.log(error);
 
+  if (loading) {
+    return <Loading />;
+  }
+
   // Conditional rendering: If user is authenticated and email is found in master_data, show the appropriate component
   if (
     userDetails &&
@@ -49,8 +49,8 @@ export default function Ligayasdg() {
       <Home
         initialMembers={initialMembers}
         userEmail={user.email}
-        userRole={user.role}
-        plName={user.pl_name}
+        userRole={userDetails.service_role}
+        plName={userDetails.pl}
         notRegistered={notRegistered}
         setNotRegistered={setNotRegistered}
       />
