@@ -193,11 +193,12 @@ export function AuthProvider({ children }) {
       Cookies.remove("token");
       router.push("/");
       setUser(null);
-
       setNotRegistered(false); // Reset registration state on logout
+      setSearchQuery(""); // Clear search query on logout
     } catch (error) {
       setError(error.message); // Set error message if sign-out fails
     }
+    setLoading(false); // Set loading to false after logout
   };
 
   return (

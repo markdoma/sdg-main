@@ -48,6 +48,12 @@ export default function Details({ member }) {
     return isNaN(d.getTime()) ? "" : d.toISOString().split("T")[0];
   };
 
+  const formatLocalDate = (date) => {
+    if (!date) return "";
+    const d = new Date(date.seconds ? date.seconds * 1000 : date);
+    return isNaN(d.getTime()) ? "" : d.toLocaleDateString("en-CA");
+  };
+
   const fields = [
     // Personal
     { label: "First Name", value: "firstname" },
@@ -118,7 +124,7 @@ export default function Details({ member }) {
                     <input
                       type="date"
                       ref={inputRef}
-                      value={formatDate(updatedMember[field.value])}
+                      value={formatLocalDate(updatedMember[field.value])}
                       onChange={(e) => handleChange(e, field.value)}
                       onKeyDown={(e) => handleKeyDown(e, field.value)}
                       className="rounded-md border-gray-300 p-2 text-gray-900 grow"

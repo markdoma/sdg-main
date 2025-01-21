@@ -21,7 +21,7 @@ const ExtractMembers = ({ initialMembers }) => {
     );
     const ageDifMs = Date.now() - birthDate.getTime();
     const ageDate = new Date(ageDifMs);
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
+    return Math.abs(ageDate.getUTCFullYear() - 1970); // 1970 is the Unix epoch
   };
 
   const calculateYearsMarried = (weddingdate) => {
