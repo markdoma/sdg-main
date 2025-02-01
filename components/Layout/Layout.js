@@ -4,7 +4,6 @@ import FormWithQRCode from "@/components/FormWithQRCode";
 import { useRouter } from "next/router";
 import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
-
 import { useState, useEffect } from "react";
 import {
   Dialog,

@@ -3,8 +3,12 @@ import { db } from "../utils/firebase"; // Replace this with your Firebase confi
 import AttendanceGroupCard from "./AttendanceGroupCard"; // Make sure to adjust the path if necessary
 import EventContext from "@/context/eventContext";
 
-import firebase from "firebase/app";
-import "firebase/firestore"; // Make sure firestore is imported
+import {
+  collectionGroup,
+  onSnapshot,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 
 import EventOptions from "../components/EventOptions";
 
@@ -19,73 +23,6 @@ const AttendancePage = () => {
   console.log(`${eventsOptions} from attendance page`);
   console.log(eventsOptions);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get(
-          `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events/`,
-          {
-            params: {
-              // key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
-              key: "AIzaSyAbX2qOg-8MGiK2HHxpNT0DAwCogdHpJJM",
-            },
-          }
-        );
-
-        // Filter events that start with "SDG" or "Open"
-        const filteredEvents = response.data.items.filter((item) => {
-          if (item.status === "cancelled") {
-            // Exclude cancelled events
-            return false;
-          }
-          const summary = item.summary.toLowerCase();
-          return (
-            summary.startsWith("sdg: district") ||
-            summary.startsWith("open") ||
-            summary.startsWith("bid") ||
-            summary.startsWith("choices") ||
-            summary.startsWith("plt")
-          );
-        });
-
-        // Filter events with dates between 07/30/23 and today's date
-        const currentDate = new Date();
-        const events = filteredEvents.map((item, index) => {
-          if (item.status === "cancelled") {
-            // Exclude cancelled events
-            return false;
-          }
-          let value;
-          if (item.start.dateTime) {
-            value = new Date(item.start.dateTime).toLocaleDateString("en-US");
-          } else {
-            value = new Date(item.start.date).toLocaleDateString("en-US");
-          }
-
-          // Parse the date string and compare it with the currentDate
-          const eventDate = new Date(value);
-          if (eventDate >= new Date("2023-07-29") && eventDate <= currentDate) {
-            return {
-              value,
-              label: item.summary,
-              key: `${value}-${index}`,
-            };
-          }
-          return null;
-        });
-
-        // Remove null values from the events array (events that didn't meet the criteria)
-        const filteredEventsOptions = events.filter(Boolean);
-
-        setEventsOptions(filteredEventsOptions);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      }
-    };
-
-    fetchEvents();
-  }, []);
-
   const eventOptions = eventsOptions;
 
   const [selectedEvent, setSelectedEvent] = useState(eventOptions[0]);
@@ -99,9 +36,9 @@ const AttendancePage = () => {
 
   useEffect(() => {
     // Fetch all attendance data from collectionGroup
-    const unsubscribe = db
-      .collectionGroup("attendance")
-      .onSnapshot((snapshot) => {
+    const unsubscribe = onSnapshot(
+      collectionGroup(db, "attendance"),
+      (snapshot) => {
         const fetchedAttendance = snapshot.docs.map((doc) => doc.data());
         // Convert Firestore timestamps to JavaScript Date objects
         const processedAttendanceData = fetchedAttendance.map((item) => ({
@@ -109,7 +46,8 @@ const AttendancePage = () => {
           date: item.date.toDate().toLocaleDateString("en-US"), // Assuming 'date' is the field with the timestamp
         }));
         setAttendanceData(processedAttendanceData);
-      });
+      }
+    );
 
     return () => {
       // Unsubscribe from the snapshot listener when the component unmounts
@@ -120,7 +58,7 @@ const AttendancePage = () => {
   useEffect(() => {
     // Fetch data from master_data collection only once
     const fetchMasterData = async () => {
-      const masterDataSnapshot = await db.collection("master_data").get();
+      const masterDataSnapshot = await getDocs(collection(db, "master_data"));
       const masterDataList = masterDataSnapshot.docs.map((doc) => doc.data());
       // Convert masterDataList to an object with the document ID as keys for efficient lookup
       const masterDataObject = masterDataList.reduce((acc, data) => {
@@ -139,7 +77,7 @@ const AttendancePage = () => {
   useEffect(() => {
     // Filter attendanceData based on the selected eventOptions
     // Define the target date: September 1, 2024
-    const targetDate = new Date("2024-12-01T00:00:00.000Z");
+    const targetDate = new Date("2025-02-01T00:00:00.000Z");
     const convertedDate = new Date(targetDate);
     console.log(convertedDate);
     const filteredAttendanceData = attendanceData.filter(
