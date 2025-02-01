@@ -10,6 +10,8 @@ import {
   where,
   getDocs,
   onSnapshot,
+  addDoc,
+  updateDoc,
 } from "firebase/firestore"; // v9 modular imports
 
 import Modal from "../components/Modal";
@@ -52,98 +54,6 @@ const FormWithQRCode = () => {
 
   // Modals
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-
-  // const handleConfirmationModalConfirm = () => {
-  //   // Handle the form submission here after the user confirms the information
-  //   setShowConfirmationModal(false);
-  //   setIsConfirmed(true);
-  //   // Convert the data to JSON format using the new function
-  //   const jsonData = convertToJSON(firstName, lastName);
-
-  //   const generatedCode = uuidv4();
-  //   setUniqueCode(generatedCode);
-  //   setShowQRCode(true);
-
-  //   // Prepare the data to be saved in the database
-  //   const newData = {
-  //     no: getMaxNoValue() + 1,
-  //     parent_no: null,
-  //     lastname: capitalizeName(lastName),
-  //     firstname: capitalizeName(firstName),
-  //     middlename: null,
-  //     suffix: null,
-  //     nickname: null,
-  //     gender: gender,
-  //     birthdate: new Date(dob),
-  //     street: address,
-  //     brgy: null,
-  //     city: null,
-  //     province: null,
-  //     region: null,
-  //     civilstatus: status,
-  //     bloodtype: null,
-  //     weddingdate: null,
-  //     contact: contact,
-  //     emailadd: null,
-  //     fathersname: null,
-  //     mothersname: null,
-  //     profession_course: null,
-  //     company_school: null,
-  //     cwryear: null,
-  //     entry: null,
-  //     sdg_class: classification,
-  //     status: null,
-  //     pl: null,
-  //     service_role: null,
-  //     ligaya: null,
-  //     chrurch: null,
-  //     lat: null,
-  //     long: null,
-  //     qrCode: jsonData,
-  //     insert_date: new Date(),
-  //     insert_by: "Reg Team",
-  //     update_date: null,
-  //     update_by: null,
-  //     invitedBy: invitedBy,
-  //   };
-
-  //   // Add the data to the "master_data" collection in the database
-  //   db.collection("master_data")
-  //     .add(newData)
-  //     .then((docRef) => {
-  //       console.log("Document written with ID: ", docRef.id);
-
-  //       // Update the newData object with the doc_id
-  //       newData.doc_id = docRef.id;
-
-  //       // Add the attendance record when the "Present" button is clicked
-  //       addAttendanceRecord(
-  //         eventDetails,
-  //         newData.doc_id,
-  //         newData.no,
-  //         newData.firstname,
-  //         newData.lastname,
-  //         newData.pl,
-  //         newData.invitedBy,
-  //         newData.sdg_class,
-  //         first
-  //       );
-
-  //       // Update the "master_data" collection with the doc_id property
-  //       db.collection("master_data")
-  //         .doc(docRef.id)
-  //         .update({ doc_id: docRef.id })
-  //         .then(() => {
-  //           console.log("Document updated with doc_id: ", docRef.id);
-  //         })
-  //         .catch((error) => {
-  //           console.error("Error updating document with doc_id: ", error);
-  //         });
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error adding document: ", error);
-  //     });
-  // };
 
   const handleConfirmationModalConfirm = () => {
     // Handle the form submission here after the user confirms the information
@@ -253,7 +163,7 @@ const FormWithQRCode = () => {
       // const data = await response.json();
       const data = response.data.items;
       // console.log(currentDate)
-      // console.log(data)
+      // console.log(`data from google calendar ${data}`);
       const eventsForCurrentDay = data.filter((event) => {
         if (event.status === "cancelled" || event.summary === "") {
           // Exclude cancelled events with empty summary
@@ -262,9 +172,10 @@ const FormWithQRCode = () => {
 
         // console.log(event)
         const summary = event.summary.toLowerCase();
+        // console.log(`summary ${summary}`);
         const eventDate = new Date(event.start.dateTime);
         // return eventDate.toDateString() === currentDate.toDateString();
-        // console.log(summary);
+        console.log(`eventDate ${summary}- ${eventDate}`);
         return (
           eventDate.toDateString() === currentDate.toDateString() &&
           (summary.startsWith("sdg: district") ||
@@ -272,7 +183,7 @@ const FormWithQRCode = () => {
             summary.startsWith("choices"))
         );
       });
-      console.log(eventsForCurrentDay);
+      // console.log(`event for today ${eventsForCurrentDay}`);
 
       return eventsForCurrentDay.length > 0 ? eventsForCurrentDay[0] : null;
     } catch (error) {
@@ -305,11 +216,7 @@ const FormWithQRCode = () => {
       sdg_class: sdg_class,
       first_timer: first,
     };
-    db.collection("master_data")
-      .doc(id)
-      .collection("attendance")
-      // db.collection('attendance')
-      .add(newAttendanceRecord)
+    addDoc(collection(db, `master_data/${id}/attendance`), newAttendanceRecord)
       .then((docRef) => {
         console.log("Attendance record added with ID: ", docRef.id);
         // If you need to do anything after successfully adding the record, you can put it here.

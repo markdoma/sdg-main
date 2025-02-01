@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { auth, provider, db } from "../utils/firebase";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import { signInWithPopup } from "firebase/auth"; // Make sure to import the signInWithPopup method
+import { signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
 import {
   collection,
   query,
@@ -10,7 +10,7 @@ import {
   getDocs,
   doc,
   getDoc,
-  updateDoc, // Import updateDoc from Firestore
+  updateDoc,
 } from "firebase/firestore";
 import {
   HomeIcon,
@@ -136,7 +136,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     console.log("useEffect called"); // Log when useEffect is called
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         console.log("User is logged in"); // Log when user is logged in
         setUser(user); // Set user when logged in
@@ -189,16 +189,15 @@ export function AuthProvider({ children }) {
     setLoading(true);
     setError(null);
     try {
-      await auth.signOut();
+      await signOut(auth);
       Cookies.remove("token");
       router.push("/");
       setUser(null);
+
       setNotRegistered(false); // Reset registration state on logout
-      setSearchQuery(""); // Clear search query on logout
     } catch (error) {
       setError(error.message); // Set error message if sign-out fails
     }
-    setLoading(false); // Set loading to false after logout
   };
 
   return (
