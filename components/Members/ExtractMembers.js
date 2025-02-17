@@ -11,7 +11,12 @@ const ExtractMembers = ({ initialMembers }) => {
   const formatDate = (date) => {
     if (!date) return "";
     const d = new Date(date.seconds ? date.seconds * 1000 : date);
-    return isNaN(d.getTime()) ? "" : d.toISOString().split("T")[0];
+    return isNaN(d.getTime())
+      ? ""
+      : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}-${String(d.getDate()).padStart(2, "0")}`;
   };
 
   const calculateAge = (birthdate) => {
