@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import FormWithQRCode from "@/components/FormWithQRCode";
+import FormWithQRCode2 from "@/components/FormWithQRCode2";
 import AttendancePage from "@/components/AttendancePage";
 import Scan from "@/components/Scan";
 import QRCodeScanner from "@/components/QRCodeScanner";
@@ -128,7 +128,7 @@ export default function Registration() {
         </nav>
       </div>
 
-      {activeTab === "Attendance" && <FormWithQRCode />}
+      {activeTab === "Attendance" && <FormWithQRCode2 />}
       {activeTab === "Summary" && <AttendancePage />}
       {activeTab === "Scanner" && <Scan />}
     </>
