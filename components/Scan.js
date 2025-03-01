@@ -1,33 +1,12 @@
 import Header from "@/components/Header";
-
 import Sidebar from "@/components/Sidebar";
-import FormWithQRCode from "@/components/FormWithQRCode";
 import Html5QrcodePlugin from "../components/Html5QrcodePlugin";
-// import { getEventDetailsFromGoogleCalendar } from '../utils/attendance_utils';
-
-import axios from "axios";
-import firebase, { db } from "../utils/firebase";
-
+import { db } from "../utils/firebase";
+import { collection, getDocs, query, where, addDoc } from "firebase/firestore"; // v9 modular imports
 import { Fragment, useState, useEffect } from "react";
-import { Dialog, Menu, Transition } from "@headlessui/react";
-import {
-  Bars3Icon,
-  BellIcon,
-  CalendarIcon,
-  ChartPieIcon,
-  Cog6ToothIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
-  HomeIcon,
-  UsersIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/20/solid";
-
+import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
+import eventDetailsData from "../data/eventDetails"; // Import static event data
 
 export default function Scan() {
   const router = useRouter(); // Use useRouter hook for navigation
@@ -55,57 +34,13 @@ export default function Scan() {
   const [showExistingModal, setShowExistingModal] = useState(false);
   const [showNoRecordModal, setShowNoRecordModal] = useState(false);
 
-  const getEventDetailsFromGoogleCalendar = async () => {
-    try {
-      const response = await axios.get(
-        `https://www.googleapis.com/calendar/v3/calendars/ligayasdg@gmail.com/events`,
-        {
-          params: {
-            // key: 'AIzaSyC0OBwnEO2n244bIYqjhvTkdo1_QaZIjtY',
-            key: "AIzaSyAbX2qOg-8MGiK2HHxpNT0DAwCogdHpJJM",
-          },
-        }
-      );
-      const currentDate = new Date();
-      // const data = await response.json();
-      const data = response.data.items;
-      console.log(currentDate);
-      console.log(data);
-      const eventsForCurrentDay = data.filter((event) => {
-        if (event.status === "cancelled" || event.summary === "") {
-          // Exclude cancelled events with empty summary
-          return false;
-        }
-
-        // console.log(event)
-        const summary = event.summary.toLowerCase();
-        const eventDate = new Date(event.start.dateTime);
-        // return eventDate.toDateString() === currentDate.toDateString();
-        console.log(summary);
-        return (
-          eventDate.toDateString() === currentDate.toDateString() &&
-          (summary.startsWith("sdg: district") ||
-            summary.startsWith("open") ||
-            summary.startsWith("choices"))
-        );
-      });
-      console.log(eventsForCurrentDay);
-
-      return eventsForCurrentDay.length > 0 ? eventsForCurrentDay[0] : null;
-    } catch (error) {
-      console.error("Error fetching events:", error);
-    }
-  };
-
   useEffect(() => {
-    // Fetch event details from Google Calendar when the component mounts
-    getEventDetailsFromGoogleCalendar()
-      .then((event) => {
-        setEventDetails(event);
-      })
-      .catch((error) => {
-        console.error("Error fetching event details: ", error);
-      });
+    // Set static event details if the current date matches the event date
+    const currentDate = new Date().toISOString().split("T")[0];
+    const event = eventDetailsData.find(
+      (event) => event.EventDate === currentDate
+    );
+    setEventDetails(event || null);
   }, []);
 
   useEffect(() => {
@@ -116,54 +51,42 @@ export default function Scan() {
   }, []);
 
   const onNewScanResult = (decodedText, decodedResult) => {
-    // console.log(decodedText);
     if (decodedText) {
       setQRData(decodedText);
-
       checkDatabaseForAttendance(decodedText);
     }
   };
 
   const fetchMasterDataAndMappings = async () => {
     try {
-      const masterDataRef = db.collection("master_data");
-      const querySnapshot = await masterDataRef.get();
-
-      let attendanceRecordExists = false;
+      const masterDataRef = collection(db, "master_data");
+      const querySnapshot = await getDocs(masterDataRef);
 
       // Mapping to store other details for each fullname
       const newFullnameToDetailsMapping = {};
 
       querySnapshot.forEach((doc) => {
         const fullName = doc.data().firstname + " " + doc.data().lastname;
-        newFullnameToDetailsMapping[fullName] = doc.data().doc_id;
-
-        // Store other details in the fullnameToDetailsMapping
         newFullnameToDetailsMapping[fullName] = {
-          id: doc.data().doc_id,
+          id: doc.id,
           sdg_class: doc.data().sdg_class,
           pastoral_leader: doc.data().pl,
           firstname: doc.data().firstname,
           lastname: doc.data().lastname,
           no: doc.data().no,
+          invitedBy: doc.data().invitedBy,
         };
       });
 
-      // Now you have the mappings and can use them as needed
-      // console.log(newFullnameToDetailsMapping);
-
       // Set the state with the new mapping
       setFullnameToDetailsMapping(newFullnameToDetailsMapping);
-      // console.log(fullnameToDetailsMapping);
     } catch (error) {
       console.error("Error fetching master data and mappings: ", error);
     }
   };
 
   const checkDatabaseForAttendance = async (qrData) => {
-    const fullName = qrData; // Replace with the actual fullname
-    // console.log(fullName);
-    // console.log(fullnameToDetailsMapping);
+    const fullName = qrData;
 
     if (!fullnameToDetailsMapping[fullName]) {
       // If the fullName does not exist in the mapping
@@ -180,7 +103,7 @@ export default function Scan() {
     const lastname = fullnameToDetailsMapping[fullName].lastname;
     const no = fullnameToDetailsMapping[fullName].no;
     const invitedBy = fullnameToDetailsMapping[fullName].invitedBy;
-    // console.log(firstname);
+
     setQRDetails({
       qrDataId,
       sdgClass,
@@ -192,35 +115,24 @@ export default function Scan() {
     });
 
     if (qrDataId !== undefined) {
-      const eventDate = new Date(eventDetails.start.dateTime);
-      const eventTimestamp = firebase.firestore.Timestamp.fromDate(eventDate);
+      const eventDate = new Date(eventDetails.EventDate);
 
-      // console.log('with data');
       // Check if attendance already exists for the event and individual
-      db.collectionGroup("attendance")
-        .where("id", "==", qrDataId) // Use "id" as the query key
-        .where("event", "==", eventDetails.summary)
-        .where("date", "==", eventTimestamp)
-        .get()
-        .then((querySnapshot) => {
-          // console.log(querySnapshot.empty);
-          if (!querySnapshot.empty) {
-            // Attendance already captured for this event and individual
-            console.log(
-              "Attendance already captured for this event and individual."
-            );
-            setShowExistingModal(true); // Show the existing modal
-          } else {
-            // Attendance not captured, proceed to add new attendance
-            // console.log(showConfirmationModal);
+      const attendanceQuery = query(
+        collection(db, `master_data/${qrDataId}/attendance`),
+        where("event", "==", eventDetails.Summary),
+        where("date", "==", eventDate)
+      );
 
-            setShowConfirmationModal(true); // Show the confirmation modal
-            // console.log(`after - ${showConfirmationModal}`);
-          }
-        })
-        .catch((error) => {
-          console.error("Error checking attendance: ", error);
-        });
+      const querySnapshot = await getDocs(attendanceQuery);
+
+      if (!querySnapshot.empty) {
+        // Attendance already captured for this event and individual
+        setShowExistingModal(true); // Show the existing modal
+      } else {
+        // Attendance not captured, proceed to add new attendance
+        setShowConfirmationModal(true); // Show the confirmation modal
+      }
     } else {
       console.log("No attendance record found for this event and individual.");
     }
@@ -229,23 +141,23 @@ export default function Scan() {
   const handleConfirmAttendance = () => {
     // Perform the attendance insertion logic here
     const newAttendance = {
-      date: new Date(eventDetails.start.dateTime),
-      event: eventDetails.summary,
-      id: QRDetails.qrDataId, // Assuming there's only one matching doc
-      no: QRDetails.no, // Use the "no" from the mapping
-      firstname: QRDetails.firstname, // Assuming there's only one matching doc
-      lastname: QRDetails.lastname, // Assuming there's only one matching doc
-      pastoral_leader: QRDetails.pastoralLeader, // Assuming there's only one matching doc
-      invitedBy: null,
-      sdg_class: QRDetails.sdgClass, // Assuming there's only one matching doc
+      date: new Date(eventDetails.EventDate),
+      event: eventDetails.Summary,
+      id: QRDetails.qrDataId,
+      no: QRDetails.no,
+      firstname: QRDetails.firstname,
+      lastname: QRDetails.lastname,
+      pastoral_leader: QRDetails.pastoralLeader,
+      invitedBy: QRDetails.invitedBy,
+      sdg_class: QRDetails.sdgClass,
       first_timer: "no",
     };
 
     // Add new attendance entry
-    db.collection("master_data")
-      .doc(QRDetails.qrDataId) // Assuming there's only one matching doc
-      .collection("attendance")
-      .add(newAttendance)
+    addDoc(
+      collection(db, `master_data/${QRDetails.qrDataId}/attendance`),
+      newAttendance
+    )
       .then((docRef) => {
         console.log("Attendance record added with ID: ", docRef.id);
         // Update attendance list with new data at the top
@@ -255,6 +167,7 @@ export default function Scan() {
       .catch((error) => {
         console.error("Error adding attendance record: ", error);
       });
+
     // After successful insertion, close the confirmation modal
     setShowConfirmationModal(false);
     setQRData(null); // Reset QR data
@@ -285,7 +198,6 @@ export default function Scan() {
     // Add event listener for scanning results
     document.addEventListener("decoded", onNewScanResult);
     fetchMasterDataAndMappings();
-    // console.log(fullnameToDetailsMapping);
 
     // Cleanup the event listener when the component unmounts
     return () => {
@@ -325,14 +237,12 @@ export default function Scan() {
           </div>
 
           {/* Display QR code data */}
-
-          {/* Display QR code data */}
           {qrData && (
             <div>
               <p>QR Code Data: {qrData}</p>
             </div>
           )}
-          {/* {qrData && <p>QR Code Data: {qrData}</p>} */}
+
           {/* Confirmation Modal */}
           <Transition.Root show={showConfirmationModal} as={Fragment}>
             <Dialog
@@ -468,11 +378,11 @@ export default function Scan() {
                         as="h3"
                         className="text-lg font-medium leading-6 text-gray-900"
                       >
-                        Record does not exists
+                        Record does not exist
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          {`Do you want ${QRDetails.firstname} to the database?`}
+                          {`Do you want ${QRDetails.firstname} to be added to the database?`}
                         </p>
                       </div>
                     </div>
