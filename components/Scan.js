@@ -38,7 +38,7 @@ export default function Scan() {
     // Set static event details if the current date matches the event date
     const currentDate = new Date().toISOString().split("T")[0];
     const event = eventDetailsData.find(
-      (event) => event.EventDate === currentDate
+      (event) => event.EventDate.split("T")[0] === currentDate
     );
     setEventDetails(event || null);
   }, []);
