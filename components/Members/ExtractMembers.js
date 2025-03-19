@@ -71,6 +71,7 @@ const ExtractMembers = ({ initialMembers }) => {
       "chrurch",
       "age", // Add age field
       "years_married", // Add years married field
+      "invitedBy",
     ];
 
     const data = members.map((member) =>
