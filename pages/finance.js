@@ -43,6 +43,7 @@ const FinancePage = () => {
     const newFinanceRecord = {
       fundType,
       monthYear,
+      id: userDetails.doc_id,
       amount: parseFloat(amount),
       proof: proof ? proof.name : null, // Save the file name or handle file upload separately
       date: new Date(),

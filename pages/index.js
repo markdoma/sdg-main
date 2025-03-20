@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { useAuth, AuthProvider } from "../context/AuthContext"; // Ensure AuthProvider is imported
 import Loading from "../components/Misc/Loading";
-import { db } from "@/utils/firebase";
-import Home from "@/components/Members/Home";
-import MemberLanding from "@/components/Members/MemberLanding";
+
+import Home from "../components/Members/Home";
+import MemberLanding from "../components/Members/MemberLanding";
 import {
   getDocs,
   query,

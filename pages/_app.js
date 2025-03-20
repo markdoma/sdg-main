@@ -1,8 +1,8 @@
-import "@/styles/globals.css";
-import "@/styles/styles.css";
+import "../styles/globals.css";
+import "../styles/styles.css";
 import { AuthProvider, useAuth } from "../context/AuthContext";
-import Layout from "@/components/Layout/Layout"; // Layout component
-import Loading from "@/components/Misc/Loading"; // Loading component
+import Layout from "../components/Layout/Layout"; // Layout component
+import Loading from "../components/Misc/Loading"; // Loading component
 
 import { useEffect } from "react";
 function App({ Component, pageProps }) {
