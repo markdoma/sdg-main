@@ -40,10 +40,16 @@ const FinancePage = () => {
       return;
     }
 
+    const [month, year] = monthYear.split(" - "); // Extract month and year
+
     const newFinanceRecord = {
       fundType,
       monthYear,
+      month, // Add month field
+      year, // Add year field
       id: userDetails.doc_id,
+      firstname: userDetails.firstname, // Add firstname field
+      lastname: userDetails.lastname, // Add lastname field
       amount: parseFloat(amount),
       proof: proof ? proof.name : null, // Save the file name or handle file upload separately
       date: new Date(),
