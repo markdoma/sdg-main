@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { db } from "../utils/firebase"; // Replace this with your Firebase configuration
 import AttendanceGroupCard from "./AttendanceGroupCard"; // Make sure to adjust the path if necessary
-import EventContext from "@/context/eventContext";
 
 import {
   collectionGroup,
@@ -9,10 +8,6 @@ import {
   collection,
   getDocs,
 } from "firebase/firestore";
-
-import EventOptions from "../components/EventOptions";
-
-import { Timestamp } from "firebase/firestore";
 
 const AttendancePage = () => {
   const [attendanceData, setAttendanceData] = useState([]);

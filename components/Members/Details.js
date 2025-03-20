@@ -1,7 +1,7 @@
 import { PaperClipIcon } from "@heroicons/react/20/solid";
 import { useRouter } from "next/router";
 import { useState, useRef, useEffect } from "react";
-import { db } from "@/utils/firebase";
+import { db } from "../../utils/firebase";
 import { doc, updateDoc, Timestamp } from "firebase/firestore";
 
 export default function Details({ member }) {

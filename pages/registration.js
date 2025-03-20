@@ -1,10 +1,6 @@
-import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
-import FormWithQRCode2 from "@/components/FormWithQRCode2";
-import AttendancePage from "@/components/AttendancePage";
-import Scan from "@/components/Scan";
-import QRCodeScanner from "@/components/QRCodeScanner";
-import PageHeadingcopy from "@/components/PageHeadingcopy";
+import FormWithQRCode2 from "../components/FormWithQRCode2";
+import AttendancePage from "../components/AttendancePage";
+import Scan from "../components/Scan";
 
 import { Fragment, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
@@ -28,7 +24,7 @@ import {
 const initialNavigation = [
   { name: "Attendance", href: "#", current: true },
   { name: "Summary", href: "/summary", current: false },
-  { name: "Scanner", href: "/scan", current: false },
+  // { name: "Scanner", href: "/scan", current: false },
   // { name: "Collaborators", href: "#", current: false },
   // { name: "Notifications", href: "#", current: false },
 ];

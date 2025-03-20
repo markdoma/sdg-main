@@ -1,5 +1,3 @@
-import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
 import Html5QrcodePlugin from "../components/Html5QrcodePlugin";
 import { db } from "../utils/firebase";
 import { collection, getDocs, query, where, addDoc } from "firebase/firestore"; // v9 modular imports
