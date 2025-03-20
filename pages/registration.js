@@ -24,7 +24,7 @@ import {
 const initialNavigation = [
   { name: "Attendance", href: "#", current: true },
   { name: "Summary", href: "/summary", current: false },
-  // { name: "Scanner", href: "/scan", current: false },
+  { name: "Scanner", href: "/scan", current: false },
   // { name: "Collaborators", href: "#", current: false },
   // { name: "Notifications", href: "#", current: false },
 ];
