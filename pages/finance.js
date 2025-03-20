@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { db } from "../utils/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 
 const FinancePage = () => {
@@ -27,6 +27,7 @@ const FinancePage = () => {
   });
   const [amount, setAmount] = useState("");
   const [proof, setProof] = useState(null);
+  const [financeRecords, setFinanceRecords] = useState([]);
 
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -61,6 +62,9 @@ const FinancePage = () => {
         newFinanceRecord
       );
       console.log("Finance record added with ID: ", docRef.id);
+
+      // Update the financeRecords state to include the new record
+      setFinanceRecords((prevRecords) => [...prevRecords, newFinanceRecord]);
     } catch (error) {
       console.error("Error adding finance record: ", error);
     }
@@ -70,6 +74,33 @@ const FinancePage = () => {
     e.preventDefault();
     addFinanceRecord(fundType, monthYear, amount, proof);
   };
+
+  useEffect(() => {
+    const fetchFinanceRecords = async () => {
+      if (!userDetails || !userDetails.doc_id) {
+        console.error("User ID not found. Please log in.");
+        return;
+      }
+
+      try {
+        const querySnapshot = await getDocs(
+          collection(db, `master_data/${userDetails.doc_id}/finance`)
+        );
+        const records = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            ...data,
+            date: data.date instanceof Date ? data.date : data.date.toDate(), // Ensure date is a Date object
+          };
+        });
+        setFinanceRecords(records);
+      } catch (error) {
+        console.error("Error fetching finance records: ", error);
+      }
+    };
+
+    fetchFinanceRecords();
+  }, [userDetails]);
 
   return (
     <div className="flex justify-center items-start h-screen">
@@ -168,6 +199,64 @@ const FinancePage = () => {
             </button>
           </div>
         </form>
+
+        <div className="bg-white rounded px-8 pt-6 pb-8">
+          <h2 className="text-xl font-bold mb-4 text-center">
+            Finance Records
+          </h2>
+          <div className="flex justify-center">
+            <table className="table-auto border-collapse border border-gray-300">
+              <thead>
+                <tr>
+                  <th className="border border-gray-300 px-4 py-2">
+                    Fund Type
+                  </th>
+                  <th className="border border-gray-300 px-4 py-2">Month</th>
+                  <th className="border border-gray-300 px-4 py-2">Year</th>
+                  <th className="border border-gray-300 px-4 py-2">
+                    First Name
+                  </th>
+                  <th className="border border-gray-300 px-4 py-2">
+                    Last Name
+                  </th>
+                  <th className="border border-gray-300 px-4 py-2">Amount</th>
+                  <th className="border border-gray-300 px-4 py-2">Proof</th>
+                  <th className="border border-gray-300 px-4 py-2">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {financeRecords.map((record, index) => (
+                  <tr key={index}>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {record.fundType}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {record.month}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {record.year}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {record.firstname}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {record.lastname}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {record.amount}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {record.proof}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {record.date.toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
