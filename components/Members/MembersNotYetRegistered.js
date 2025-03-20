@@ -12,7 +12,7 @@ import {
   Timestamp,
 } from "firebase/firestore"; // v9 modular imports
 
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const MembersNotYetRegistered = ({ userEmail }) => {
   const [userData, setUserData] = useState(null);

@@ -1,6 +1,6 @@
 "use client";
 
-import FormWithQRCode from "@/components/FormWithQRCode";
+// import FormWithQRCode from "@/components/FormWithQRCode";
 import { useRouter } from "next/router";
 import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
@@ -37,8 +37,7 @@ import {
   ChevronRightIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
-import ExtractMembers from "@/components/Members/ExtractMembers";
-
+import ExtractMembers from "../Members/ExtractMembers";
 const secondaryNavigation = [
   { name: "Settings", href: "#", icon: CogIcon },
   { name: "Help", href: "#", icon: QuestionMarkCircleIcon },

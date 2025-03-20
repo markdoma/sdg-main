@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import Loading from "@/components/Misc/Loading";
-import MembersNotYetRegistered from "@/components/Members/MembersNotYetRegistered";
-import { db } from "@/utils/firebase";
+import Loading from "../Misc/Loading";
+import MembersNotYetRegistered from "../../components/Members/MembersNotYetRegistered";
+
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Home({ initialMembers, userEmail, userRole, plName }) {
   const { notRegistered, searchQuery } = useAuth(); // Add searchQuery from context
