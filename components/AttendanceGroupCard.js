@@ -1,9 +1,9 @@
-import React from 'react';
-import { calculateAge } from '@/utils/utilties';
+import React from "react";
+import { calculateAge } from "../utils/utilties";
 const AttendanceGroupCard = ({ groups, eventOptions }) => {
   // Filter out the Guest group and other classifications
   const otherGroups = groups.filter(
-    (group) => group.classification !== 'Guest'
+    (group) => group.classification !== "Guest"
   );
 
   // Calculate total attendees for all classifications
@@ -51,7 +51,7 @@ const AttendanceGroupCard = ({ groups, eventOptions }) => {
   };
 
   // Find the Guest group
-  const guestGroup = groups.find((group) => group.classification === 'Guest');
+  const guestGroup = groups.find((group) => group.classification === "Guest");
 
   return (
     <div className="flex justify-center items-start h-screen">
@@ -124,13 +124,13 @@ const AttendanceGroupCard = ({ groups, eventOptions }) => {
                       <tr
                         key={item.id}
                         className={
-                          item.first_timer === 'yes' ? 'bg-green-100' : ''
+                          item.first_timer === "yes" ? "bg-green-100" : ""
                         }
                       >
                         <td className="border px-4 py-2">{`${item.firstname} ${item.lastname}`}</td>
                         <td className="border px-4 py-2">{item.invitedBy}</td>
                         <td className="border px-4 py-2 text-center">
-                          {item.first_timer === 'yes' ? '🎊 🎉🎊 🎉🎊 🎉' : ''}
+                          {item.first_timer === "yes" ? "🎊 🎉🎊 🎉🎊 🎉" : ""}
                         </td>
                       </tr>
                     ))}
@@ -150,27 +150,27 @@ const AttendanceGroupCard = ({ groups, eventOptions }) => {
                 return null;
               }
 
-              let backgroundColor = '';
+              let backgroundColor = "";
               switch (classification) {
-                case 'Family':
-                  backgroundColor = 'bg-green-500';
+                case "Family":
+                  backgroundColor = "bg-green-500";
                   break;
-                case 'Non-SDG':
-                  backgroundColor = 'bg-blue-500';
+                case "Non-SDG":
+                  backgroundColor = "bg-blue-500";
                   break;
-                case 'Member':
-                  backgroundColor = 'bg-white';
+                case "Member":
+                  backgroundColor = "bg-white";
                   break;
                 default:
-                  backgroundColor = 'bg-gray-500';
+                  backgroundColor = "bg-gray-500";
                   break;
               }
 
-              if (classification === 'Member') {
+              if (classification === "Member") {
                 // Group members by pastoral_leader
                 const groupedMembers = data.reduce((acc, item) => {
                   const pastoralLeader =
-                    item.pastoral_leader || 'No Pastoral Leader';
+                    item.pastoral_leader || "No Pastoral Leader";
                   if (!acc[pastoralLeader]) {
                     acc[pastoralLeader] = [];
                   }

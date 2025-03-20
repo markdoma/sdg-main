@@ -9,9 +9,9 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "../../utils/firebase";
-import MemberHeading from "@/components/Members/MemberHeading";
-import Details from "@/components/Members/Details";
-import AttendanceData from "@/components/Members/AttendanceData";
+import MemberHeading from "../../components/Members/MemberHeading";
+import Details from "../../components/Members/Details";
+import AttendanceData from "../../components/Members/AttendanceData";
 import Loading from "../../components/Misc/Loading";
 
 const initialNavigation = [

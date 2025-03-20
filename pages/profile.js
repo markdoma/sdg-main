@@ -1,6 +1,6 @@
 import { useContext, useState, useRef, useEffect } from "react";
 import { PaperClipIcon } from "@heroicons/react/20/solid";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { Timestamp } from "firebase/firestore"; // Import Timestamp from Firestore
 
 export default function Profile() {
